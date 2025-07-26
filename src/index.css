@@ -8,4 +8,6 @@ body {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-
+.nav-link {
+  @apply text-gray-700 hover:text-amber-600 transition-colors duration-200 text-2xl;
+}

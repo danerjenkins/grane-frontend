@@ -36,6 +36,9 @@ const Navbar = () => {
           <Link to="/contact" className="nav-link">
             Contact
           </Link>
+          <Link to="/bake-days" className="nav-link">
+            Bake Days
+          </Link>
           <Link to="/account" className="nav-link">
             Account
           </Link>
@@ -53,6 +56,9 @@ const Navbar = () => {
           </Link>
           <Link to="/contact" className="nav-link">
             Contact
+          </Link>
+          <Link to="/bake-days" className="nav-link">
+            Bake Days
           </Link>
           <Link to="/account" className="nav-link">
             Account

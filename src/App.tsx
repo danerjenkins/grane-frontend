@@ -5,6 +5,7 @@ import About from './pages/About.tsx';
 import Navbar from './components/Navbar';
 import Menu from './pages/Menu.tsx';
 import Contact from './pages/Contact.tsx';
+import BakeDaysPage from './pages/BakeDays';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/bake-days" element={<BakeDaysPage />} />
       </Routes>
     </div>
   );

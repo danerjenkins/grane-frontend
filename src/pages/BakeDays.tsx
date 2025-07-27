@@ -8,9 +8,7 @@ export default function BakeDaysPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   useEffect(() => {
-    getBakeDays()
-      .then(setBakeDays)
-      .catch(console.error);
+    getBakeDays().then(setBakeDays).catch(console.error);
   }, []);
 
   const getTileClassName = ({ date }: { date: Date }) => {
@@ -31,16 +29,30 @@ export default function BakeDaysPage() {
         <Calendar
           onClickDay={(value) => setSelectedDate(value)}
           tileClassName={getTileClassName}
+          prev2Label={null}
+          next2Label={null}
         />
 
         <style>
           {`
             .bake-day-highlight {
               background: #facc15 !important;
-              border-radius: 50%;
+              border-radius: 0.375rem;
               font-weight: bold;
               color: black !important;
             }
+            .react-calendar__month-view__days__day--weekend {
+                color: inherit !important;
+            }
+            .react-calendar__tile--now {
+                background-color: #e5e7eb !important; /* Tailwind gray-200 */
+                color: #111827 !important; /* Tailwind gray-900 */
+                font-weight: bold;
+                border-radius: 0.375rem;
+            }
+            
+
+
           `}
         </style>
 

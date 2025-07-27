@@ -38,3 +38,7 @@ a.email-button:hover {
   font-weight: 500;
   border-radius: 1rem;
 }
+.react-calendar,
+.react-calendar * {
+  font-family: inherit !important;
+}

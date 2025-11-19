@@ -172,7 +172,7 @@ export default function AdminOrders() {
                       <p className="text-sm text-gray-600">
                         {item.quantity} × $
                         {item.item_price != null
-                          ? (item.item_price / 100).toFixed(2)
+                          ? (item.item_price).toFixed(2)
                           : 'N/A'}
                       </p>
                     </div>

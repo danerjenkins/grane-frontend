@@ -7,6 +7,8 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const { cart, removeFromCart } = useCart();
+  const { cartQuantity } = useCart();
+
 
   return (
     <nav className="bg-white shadow-md px-6 py-6 relative">
@@ -53,11 +55,11 @@ const Navbar = () => {
 
         {/* DESKTOP MENU + DESKTOP CART */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/menu" className="nav-link">Menu</Link>
-          <Link to="/about" className="nav-link">About</Link>
+          {/* <Link to="/menu" className="nav-link">Menu</Link>
+          <Link to="/about" className="nav-link">About</Link> */}
           <Link to="/contact" className="nav-link">Contact</Link>
-          <Link to="/bake-days" className="nav-link">Bake Days</Link>
-          <Link to="/account" className="nav-link">Account</Link>
+          <Link to="/bake-days" className="nav-link">Order</Link>
+          {/* <Link to="/account" className="nav-link">Account</Link> */}
 
           {/* Desktop Cart */}
           <div className="relative ml-4">
@@ -68,7 +70,7 @@ const Navbar = () => {
               <ShoppingCart className="w-6 h-6 text-gray-800" />
               {cart.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  {cart.length}
+                  {cartQuantity}
                 </span>
               )}
             </button>
@@ -118,11 +120,11 @@ const Navbar = () => {
       {/* MOBILE MENU ITEMS */}
       {isOpen && (
         <div className="mt-4 flex flex-col space-y-2 md:hidden">
-          <Link to="/menu" className="nav-link">Menu</Link>
-          <Link to="/about" className="nav-link">About</Link>
+          {/* <Link to="/menu" className="nav-link">Menu</Link> */}
+          {/* <Link to="/about" className="nav-link">About</Link> */}
           <Link to="/contact" className="nav-link">Contact</Link>
-          <Link to="/bake-days" className="nav-link">Bake Days</Link>
-          <Link to="/account" className="nav-link">Account</Link>
+          <Link to="/bake-days" className="nav-link">Order</Link>
+          {/* <Link to="/account" className="nav-link">Account</Link> */}
         </div>
       )}
 

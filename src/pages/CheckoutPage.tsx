@@ -1,27 +1,16 @@
-import { useEffect, useState } from "react";
-import { useCart } from "../context/CartContext";
+import { useState } from 'react';
+import { useCart } from '../context/CartContext';
 
 export default function CheckoutPage() {
-  const { cart } = useCart();
-  const [bakeDays, setBakeDays] = useState<any[]>([]);
-  const [selectedBakeDay, setSelectedBakeDay] = useState("");
-  const [note, setNote] = useState("");
+  const { cart, selectedBakeDay, updateQuantity, removeFromCart } = useCart();
 
-  // Fetch bake days from your backend
-  useEffect(() => {
-    fetch("http://localhost:5000/api/bake-days")
-      .then((res) => res.json())
-      .then((data) => setBakeDays(data));
-  }, []);
+  const [note, setNote] = useState('');
 
-  const total = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
     if (!selectedBakeDay) {
-      alert("Please choose a bake day.");
+      alert('Please choose a bake day.');
       return;
     }
 
@@ -34,9 +23,9 @@ export default function CheckoutPage() {
       })),
     };
 
-    const res = await fetch("http://localhost:5000/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const res = await fetch('http://localhost:5000/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
 
@@ -45,8 +34,8 @@ export default function CheckoutPage() {
     if (data.url) {
       window.location.href = data.url; // redirect to Stripe Checkout
     } else {
-      console.error("Checkout Error", data);
-      alert("Checkout failed. See console.");
+      console.error('Checkout Error', data);
+      alert('Checkout failed. See console.');
     }
   };
 
@@ -65,18 +54,46 @@ export default function CheckoutPage() {
             {cart.map((item) => (
               <div
                 key={item.product_id}
-                className="flex justify-between border-b pb-2"
+                className="flex justify-between items-center border-b pb-3"
               >
+                {/* Left side: item name + price */}
                 <div>
                   <p className="font-medium">{item.name}</p>
-                  <p className="text-sm">
-                    ${(item.price / 100).toFixed(2)} × {item.quantity}
-                  </p>
+                  <p className="text-sm text-gray-600">${(item.price / 100).toFixed(2)} each</p>
                 </div>
 
-                <p className="font-medium">
-                  ${(item.price * item.quantity / 100).toFixed(2)}
-                </p>
+                {/* Right side: quantity controls + total */}
+                <div className="flex items-center gap-4">
+                  {/* Quantity Controls */}
+                  <div className="flex items-center border rounded px-2 py-1">
+                    <button
+                      className="px-2 font-bold text-lg"
+                      onClick={() => {
+                        if (item.quantity === 1) {
+                          removeFromCart(item.product_id);
+                        } else {
+                          updateQuantity(item.product_id, item.quantity - 1);
+                        }
+                      }}
+                    >
+                      –
+                    </button>
+
+                    <span className="px-3">{item.quantity}</span>
+
+                    <button
+                      className="px-2 font-bold text-lg"
+                      onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {/* Item total */}
+                  <p className="font-medium w-16 text-right">
+                    ${((item.price * item.quantity) / 100).toFixed(2)}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -85,19 +102,9 @@ export default function CheckoutPage() {
 
       {/* Bake Day Selector */}
       <div className="mb-8">
-        <label className="block font-semibold mb-1">Choose a Bake Day</label>
-        <select
-          className="border rounded p-2 w-full"
-          value={selectedBakeDay}
-          onChange={(e) => setSelectedBakeDay(e.target.value)}
-        >
-          <option value="">Select a bake day</option>
-          {bakeDays.map((day) => (
-            <option key={day.id} value={day.id}>
-              {new Date(day.date).toLocaleDateString()}
-            </option>
-          ))}
-        </select>
+        <p className="font-semibold mb-1">
+          Bake Day: {new Date(selectedBakeDay!).toLocaleDateString()}
+        </p>
       </div>
 
       {/* Customer Note */}
@@ -114,9 +121,7 @@ export default function CheckoutPage() {
 
       {/* Total + Checkout Button */}
       <div className="flex justify-between items-center">
-        <p className="text-xl font-bold">
-          Total: ${(total / 100).toFixed(2)}
-        </p>
+        <p className="text-xl font-bold">Total: ${(total / 100).toFixed(2)}</p>
 
         <button
           onClick={handleCheckout}

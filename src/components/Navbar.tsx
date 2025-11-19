@@ -1,14 +1,18 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react'; // optional: for icons
+import { Menu, X, ShoppingCart } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const { cart, removeFromCart } = useCart();
 
   return (
-    <nav className="bg-white shadow-md px-6 py-6">
+    <nav className="bg-white shadow-md px-6 py-6 relative">
       <div className="flex justify-between items-center">
-        {/* Logo / Brand */}
+
+        {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
           <img
             src="/granelogo3draft.png"
@@ -17,52 +21,148 @@ const Navbar = () => {
           />
         </Link>
 
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden text-gray-800 focus:outline-none"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        {/* MOBILE ICONS */}
+        <div className="flex items-center space-x-4 md:hidden">
+          {/* Mobile Cart Button */}
+          <button
+            className="relative"
+            onClick={() => {
+              setCartOpen(!cartOpen);
+              setIsOpen(false);
+            }}
+          >
+            <ShoppingCart className="w-6 h-6 text-gray-800" />
+            {cart.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                {cart.length}
+              </span>
+            )}
+          </button>
 
-        {/* Desktop menu */}
-        <div className="hidden md:flex space-x-6">
-          <Link to="/menu" className="nav-link">
-            Menu
-          </Link>
-          <Link to="/about" className="nav-link">
-            About
-          </Link>
-          <Link to="/contact" className="nav-link">
-            Contact
-          </Link>
-          <Link to="/bake-days" className="nav-link">
-            Bake Days
-          </Link>
-          <Link to="/account" className="nav-link">
-            Account
-          </Link>
+          {/* Mobile Menu Toggle */}
+          <button
+            className="text-gray-800 focus:outline-none"
+            onClick={() => {
+              setIsOpen(!isOpen);
+              setCartOpen(false);
+            }}
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
+
+        {/* DESKTOP MENU + DESKTOP CART */}
+        <div className="hidden md:flex items-center space-x-6">
+          <Link to="/menu" className="nav-link">Menu</Link>
+          <Link to="/about" className="nav-link">About</Link>
+          <Link to="/contact" className="nav-link">Contact</Link>
+          <Link to="/bake-days" className="nav-link">Bake Days</Link>
+          <Link to="/account" className="nav-link">Account</Link>
+
+          {/* Desktop Cart */}
+          <div className="relative ml-4">
+            <button
+              className="relative"
+              onClick={() => setCartOpen(!cartOpen)}
+            >
+              <ShoppingCart className="w-6 h-6 text-gray-800" />
+              {cart.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  {cart.length}
+                </span>
+              )}
+            </button>
+
+            {/* Desktop Dropdown */}
+            {cartOpen && (
+              <div className="absolute right-0 mt-3 w-64 bg-white shadow-lg border rounded-lg p-4 z-50">
+                <h3 className="text-lg font-semibold mb-3">Cart</h3>
+                {cart.length === 0 ? (
+                  <p className="text-sm text-gray-600">Your cart is empty.</p>
+                ) : (
+                  <div className="space-y-3 max-h-60 overflow-y-auto">
+                    {cart.map((item) => (
+                      <div key={item.product_id} className="flex justify-between">
+                        <div>
+                          <p className="font-medium">{item.name}</p>
+                          <p className="text-sm text-gray-600">
+                            ${(item.price / 100).toFixed(2)} × {item.quantity}
+                          </p>
+                        </div>
+                        <button
+                          className="text-red-500 text-sm"
+                          onClick={() => removeFromCart(item.product_id)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-4 border-t pt-3">
+                  <Link
+                    to="/checkout"
+                    className="block bg-black text-white text-center py-2 rounded-md hover:bg-gray-800"
+                    onClick={() => setCartOpen(false)}
+                  >
+                    Checkout
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Mobile menu items */}
+      {/* MOBILE MENU ITEMS */}
       {isOpen && (
         <div className="mt-4 flex flex-col space-y-2 md:hidden">
-          <Link to="/menu" className="nav-link">
-            Menu
-          </Link>
-          <Link to="/about" className="nav-link">
-            About
-          </Link>
-          <Link to="/contact" className="nav-link">
-            Contact
-          </Link>
-          <Link to="/bake-days" className="nav-link">
-            Bake Days
-          </Link>
-          <Link to="/account" className="nav-link">
-            Account
-          </Link>
+          <Link to="/menu" className="nav-link">Menu</Link>
+          <Link to="/about" className="nav-link">About</Link>
+          <Link to="/contact" className="nav-link">Contact</Link>
+          <Link to="/bake-days" className="nav-link">Bake Days</Link>
+          <Link to="/account" className="nav-link">Account</Link>
+        </div>
+      )}
+
+      {/* MOBILE CART DROPDOWN */}
+      {cartOpen && (
+        <div className="md:hidden mt-4 w-full bg-white shadow-lg border rounded-lg p-4 z-50">
+          <h3 className="text-lg font-semibold mb-3">Cart</h3>
+
+          {cart.length === 0 ? (
+            <p className="text-sm text-gray-600">Your cart is empty.</p>
+          ) : (
+            <div className="space-y-3 max-h-60 overflow-y-auto">
+              {cart.map((item) => (
+                <div key={item.product_id} className="flex justify-between">
+                  <div>
+                    <p className="font-medium">{item.name}</p>
+                    <p className="text-sm text-gray-600">
+                      ${(item.price / 100).toFixed(2)} × {item.quantity}
+                    </p>
+                  </div>
+                  <button
+                    className="text-red-500 text-sm"
+                    onClick={() => removeFromCart(item.product_id)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-4 border-t pt-3">
+            <Link
+              to="/checkout"
+              className="block bg-black text-white text-center py-2 rounded-md hover:bg-gray-800"
+              onClick={() => setCartOpen(false)}
+            >
+              Checkout
+            </Link>
+          </div>
         </div>
       )}
     </nav>

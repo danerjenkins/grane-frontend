@@ -1,4 +1,3 @@
-
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.tsx';
 import About from './pages/About.tsx';
@@ -6,6 +5,8 @@ import Navbar from './components/Navbar';
 import Menu from './pages/Menu.tsx';
 import Contact from './pages/Contact.tsx';
 import BakeDaysPage from './pages/BakeDays';
+import CheckoutPage from './pages/CheckoutPage';
+import AdminOrders from './pages/AdminOrders';
 
 export default function App() {
   return (
@@ -18,6 +19,8 @@ export default function App() {
         <Route path="/menu" element={<Menu />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/bake-days" element={<BakeDaysPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
       </Routes>
     </div>
   );

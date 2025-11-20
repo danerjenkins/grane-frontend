@@ -31,7 +31,7 @@ export default function AdminOrders() {
   // PATCH to mark order as completed
   const markAsCompleted = async (orderId: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders/${orderId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -52,7 +52,7 @@ export default function AdminOrders() {
 
   // Fetch orders
   useEffect(() => {
-    fetch('http://localhost:5000/api/orders')
+    fetch(`${import.meta.env.VITE_API_URL}/orders`)
       .then((res) => res.json())
       .then((data) => {
         console.log('ORDERS FROM API:', data);

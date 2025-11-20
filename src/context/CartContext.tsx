@@ -7,6 +7,11 @@ export interface CartItem {
   quantity: number;
 }
 
+export interface SelectedBakeDay {
+  id: string;
+  date: string;
+}
+
 interface CartContextType {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
@@ -14,23 +19,23 @@ interface CartContextType {
   updateQuantity: (product_id: string, qty: number) => void;
   clearCart: () => void;
 
-  selectedBakeDay: string | null;
-  setSelectedBakeDay: (id: string | null) => void;
-  cartQuantity:number;
+  selectedBakeDay: SelectedBakeDay | null;
+  setSelectedBakeDay: (day: SelectedBakeDay | null) => void;
+
+  cartQuantity: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [selectedBakeDay, setSelectedBakeDay] = useState<string | null>(null);
+  const [selectedBakeDay, setSelectedBakeDay] = useState<SelectedBakeDay | null>(null);
 
   const addToCart = (item: CartItem) => {
     setCart((prev) => {
       const existing = prev.find((p) => p.product_id === item.product_id);
 
       if (existing) {
-        // update quantity if item already in cart
         return prev.map((p) =>
           p.product_id === item.product_id ? { ...p, quantity: p.quantity + item.quantity } : p
         );
@@ -52,7 +57,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const clearCart = () => setCart([]);
   const cartQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-
 
   return (
     <CartContext.Provider

@@ -15,7 +15,7 @@ export default function CheckoutPage() {
     }
 
     const body = {
-      bake_day_id: selectedBakeDay,
+      bake_day_id: selectedBakeDay.id,
       customer_note: note,
       items: cart.map((item) => ({
         product_id: item.product_id,
@@ -23,7 +23,7 @@ export default function CheckoutPage() {
       })),
     };
 
-    const res = await fetch('http://localhost:5000/api/checkout', {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/checkout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -103,7 +103,7 @@ export default function CheckoutPage() {
       {/* Bake Day Selector */}
       <div className="mb-8">
         <p className="font-semibold mb-1">
-          Bake Day: {new Date(selectedBakeDay!).toLocaleDateString()}
+          Bake Day: {selectedBakeDay ? new Date(selectedBakeDay.date).toLocaleDateString() : 'None selected'}
         </p>
       </div>
 

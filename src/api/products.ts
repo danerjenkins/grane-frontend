@@ -8,7 +8,7 @@ export interface Product {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  const res = await fetch('http://localhost:5000/api/products');
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/products`);
 
   if (!res.ok) {
     throw new Error(`Failed to fetch products: ${res.statusText}`);
@@ -19,7 +19,7 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 export async function getProductById(id: string) {
-  const res = await fetch(`http://localhost:5000/api/products/${id}`);
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/products/${id}`);
 
   if (!res.ok) {
     console.error("Product lookup failed:", res.status, res.statusText);

@@ -28,7 +28,7 @@ export default function Home() {
         {/* Call to Action */}
         <div className="flex flex-col items-center gap-4">
           <a
-            href="/order"
+            href="/bake-days"
             className="inline-block bg-black text-white px-8 py-4 rounded-xl text-lg font-medium hover:bg-neutral-800 transition shadow"
           >
             Order Now

@@ -10,14 +10,8 @@ export default function BakeDaysPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const {
-    cart,
-    addToCart,
-    selectedBakeDay,
-    setSelectedBakeDay,
-    updateQuantity,
-    removeFromCart,
-  } = useCart();
+  const { cart, addToCart, selectedBakeDay, setSelectedBakeDay, updateQuantity, removeFromCart } =
+    useCart();
   const [addedMessage, setAddedMessage] = useState('');
 
   // Load bake days
@@ -50,13 +44,13 @@ export default function BakeDaysPage() {
           year: 'numeric',
         })
       : selectedDate
-      ? selectedDate.toLocaleDateString(undefined, {
-          weekday: 'long',
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric',
-        })
-      : null;
+        ? selectedDate.toLocaleDateString(undefined, {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+          })
+        : null;
 
   return (
     <main className="min-h-screen bg-neutral-50 px-4 py-10">
@@ -74,8 +68,8 @@ export default function BakeDaysPage() {
             Choose Your Bake Day
           </h1>
           <p className="mx-auto max-w-xl text-sm text-neutral-600">
-            Select a highlighted day to see which fresh loaves and treats are
-            coming out of the oven on that bake.
+            Select a highlighted day to see which fresh loaves and treats are coming out of the oven
+            on that bake.
           </p>
         </header>
 
@@ -86,16 +80,18 @@ export default function BakeDaysPage() {
               <Calendar
                 onClickDay={(value) => {
                   const dateStr = value.toISOString().split('T')[0];
-
+                  const record = bakeDays.find((b) => b.date === dateStr);
+                  if (record) {
+                    setSelectedBakeDay({ id: record.id, date: record.date });
+                  }
                   // If cart has items and selectedBakeDay exists, prevent switching
-                  if (cart.length > 0 && selectedBakeDay && selectedBakeDay !== dateStr) {
+                  if (cart.length > 0 && selectedBakeDay) {
                     alert(
                       'You already have items in your cart. To change bake days, empty your cart first.'
                     );
                     return;
                   }
 
-                  setSelectedBakeDay(dateStr);
                   setSelectedDate(value);
                 }}
                 tileClassName={getTileClassName}
@@ -123,10 +119,7 @@ export default function BakeDaysPage() {
               <div className="space-y-4">
                 {/* Simple skeletons */}
                 {[1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="animate-pulse rounded-2xl border bg-white p-4 shadow-sm"
-                  >
+                  <div key={i} className="animate-pulse rounded-2xl border bg-white p-4 shadow-sm">
                     <div className="mb-3 h-40 w-full rounded-xl bg-neutral-200" />
                     <div className="mb-2 h-4 w-1/3 rounded bg-neutral-200" />
                     <div className="mb-2 h-3 w-2/3 rounded bg-neutral-200" />
@@ -146,8 +139,7 @@ export default function BakeDaysPage() {
                   .map(({ id, product, quantity_limit, quantity_sold }) => {
                     const soldOut = quantity_sold >= quantity_limit;
                     const cartItem = cart.find((i) => i.product_id === product.id);
-                    const remaining =
-                      quantity_limit - quantity_sold - (cartItem?.quantity ?? 0);
+                    const remaining = quantity_limit - quantity_sold - (cartItem?.quantity ?? 0);
 
                     return (
                       <article
@@ -156,12 +148,11 @@ export default function BakeDaysPage() {
                       >
                         <div className="h-52 w-full overflow-hidden">
                           <Link to={`/product/${product.id}`}>
-
-                          <img
-                            src={product.image_url}
-                            alt={product.name}
-                            className="h-full w-full object-cover"
-                          />
+                            <img
+                              src={product.image_url}
+                              alt={product.name}
+                              className="h-full w-full object-cover"
+                            />
                           </Link>
                         </div>
 
@@ -171,9 +162,7 @@ export default function BakeDaysPage() {
                               <h3 className="text-lg font-semibold text-neutral-900">
                                 {product.name}
                               </h3>
-                              <p className="text-sm text-neutral-600">
-                                {product.description}
-                              </p>
+                              <p className="text-sm text-neutral-600">{product.description}</p>
                             </div>
                           </div>
 
@@ -204,10 +193,7 @@ export default function BakeDaysPage() {
                                     if (cartItem.quantity === 1) {
                                       removeFromCart(cartItem.product_id);
                                     } else {
-                                      updateQuantity(
-                                        cartItem.product_id,
-                                        cartItem.quantity - 1
-                                      );
+                                      updateQuantity(cartItem.product_id, cartItem.quantity - 1);
                                     }
                                   }}
                                 >
@@ -222,10 +208,7 @@ export default function BakeDaysPage() {
                                   className="px-2 text-lg font-bold disabled:opacity-40"
                                   disabled={remaining <= 0}
                                   onClick={() =>
-                                    updateQuantity(
-                                      cartItem.product_id,
-                                      cartItem.quantity + 1
-                                    )
+                                    updateQuantity(cartItem.product_id, cartItem.quantity + 1)
                                   }
                                 >
                                   +
@@ -267,8 +250,8 @@ export default function BakeDaysPage() {
             ) : selectedDate ? (
               <p className="mt-4 text-center text-sm text-neutral-600">
                 No products are available for{' '}
-                <span className="font-medium">{friendlySelectedDate}</span>. Please
-                choose a highlighted date on the calendar.
+                <span className="font-medium">{friendlySelectedDate}</span>. Please choose a
+                highlighted date on the calendar.
               </p>
             ) : (
               <p className="mt-4 text-center text-sm text-neutral-600">

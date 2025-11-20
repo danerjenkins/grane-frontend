@@ -29,7 +29,7 @@ export default function Success() {
   useEffect(() => {
     if (!session_id) return;
 
-    fetch(`http://localhost:5000/api/orders/by-session/${session_id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/orders/by-session/${session_id}`)
       .then((res) => res.json())
       .then((data) => setOrder(data))
       .catch((err) => console.error("Error loading order:", err))

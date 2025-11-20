@@ -21,7 +21,7 @@ export interface BakeDay {
 }
 
 export async function getBakeDays(): Promise<BakeDay[]> {
-  const res = await fetch('http://localhost:5000/api/bake-days');
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/bake-days`);
   if (!res.ok) {
     throw new Error(`Failed to fetch bake days: ${res.statusText}`);
   }

@@ -3,6 +3,7 @@ import { useCart } from '../context/CartContext';
 
 export default function CheckoutPage() {
   const { cart, selectedBakeDay, updateQuantity, removeFromCart } = useCart();
+  const [customerName, setCustomerName] = useState('');
 
   const [note, setNote] = useState('');
 
@@ -15,13 +16,15 @@ export default function CheckoutPage() {
     }
 
     const body = {
-      bake_day_id: selectedBakeDay.id,
-      customer_note: note,
-      items: cart.map((item) => ({
-        product_id: item.product_id,
-        quantity: item.quantity,
-      })),
-    };
+  bake_day_id: selectedBakeDay.id,
+  customer_note: note,
+  customer_name: customerName,
+  items: cart.map((item) => ({
+    product_id: item.product_id,
+    quantity: item.quantity,
+  })),
+};
+
 
     const res = await fetch(`${import.meta.env.VITE_API_URL}/checkout`, {
       method: 'POST',
@@ -60,6 +63,18 @@ export default function CheckoutPage() {
                 <div>
                   <p className="font-medium">{item.name}</p>
                   <p className="text-sm text-gray-600">${(item.price / 100).toFixed(2)} each</p>
+                  <div className="mb-8">
+  <label className="block font-semibold mb-1">Your Name</label>
+  <input
+    className="border rounded p-2 w-full"
+    type="text"
+    value={customerName}
+    onChange={(e) => setCustomerName(e.target.value)}
+    placeholder="Enter your name"
+    required
+  />
+</div>
+
                 </div>
 
                 {/* Right side: quantity controls + total */}
@@ -103,7 +118,8 @@ export default function CheckoutPage() {
       {/* Bake Day Selector */}
       <div className="mb-8">
         <p className="font-semibold mb-1">
-          Bake Day: {selectedBakeDay ? new Date(selectedBakeDay.date).toLocaleDateString() : 'None selected'}
+          Bake Day:{' '}
+          {selectedBakeDay ? new Date(selectedBakeDay.date).toLocaleDateString() : 'None selected'}
         </p>
       </div>
 

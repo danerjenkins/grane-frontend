@@ -12,6 +12,7 @@ interface OrderItem {
 }
 
 interface Order {
+  users: { name: string };
   id: string;
   bake_days: { date: string } | null;
   total_price: number;
@@ -59,6 +60,10 @@ export default function Success() {
           <p className="text-center text-gray-500 text-sm mt-1">
             Order ID: {order.id.slice(0, 8)}
           </p>
+          <p className="mt-2 text-gray-700">
+  <span className="font-semibold">Customer:</span> {order.users?.name}
+</p>
+
 
           <hr className="my-6" />
 

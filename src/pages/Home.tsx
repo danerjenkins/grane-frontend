@@ -13,7 +13,7 @@ export default function Home() {
         <p className="text-xl text-gray-700 mb-10">
           Fresh sourdough returning the{' '}
           <span className="font-semibold">week of Thanksgiving</span>.<br />
-          Pre-orders will open soon!
+          Pre-orders will open very soon!
         </p>
 
         {/* Hero Image */}

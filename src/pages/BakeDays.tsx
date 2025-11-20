@@ -55,17 +55,10 @@ export default function BakeDaysPage() {
   return (
     <main className="min-h-screen bg-neutral-50 px-4 py-10">
       <div className="mx-auto max-w-5xl">
-        {/* Toast */}
-        {addedMessage && (
-          <div className="mb-6 rounded-lg bg-green-100 px-4 py-3 text-center text-sm font-medium text-green-800 shadow-sm">
-            {addedMessage}
-          </div>
-        )}
-
         {/* Header */}
         <header className="mb-10 text-center">
           <h1 className="mb-3 text-4xl font-bold tracking-tight text-neutral-900">
-            Choose Your Bake Day
+            Choose Your Pickup Day
           </h1>
           <p className="mx-auto max-w-xl text-sm text-neutral-600">
             Select a highlighted day to see which fresh loaves and treats are coming out of the oven
@@ -133,6 +126,12 @@ export default function BakeDaysPage() {
                 <h2 className="text-center text-2xl font-semibold text-neutral-900">
                   Products for {friendlySelectedDate}
                 </h2>
+                {/* Toast */}
+                {addedMessage && (
+                  <div className="mb-6 rounded-lg bg-green-100 px-4 py-3 text-center text-sm font-medium text-green-800 shadow-sm">
+                    {addedMessage}
+                  </div>
+                )}
 
                 {selectedBakeDayRecord.bake_day_products
                   .filter((p) => p.available)

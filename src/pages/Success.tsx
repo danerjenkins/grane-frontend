@@ -76,7 +76,7 @@ export default function Success() {
                 <div>
                   <p className="font-medium">{item.product.name}</p>
                   <p className="text-sm text-gray-600">
-                    {item.quantity} × ${(item.item_price / 100).toFixed(2)}
+                    {item.quantity} × ${(item.item_price).toFixed(2)}
                   </p>
                 </div>
               </div>

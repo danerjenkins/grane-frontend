@@ -16,15 +16,14 @@ export default function CheckoutPage() {
     }
 
     const body = {
-  bake_day_id: selectedBakeDay.id,
-  customer_note: note,
-  customer_name: customerName,
-  items: cart.map((item) => ({
-    product_id: item.product_id,
-    quantity: item.quantity,
-  })),
-};
-
+      bake_day_id: selectedBakeDay.id,
+      customer_note: note,
+      customer_name: customerName,
+      items: cart.map((item) => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+      })),
+    };
 
     const res = await fetch(`${import.meta.env.VITE_API_URL}/checkout`, {
       method: 'POST',
@@ -45,7 +44,17 @@ export default function CheckoutPage() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
-
+      <div className="mb-8">
+        <label className="block font-semibold mb-1">Your Name</label>
+        <input
+          className="border rounded p-2 w-full"
+          type="text"
+          value={customerName}
+          onChange={(e) => setCustomerName(e.target.value)}
+          placeholder="Enter your name"
+          required
+        />
+      </div>
       {/* Cart Items */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-2">Your Items</h2>
@@ -63,18 +72,6 @@ export default function CheckoutPage() {
                 <div>
                   <p className="font-medium">{item.name}</p>
                   <p className="text-sm text-gray-600">${(item.price / 100).toFixed(2)} each</p>
-                  <div className="mb-8">
-  <label className="block font-semibold mb-1">Your Name</label>
-  <input
-    className="border rounded p-2 w-full"
-    type="text"
-    value={customerName}
-    onChange={(e) => setCustomerName(e.target.value)}
-    placeholder="Enter your name"
-    required
-  />
-</div>
-
                 </div>
 
                 {/* Right side: quantity controls + total */}

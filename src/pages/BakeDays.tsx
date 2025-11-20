@@ -3,6 +3,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { getBakeDays, type BakeDay } from '../api/bakeDays';
 import { useCart } from '../context/CartContext';
+import { Link } from 'react-router-dom';
 
 export default function BakeDaysPage() {
   const [bakeDays, setBakeDays] = useState<BakeDay[]>([]);
@@ -154,11 +155,14 @@ export default function BakeDaysPage() {
                         className="overflow-hidden rounded-2xl border bg-white shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md"
                       >
                         <div className="h-52 w-full overflow-hidden">
+                          <Link to={`/product/${product.id}`}>
+
                           <img
                             src={product.image_url}
                             alt={product.name}
                             className="h-full w-full object-cover"
                           />
+                          </Link>
                         </div>
 
                         <div className="space-y-2 p-4">

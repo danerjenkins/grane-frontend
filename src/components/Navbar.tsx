@@ -55,8 +55,8 @@ const Navbar = () => {
 
         {/* DESKTOP MENU + DESKTOP CART */}
         <div className="hidden md:flex items-center space-x-6">
-          {/* <Link to="/menu" className="nav-link">Menu</Link>
-          <Link to="/about" className="nav-link">About</Link> */}
+          {/* <Link to="/menu" className="nav-link">Menu</Link>*/}
+          <Link to="/about" className="nav-link">About</Link> 
           <Link to="/contact" className="nav-link">Contact</Link>
           <Link to="/bake-days" className="nav-link">Order</Link>
           {/* <Link to="/account" className="nav-link">Account</Link> */}
@@ -121,7 +121,7 @@ const Navbar = () => {
       {isOpen && (
         <div className="mt-4 flex flex-col space-y-2 md:hidden">
           {/* <Link to="/menu" className="nav-link">Menu</Link> */}
-          {/* <Link to="/about" className="nav-link">About</Link> */}
+          <Link to="/about" className="nav-link">About</Link>
           <Link to="/contact" className="nav-link">Contact</Link>
           <Link to="/bake-days" className="nav-link">Order</Link>
           {/* <Link to="/account" className="nav-link">Account</Link> */}

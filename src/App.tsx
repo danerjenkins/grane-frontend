@@ -7,8 +7,8 @@ import Contact from './pages/Contact.tsx';
 import BakeDaysPage from './pages/BakeDays';
 import CheckoutPage from './pages/CheckoutPage';
 import AdminOrders from './pages/AdminOrders';
-import Success from "./pages/Success";
-
+import Success from './pages/Success';
+import ProductDetail from './pages/ProductDetail';
 
 export default function App() {
   return (
@@ -24,7 +24,7 @@ export default function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/success" element={<Success />} />
-
+        <Route path="/product/:id" element={<ProductDetail />} />
       </Routes>
     </div>
   );

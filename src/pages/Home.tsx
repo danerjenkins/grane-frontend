@@ -2,25 +2,38 @@ import '../App.css';
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 px-4 py-10 text-center">
+    <main className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 px-4 py-16 text-center">
       <div className="max-w-3xl w-full">
-        <h1 className="text-5xl font-bold mb-4 text-gray-900 font-serif">Grane Bakery</h1>
-        <p className="text-xl text-gray-700 mb-8">
-          I’ll be baking again in <span className="font-semibold">mid-August</span>. Thanks for your
-          patience!
+        {/* Title */}
+        <h1 className="text-5xl font-bold mb-4 text-gray-900 font-serif">
+          Grane Bakery
+        </h1>
+
+        {/* Subtitle / Availability */}
+        <p className="text-xl text-gray-700 mb-10">
+          Fresh sourdough returning the{' '}
+          <span className="font-semibold">week of Thanksgiving</span>.<br />
+          Pre-orders will open soon!
         </p>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-10">
-          {/* Bread Image */}
-          <img src="/IMG_6188.jpg" alt="Bread" className="rounded-xl w-60 h-60 object-cover" />
+        {/* Hero Image */}
+        <div className="flex items-center justify-center mb-12">
+          <img
+            src="/IMG_6188.jpg"
+            alt="Fresh sourdough loaf"
+            className="rounded-2xl w-72 h-72 object-cover shadow-md"
+          />
         </div>
 
-        <a
-          href="mailto:support@granebakery.com"
-          className="inline-block bg-black text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-gray-800 transition"
-        >
-          Request an Order
-        </a>
+        {/* Call to Action */}
+        <div className="flex flex-col items-center gap-4">
+          <a
+            href="/order"
+            className="inline-block bg-black text-white px-8 py-4 rounded-xl text-lg font-medium hover:bg-neutral-800 transition shadow"
+          >
+            Order Now
+          </a>
+        </div>
       </div>
     </main>
   );

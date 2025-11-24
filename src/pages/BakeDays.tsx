@@ -105,6 +105,18 @@ export default function BakeDaysPage() {
               )}
             </div>
           </section>
+          <div className="mx-auto mt-4 max-w-xl rounded-lg bg-amber-50 p-4 text-sm text-amber-900">
+  <p className="font-semibold mb-1">Thanksgiving Pickup Info</p>
+  <p>
+    <strong>Wednesday (Nov 26):</strong> 6:00–9:00 PM<br />
+    <strong>Thursday (Nov 27 – Thanksgiving):</strong> 10:00 AM–5:00 PM
+  </p>
+  <p className="mt-2">
+    Pickup is in Provo near Center Street & University Avenue. After you place
+    an order, I’ll send the exact address and simple instructions.
+  </p>
+</div>
+
 
           {/* Product Listing */}
           <section className="w-full max-w-xl">

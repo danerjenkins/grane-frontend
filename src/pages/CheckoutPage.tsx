@@ -14,6 +14,14 @@ export default function CheckoutPage() {
       alert('Please choose a bake day.');
       return;
     }
+    if (!customerName) {
+      alert('Please include your name.');
+      return;
+    }
+    if (!note) {
+      alert('Please leave contact information so I can send you the pickup location');
+      return;
+    }
 
     const body = {
       bake_day_id: selectedBakeDay.id,
@@ -125,13 +133,14 @@ export default function CheckoutPage() {
 
       {/* Customer Note */}
       <div className="mb-8">
-        <label className="block font-semibold mb-1">Add a Note (optional)</label>
+        <label className="block font-semibold mb-1">Please leave contact information so I can send you the pickup location. Include any notes as well</label>
         <textarea
           className="border rounded p-2 w-full"
           rows={3}
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="Any requests?"
+          placeholder="Email or phone number. Include any additional comments"
+          required
         />
       </div>
 

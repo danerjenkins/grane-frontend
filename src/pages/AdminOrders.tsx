@@ -119,7 +119,7 @@ export default function AdminOrders() {
 
               <p className="text-gray-600 text-sm">
                 <span className="font-semibold">Total:</span> $
-                {order.total_price != null ? (order.total_price / 100).toFixed(2) : 'N/A'}
+                {order.total_price != null ? (order.total_price).toFixed(2) : 'N/A'}
               </p>
 
               {/* ---------------- CUSTOMER NOTE ---------------- */}

@@ -14,11 +14,11 @@ export default function CheckoutPage() {
       alert('Please choose a bake day.');
       return;
     }
-    if (!customerName) {
+    if (!customerName.trim()) {
       alert('Please include your name.');
       return;
     }
-    if (!note) {
+    if (!note.trim()) {
       alert('Please leave contact information so I can send you the pickup location');
       return;
     }

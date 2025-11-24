@@ -133,7 +133,8 @@ export default function CheckoutPage() {
 
       {/* Customer Note */}
       <div className="mb-8">
-        <label className="block font-semibold mb-1">Please leave contact information so I can send you the pickup location. Include any notes as well</label>
+        <label className="block font-semibold mb-1">Contact Information</label>
+        <p>Please leave contact information so I can send you the pickup location. Include any notes as well</p>
         <textarea
           className="border rounded p-2 w-full"
           rows={3}

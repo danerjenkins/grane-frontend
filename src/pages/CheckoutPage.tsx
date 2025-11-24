@@ -118,6 +118,9 @@ export default function CheckoutPage() {
           Bake Day:{' '}
           {selectedBakeDay ? new Date(selectedBakeDay.date).toLocaleDateString() : 'None selected'}
         </p>
+        <p>Orders are by pick up only and can be picked up on your selected bake day from 6pm to 9pm. If ordering for Thanksgiving, pick up is from 10am to 5pm. </p>
+        <p> The pickup location is in Provo near Center and University. I will send you the address on confirmation of your order. </p>
+        <p>Please message me at (702)767-3350 for questions about pickup!</p>
       </div>
 
       {/* Customer Note */}

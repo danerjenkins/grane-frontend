@@ -1,14 +1,9 @@
 import '../App.css';
-import { useEffect } from "react";
+
 
 
 
 export default function Home() {
-  useEffect(() => {
-  fetch(`${import.meta.env.VITE_BACKEND_URL}/api/health`)
-    .then(() => console.log("Backend warmed"))
-    .catch(() => console.log("Backend ping failed"));
-}, []);
   return (
     
     

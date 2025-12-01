@@ -9,8 +9,14 @@ import CheckoutPage from './pages/CheckoutPage';
 import AdminOrders from './pages/AdminOrders';
 import Success from './pages/Success';
 import ProductDetail from './pages/ProductDetail';
+import { useEffect } from 'react';
 
 export default function App() {
+    useEffect(() => {
+  fetch(`${import.meta.env.VITE_BACKEND_URL}/api/health`)
+    .then(() => console.log("Backend warmed"))
+    .catch(() => console.log("Backend ping failed"));
+}, []);
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-800 font-sans">
       <Navbar />

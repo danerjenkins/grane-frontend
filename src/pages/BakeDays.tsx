@@ -25,19 +25,31 @@ export default function BakeDaysPage() {
 
   // Highlight dates that have bake days
   const getTileClassName = ({ date }: { date: Date }) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = toLocalYMD(date);
     const match = bakeDays.some((b) => b.date === dateStr);
     return match ? 'bake-day-highlight' : null;
   };
+    // Convert Date → YYYY-MM-DD in local time (NO UTC shift)
+  const toLocalYMD = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
+  function toLocalDateFromYMD(ymd: string) {
+  const [y, m, d] = ymd.split("-").map(Number);
+  return new Date(y, m - 1, d); // <-- Local time, no UTC shift
+}
+
 
   // Find selected bake day record
   const selectedBakeDayRecord = bakeDays.find(
-    (b) => b.date === selectedDate?.toISOString().split('T')[0]
+    (b) => selectedDate && b.date === toLocalYMD(selectedDate)
   );
 
   const friendlySelectedDate =
     selectedDate && selectedBakeDayRecord
-      ? new Date(selectedBakeDayRecord.date).toLocaleDateString(undefined, {
+      ? toLocalDateFromYMD(selectedBakeDayRecord.date).toLocaleDateString(undefined, {
           weekday: 'long',
           month: 'long',
           day: 'numeric',
@@ -86,6 +98,7 @@ export default function BakeDaysPage() {
     );
   }
 
+
   return (
     <main className="min-h-screen bg-neutral-50 px-4 py-10">
       <div className="mx-auto max-w-5xl">
@@ -106,7 +119,7 @@ export default function BakeDaysPage() {
             <div className="rounded-2xl border bg-white p-4 shadow-sm">
               <Calendar
                 onClickDay={(value) => {
-                  const dateStr = value.toISOString().split('T')[0];
+                  const dateStr = toLocalYMD(value);
                   const record = bakeDays.find((b) => b.date === dateStr);
                   if (record) {
                     setSelectedBakeDay({ id: record.id, date: record.date });
@@ -266,8 +279,8 @@ export default function BakeDaysPage() {
                             </div>
                           ) : (
                             <Tooltip message="Orders must be placed at least 3 days before the bake day. Please choose a later date.">
-                            <button
-                              className={`
+                              <button
+                                className={`
       mt-3 w-full rounded-lg py-2 text-sm font-medium transition-colors
       ${
         isTooCloseToBakeDay(selectedBakeDay?.date)
@@ -275,30 +288,30 @@ export default function BakeDaysPage() {
           : 'bg-neutral-900 text-white hover:bg-neutral-800'
       }
     `}
-                              disabled={isTooCloseToBakeDay(selectedBakeDay?.date)}
-                              onClick={() => {
-                                if (isTooCloseToBakeDay(selectedBakeDay?.date)) return;
+                                disabled={isTooCloseToBakeDay(selectedBakeDay?.date)}
+                                onClick={() => {
+                                  if (isTooCloseToBakeDay(selectedBakeDay?.date)) return;
 
-                                if (!selectedBakeDay) {
-                                  alert('Please select a bake day first.');
-                                  return;
-                                }
+                                  if (!selectedBakeDay) {
+                                    alert('Please select a bake day first.');
+                                    return;
+                                  }
 
-                                addToCart({
-                                  product_id: product.id,
-                                  name: product.name,
-                                  price: Math.round(product.price * 100),
-                                  quantity: 1,
-                                });
+                                  addToCart({
+                                    product_id: product.id,
+                                    name: product.name,
+                                    price: Math.round(product.price * 100),
+                                    quantity: 1,
+                                  });
 
-                                setAddedMessage(`${product.name} added to cart!`);
-                                setTimeout(() => setAddedMessage(''), 2000);
-                              }}
-                            >
-                              {isTooCloseToBakeDay(selectedBakeDay?.date)
-                                ? 'Too Late to Order'
-                                : 'Add to Order'}
-                            </button>
+                                  setAddedMessage(`${product.name} added to cart!`);
+                                  setTimeout(() => setAddedMessage(''), 2000);
+                                }}
+                              >
+                                {isTooCloseToBakeDay(selectedBakeDay?.date)
+                                  ? 'Too Late to Order'
+                                  : 'Add to Order'}
+                              </button>
                             </Tooltip>
                           )}
                         </div>

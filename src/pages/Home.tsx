@@ -1,7 +1,17 @@
 import '../App.css';
+import { useEffect } from "react";
+
+
 
 export default function Home() {
+  useEffect(() => {
+  fetch(`${import.meta.env.VITE_BACKEND_URL}/api/health`)
+    .then(() => console.log("Backend warmed"))
+    .catch(() => console.log("Backend ping failed"));
+}, []);
   return (
+    
+    
     <main className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 px-4 py-16 text-center">
       <div className="max-w-3xl w-full">
         {/* Title */}

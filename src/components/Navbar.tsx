@@ -9,11 +9,9 @@ const Navbar = () => {
   const { cart, removeFromCart } = useCart();
   const { cartQuantity } = useCart();
 
-
   return (
     <nav className="bg-white shadow-md px-6 py-6 relative">
       <div className="flex justify-between items-center">
-
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
           <img
@@ -56,17 +54,20 @@ const Navbar = () => {
         {/* DESKTOP MENU + DESKTOP CART */}
         <div className="hidden md:flex items-center space-x-6">
           {/* <Link to="/menu" className="nav-link">Menu</Link>*/}
-          <Link to="/about" className="nav-link">About</Link> 
-          <Link to="/contact" className="nav-link">Contact</Link>
-          <Link to="/bake-days" className="nav-link">Order</Link>
+          <Link to="/about" className="nav-link">
+            About
+          </Link>
+          <Link to="/contact" className="nav-link">
+            Contact
+          </Link>
+          <Link to="/bake-days" className="nav-link">
+            Order
+          </Link>
           {/* <Link to="/account" className="nav-link">Account</Link> */}
 
           {/* Desktop Cart */}
           <div className="relative ml-4">
-            <button
-              className="relative"
-              onClick={() => setCartOpen(!cartOpen)}
-            >
+            <button className="relative" onClick={() => setCartOpen(!cartOpen)}>
               <ShoppingCart className="w-6 h-6 text-gray-800" />
               {cart.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
@@ -103,13 +104,23 @@ const Navbar = () => {
                 )}
 
                 <div className="mt-4 border-t pt-3">
-                  <Link
-                    to="/checkout"
-                    className="block bg-black text-white text-center py-2 rounded-md hover:bg-gray-800"
-                    onClick={() => setCartOpen(false)}
-                  >
-                    Checkout
-                  </Link>
+                  {cart.length === 0 ? (
+                    <Link
+                      to="/bake-days"
+                      onClick={() => setCartOpen(false)}
+                      className="block bg-black text-white text-center py-2 rounded-md hover:bg-gray-800"
+                    >
+                      Order
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/checkout"
+                      onClick={() => setCartOpen(false)}
+                      className="block bg-black text-white text-center py-2 rounded-md hover:bg-gray-800"
+                    >
+                      Checkout
+                    </Link>
+                  )}
                 </div>
               </div>
             )}
@@ -121,9 +132,15 @@ const Navbar = () => {
       {isOpen && (
         <div className="mt-4 flex flex-col space-y-2 md:hidden">
           {/* <Link to="/menu" className="nav-link">Menu</Link> */}
-          <Link to="/about" className="nav-link">About</Link>
-          <Link to="/contact" className="nav-link">Contact</Link>
-          <Link to="/bake-days" className="nav-link">Order</Link>
+          <Link to="/about" className="nav-link">
+            About
+          </Link>
+          <Link to="/contact" className="nav-link">
+            Contact
+          </Link>
+          <Link to="/bake-days" className="nav-link">
+            Order
+          </Link>
           {/* <Link to="/account" className="nav-link">Account</Link> */}
         </div>
       )}
@@ -157,13 +174,23 @@ const Navbar = () => {
           )}
 
           <div className="mt-4 border-t pt-3">
-            <Link
-              to="/checkout"
-              className="block bg-black text-white text-center py-2 rounded-md hover:bg-gray-800"
-              onClick={() => setCartOpen(false)}
-            >
-              Checkout
-            </Link>
+            {cart.length === 0 ? (
+              <Link
+                to="/bake-days"
+                onClick={() => setCartOpen(false)}
+                className="block bg-black text-white text-center py-2 rounded-md hover:bg-gray-800"
+              >
+                Order
+              </Link>
+            ) : (
+              <Link
+                to="/checkout"
+                onClick={() => setCartOpen(false)}
+                className="block bg-black text-white text-center py-2 rounded-md hover:bg-gray-800"
+              >
+                Checkout
+              </Link>
+            )}
           </div>
         </div>
       )}

@@ -29,7 +29,7 @@ export default function BakeDaysPage() {
     const match = bakeDays.some((b) => b.date === dateStr);
     return match ? 'bake-day-highlight' : null;
   };
-    // Convert Date → YYYY-MM-DD in local time (NO UTC shift)
+  // Convert Date → YYYY-MM-DD in local time (NO UTC shift)
   const toLocalYMD = (date: Date) => {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -37,10 +37,9 @@ export default function BakeDaysPage() {
     return `${y}-${m}-${d}`;
   };
   function toLocalDateFromYMD(ymd: string) {
-  const [y, m, d] = ymd.split("-").map(Number);
-  return new Date(y, m - 1, d); // <-- Local time, no UTC shift
-}
-
+    const [y, m, d] = ymd.split('-').map(Number);
+    return new Date(y, m - 1, d); // <-- Local time, no UTC shift
+  }
 
   // Find selected bake day record
   const selectedBakeDayRecord = bakeDays.find(
@@ -64,22 +63,26 @@ export default function BakeDaysPage() {
           })
         : null;
 
-  // Returns true if customer is too close to the bake day (must be more than 2 days away)
-  const isTooCloseToBakeDay = (bakeDayStr: string | undefined) => {
-    if (!bakeDayStr) return false;
+  // Returns "too-close", "soon", or null based on days remaining
+const getOrderDeadlineStatus = (bakeDayStr: string | undefined) => {
+  if (!bakeDayStr) return null;
 
-    const bakeDay = new Date(bakeDayStr);
-    const today = new Date();
+  const bakeDay = new Date(bakeDayStr);
+  const today = new Date();
 
-    // Remove time portion
-    bakeDay.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
+  bakeDay.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
 
-    const diffMs = bakeDay.getTime() - today.getTime();
-    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+  const diffDays =
+    (bakeDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
 
-    return diffDays <= 2; // 2 days or less → disabled
-  };
+  if (diffDays <= 2) return "too-close";     // too late
+  if (diffDays <= 4) return "soon";          // nearing deadline
+
+  return null;                                // no tooltip
+};
+
+
   // Simple reusable tooltip
   function Tooltip({ message, children }: { message: string; children: React.ReactNode }) {
     return (
@@ -97,7 +100,6 @@ export default function BakeDaysPage() {
       </div>
     );
   }
-
 
   return (
     <main className="min-h-screen bg-neutral-50 px-4 py-10">
@@ -234,86 +236,105 @@ export default function BakeDaysPage() {
                           </div>
 
                           {/* Controls */}
-                          {soldOut && !cartItem ? (
-                            <button
-                              className="mt-2 w-full cursor-not-allowed rounded-lg bg-neutral-200 py-2 text-sm font-medium text-neutral-500"
-                              disabled
-                            >
-                              Sold Out
-                            </button>
-                          ) : cartItem ? (
-                            <div className="mt-3 flex items-center justify-between">
-                              {/* Quantity stepper */}
-                              <div className="flex w-32 items-center justify-between rounded-full border px-2 py-1 text-sm">
-                                <button
-                                  className="px-2 text-lg font-bold"
-                                  onClick={() => {
-                                    if (cartItem.quantity === 1) {
-                                      removeFromCart(cartItem.product_id);
-                                    } else {
-                                      updateQuantity(cartItem.product_id, cartItem.quantity - 1);
-                                    }
-                                  }}
-                                >
-                                  –
-                                </button>
+{soldOut && !cartItem ? (
+  <button
+    className="mt-2 w-full cursor-not-allowed rounded-lg bg-neutral-200 py-2 text-sm font-medium text-neutral-500"
+    disabled
+  >
+    Sold Out
+  </button>
+) : cartItem ? (
+  <div className="mt-3 flex items-center justify-between">
+    {/* Quantity stepper */}
+    <div className="flex w-32 items-center justify-between rounded-full border px-2 py-1 text-sm">
+      <button
+        className="px-2 text-lg font-bold"
+        onClick={() => {
+          if (cartItem.quantity === 1) {
+            removeFromCart(cartItem.product_id);
+          } else {
+            updateQuantity(cartItem.product_id, cartItem.quantity - 1);
+          }
+        }}
+      >
+        –
+      </button>
 
-                                <span className="min-w-[1.5rem] text-center">
-                                  {cartItem.quantity}
-                                </span>
+      <span className="min-w-[1.5rem] text-center">
+        {cartItem.quantity}
+      </span>
 
-                                <button
-                                  className="px-2 text-lg font-bold disabled:opacity-40"
-                                  disabled={remaining <= 0}
-                                  onClick={() =>
-                                    updateQuantity(cartItem.product_id, cartItem.quantity + 1)
-                                  }
-                                >
-                                  +
-                                </button>
-                              </div>
+      <button
+        className="px-2 text-lg font-bold disabled:opacity-40"
+        disabled={remaining <= 0}
+        onClick={() =>
+          updateQuantity(cartItem.product_id, cartItem.quantity + 1)
+        }
+      >
+        +
+      </button>
+    </div>
 
-                              <p className="text-xs text-neutral-600">
-                                {remaining > 0 ? `${remaining} left` : 'No more available'}
-                              </p>
-                            </div>
-                          ) : (
-                            <Tooltip message="Orders must be placed at least 3 days before the bake day. Please choose a later date.">
-                              <button
-                                className={`
-      mt-3 w-full rounded-lg py-2 text-sm font-medium transition-colors
-      ${
-        isTooCloseToBakeDay(selectedBakeDay?.date)
-          ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
-          : 'bg-neutral-900 text-white hover:bg-neutral-800'
-      }
-    `}
-                                disabled={isTooCloseToBakeDay(selectedBakeDay?.date)}
-                                onClick={() => {
-                                  if (isTooCloseToBakeDay(selectedBakeDay?.date)) return;
+    <p className="text-xs text-neutral-600">
+      {remaining > 0 ? `${remaining} left` : 'No more available'}
+    </p>
+  </div>
+) : (
+  (() => {
+    // Determine deadline status
+    const deadlineStatus = getOrderDeadlineStatus(selectedBakeDay?.date);
 
-                                  if (!selectedBakeDay) {
-                                    alert('Please select a bake day first.');
-                                    return;
-                                  }
+    const tooltipMessage =
+      deadlineStatus === "too-close"
+        ? "Orders must be placed at least 3 days before the bake day. Please choose a later date."
+        : deadlineStatus === "soon"
+          ? "Place your order soon!"
+          : null;
 
-                                  addToCart({
-                                    product_id: product.id,
-                                    name: product.name,
-                                    price: Math.round(product.price * 100),
-                                    quantity: 1,
-                                  });
+    // Create the button element
+    const button = (
+      <button
+        className={`
+          mt-3 w-full rounded-lg py-2 text-sm font-medium transition-colors
+          ${
+            deadlineStatus === "too-close"
+              ? "bg-neutral-300 text-neutral-500 cursor-not-allowed"
+              : "bg-neutral-900 text-white hover:bg-neutral-800"
+          }
+        `}
+        disabled={deadlineStatus === "too-close"}
+        onClick={() => {
+          if (deadlineStatus === "too-close") return;
 
-                                  setAddedMessage(`${product.name} added to cart!`);
-                                  setTimeout(() => setAddedMessage(''), 2000);
-                                }}
-                              >
-                                {isTooCloseToBakeDay(selectedBakeDay?.date)
-                                  ? 'Too Late to Order'
-                                  : 'Add to Order'}
-                              </button>
-                            </Tooltip>
-                          )}
+          if (!selectedBakeDay) {
+            alert("Please select a bake day first.");
+            return;
+          }
+
+          addToCart({
+            product_id: product.id,
+            name: product.name,
+            price: Math.round(product.price * 100),
+            quantity: 1,
+          });
+
+          setAddedMessage(`${product.name} added to cart!`);
+          setTimeout(() => setAddedMessage(""), 2000);
+        }}
+      >
+        {deadlineStatus === "too-close" ? "Too Late to Order" : "Add to Order"}
+      </button>
+    );
+
+    // Wrap in tooltip only if needed
+    return tooltipMessage ? (
+      <Tooltip message={tooltipMessage}>{button}</Tooltip>
+    ) : (
+      button
+    );
+  })()
+)}
+
                         </div>
                       </article>
                     );

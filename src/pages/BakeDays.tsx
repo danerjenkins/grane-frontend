@@ -52,6 +52,40 @@ export default function BakeDaysPage() {
           })
         : null;
 
+  // Returns true if customer is too close to the bake day (must be more than 2 days away)
+  const isTooCloseToBakeDay = (bakeDayStr: string | undefined) => {
+    if (!bakeDayStr) return false;
+
+    const bakeDay = new Date(bakeDayStr);
+    const today = new Date();
+
+    // Remove time portion
+    bakeDay.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    const diffMs = bakeDay.getTime() - today.getTime();
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+    return diffDays <= 2; // 2 days or less → disabled
+  };
+  // Simple reusable tooltip
+  function Tooltip({ message, children }: { message: string; children: React.ReactNode }) {
+    return (
+      <div className="relative group inline-block">
+        {children}
+        <div
+          className="
+          pointer-events-none absolute left-1/2 top-full z-20 w-40 -translate-x-1/2 
+          rounded-md bg-neutral-900 px-3 py-2 text-xs text-white opacity-0 
+          shadow-lg transition-opacity duration-200 group-hover:opacity-100 
+        "
+        >
+          {message}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-neutral-50 px-4 py-10">
       <div className="mx-auto max-w-5xl">
@@ -106,17 +140,17 @@ export default function BakeDaysPage() {
             </div>
           </section>
           <div className="mx-auto mt-4 max-w-xl rounded-lg bg-amber-50 p-4 text-sm text-amber-900">
-  <p className="font-semibold mb-1">Thanksgiving Pickup Info</p>
-  <p>
-    <strong>Wednesday (Nov 26):</strong> 6:00–9:00 PM<br />
-    <strong>Thursday (Nov 27 – Thanksgiving):</strong> 10:00 AM–5:00 PM
-  </p>
-  <p className="mt-2">
-    Pickup is in Provo near Center Street & University Avenue. After you place
-    an order, I’ll send the exact address and simple instructions.
-  </p>
-</div>
-
+            <p className="font-semibold mb-1">Thanksgiving Pickup Info</p>
+            <p>
+              <strong>Wednesday (Nov 26):</strong> 6:00–9:00 PM
+              <br />
+              <strong>Thursday (Nov 27 – Thanksgiving):</strong> 10:00 AM–5:00 PM
+            </p>
+            <p className="mt-2">
+              Pickup is in Provo near Center Street & University Avenue. After you place an order,
+              I’ll send the exact address and simple instructions.
+            </p>
+          </div>
 
           {/* Product Listing */}
           <section className="w-full max-w-xl">
@@ -155,7 +189,7 @@ export default function BakeDaysPage() {
                     return (
                       <article
                         key={id}
-                        className="overflow-hidden rounded-2xl border bg-white shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md"
+                        className="overflow-visible rounded-2xl border bg-white shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md"
                       >
                         <div className="h-52 w-full overflow-hidden">
                           <Link to={`/product/${product.id}`}>
@@ -231,9 +265,20 @@ export default function BakeDaysPage() {
                               </p>
                             </div>
                           ) : (
+                            <Tooltip message="Orders must be placed at least 3 days before the bake day. Please choose a later date.">
                             <button
-                              className="mt-3 w-full rounded-lg bg-neutral-900 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
+                              className={`
+      mt-3 w-full rounded-lg py-2 text-sm font-medium transition-colors
+      ${
+        isTooCloseToBakeDay(selectedBakeDay?.date)
+          ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
+          : 'bg-neutral-900 text-white hover:bg-neutral-800'
+      }
+    `}
+                              disabled={isTooCloseToBakeDay(selectedBakeDay?.date)}
                               onClick={() => {
+                                if (isTooCloseToBakeDay(selectedBakeDay?.date)) return;
+
                                 if (!selectedBakeDay) {
                                   alert('Please select a bake day first.');
                                   return;
@@ -250,8 +295,11 @@ export default function BakeDaysPage() {
                                 setTimeout(() => setAddedMessage(''), 2000);
                               }}
                             >
-                              Add to Order
+                              {isTooCloseToBakeDay(selectedBakeDay?.date)
+                                ? 'Too Late to Order'
+                                : 'Add to Order'}
                             </button>
+                            </Tooltip>
                           )}
                         </div>
                       </article>

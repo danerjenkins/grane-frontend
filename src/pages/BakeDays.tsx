@@ -109,7 +109,7 @@ export default function BakeDaysPage() {
           </h1>
           <p className="mx-auto max-w-xl text-sm text-neutral-600">
             Select a highlighted day to see which fresh loaves and treats are coming out of the oven
-            on that bake.
+            on that day.
           </p>
         </header>
 

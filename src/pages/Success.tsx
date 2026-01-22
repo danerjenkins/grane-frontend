@@ -98,7 +98,10 @@ export default function Success() {
           <p className="text-sm text-gray-600 mt-4">
             Please contact us at (702) 767-3350 or check your email for more information.
           </p>
-          <Link to="/" className="mt-6 inline-block bg-black text-white px-6 py-2 rounded hover:bg-gray-800">
+          <Link
+            to="/"
+            className="mt-6 inline-block bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+          >
             Return Home
           </Link>
         </div>
@@ -108,7 +111,10 @@ export default function Success() {
           <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8 text-center">
             <div className="text-5xl mb-3">✓</div>
             <h1 className="text-3xl font-bold text-green-700 mb-2">Order Confirmed!</h1>
-            <p className="text-gray-700 mb-3">Thank you for your order. We'll send you the pickup address and time via text or email shortly.</p>
+            <p className="text-gray-700 mb-3">
+              Thank you for your order. We'll send you the pickup address and time via text or email
+              shortly.
+            </p>
             <p className="text-sm text-gray-600">
               Order ID: <span className="font-mono font-semibold">{order.id.slice(0, 8)}</span>
             </p>
@@ -144,14 +150,17 @@ export default function Success() {
                 <div key={item.id} className="flex items-center gap-3 text-sm">
                   <span className="font-medium">{item.quantity}×</span>
                   <span className="flex-1">{item.product.name}</span>
-                  <span className="text-gray-600">${((item.item_price * item.quantity) / 100).toFixed(2)}</span>
+                  <span className="text-gray-600">
+                    ${((item.item_price * item.quantity) / 100).toFixed(2)}
+                  </span>
                 </div>
               ))}
             </div>
 
             <div className="border-t pt-4">
               <p className="text-lg">
-                <span className="font-semibold">Total:</span> ${(order.total_price / 100).toFixed(2)}
+                <span className="font-semibold">Total:</span> $
+                {(order.total_price / 100).toFixed(2)}
               </p>
             </div>
 

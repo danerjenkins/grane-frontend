@@ -243,7 +243,7 @@ export default function WhyBakeDays() {
               <p className="mt-4 text-neutral-700 leading-relaxed">
                 Every loaf is naturally fermented using a sourdough culture, hand-shaped, and baked
                 in small batches. We use just three ingredients: flour, water, and salt. No
-                commercial yeast, no additives, no shortcuts. Each bake is intentional and personal.
+                commercial yeast, no additives, no shortcuts. Each bake is intentional and personal. Learn more about the story behind Grane on the <a href="/about" className="font-semibold text-neutral-900 underline hover:text-neutral-700">About page</a>.
               </p>
             </details>
 
@@ -264,7 +264,7 @@ export default function WhyBakeDays() {
               </summary>
               <p className="mt-4 text-neutral-700 leading-relaxed">
                 Most bake days have a 24-48 hour ordering window. You'll see the exact cutoff time
-                when you choose your bake day. This timing allows me to source ingredients and plan
+                when you <a href="/bake-days" className="font-semibold text-neutral-900 underline hover:text-neutral-700">choose your bake day</a>. This timing allows me to source ingredients and plan
                 my baking schedule precisely.
               </p>
             </details>

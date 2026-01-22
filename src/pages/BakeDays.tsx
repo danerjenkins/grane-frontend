@@ -309,7 +309,7 @@ export default function BakeDaysPage() {
                               const button = (
                                 <button
                                   className={`
-          mt-3 w-full rounded-lg py-2 text-sm font-medium transition-colors
+          mt-3 w-full rounded-lg px-4 py-3 text-base font-medium transition-colors
           ${
             deadlineStatus === 'too-close'
               ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed'

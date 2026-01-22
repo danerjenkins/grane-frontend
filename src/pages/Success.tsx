@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import ProductImage from '../components/ProductImage';
 
 interface OrderItem {
   id: string;
@@ -20,93 +21,187 @@ interface Order {
   order_items: OrderItem[];
 }
 
+interface ConfirmResponse {
+  success: boolean;
+  orderId: string;
+  status: string;
+  paymentStatus: string;
+  pickupInstructions: string;
+}
+
 export default function Success() {
   const [searchParams] = useSearchParams();
   const [order, setOrder] = useState<Order | null>(null);
+  const [confirmResponse, setConfirmResponse] = useState<ConfirmResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const session_id = searchParams.get('session_id');
 
   useEffect(() => {
-    if (!session_id) return;
+    if (!session_id) {
+      setError('Session ID missing.');
+      setLoading(false);
+      return;
+    }
 
-    fetch(`${import.meta.env.VITE_API_URL}/orders/by-session/${session_id}`)
-      .then((res) => res.json())
-      .then((data) => setOrder(data))
-      .catch((err) => console.error('Error loading order:', err))
-      .finally(() => setLoading(false));
+    // First, confirm payment status with backend
+    fetch(`${import.meta.env.VITE_API_URL}/checkout/confirm/${session_id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to confirm payment');
+        return res.json();
+      })
+      .then((data: ConfirmResponse) => {
+        console.log('Payment confirmed:', data);
+        setConfirmResponse(data);
+      })
+      .catch((err) => {
+        console.error('Error confirming payment:', err);
+        setError('Failed to confirm your payment. Please contact support.');
+      })
+      .finally(() => {
+        // Then fetch order details
+        fetch(`${import.meta.env.VITE_API_URL}/orders/by-session/${session_id}`)
+          .then((res) => res.json())
+          .then((data) => setOrder(data))
+          .catch((err) => {
+            console.error('Error loading order:', err);
+            if (!error) setError('Failed to load order details.');
+          })
+          .finally(() => setLoading(false));
+      });
   }, [session_id]);
 
   if (!session_id) {
-    return <p className="text-center mt-10">Session ID missing.</p>;
+    return (
+      <main className="min-h-screen bg-neutral-50 px-6 py-10">
+        <div className="max-w-xl mx-auto text-center">
+          <p className="text-gray-600">Session ID missing.</p>
+          <Link to="/" className="mt-4 inline-block text-blue-600 hover:underline">
+            Return Home
+          </Link>
+        </div>
+      </main>
+    );
   }
 
   return (
     <main className="min-h-screen bg-neutral-50 px-6 py-10">
       {loading ? (
-        <p className="text-center text-gray-600">Loading your order...</p>
-      ) : !order ? (
-        <p className="text-center text-gray-600">Order not found.</p>
-      ) : (
-        <div className="max-w-xl mx-auto bg-white shadow-lg p-6 rounded-lg">
-          <h1 className="text-3xl font-bold text-center text-green-700 mb-6">Thank You! 🎉</h1>
-
-          <p className="text-center text-gray-700">
-            Your order has been received and paid successfully.
+        <div className="max-w-xl mx-auto text-center">
+          <p className="text-gray-600">Confirming your order...</p>
+        </div>
+      ) : error ? (
+        <div className="max-w-xl mx-auto bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-2">Something went wrong</h1>
+          <p className="text-gray-700">{error}</p>
+          <p className="text-sm text-gray-600 mt-4">
+            Please contact us at (702) 767-3350 or check your email for more information.
           </p>
-
-          <p className="text-center text-gray-500 text-sm mt-1">Order ID: {order.id.slice(0, 8)}</p>
-          <p className="mt-2 text-gray-700">
-            <span className="font-semibold">Customer:</span> {order.users?.name}
-          </p>
-
-          <hr className="my-6" />
-
-          <h2 className="text-xl font-semibold mb-3">Order Summary</h2>
-
-          <div className="space-y-4">
-            {order.order_items.map((item) => (
-              <div key={item.id} className="flex items-center gap-4">
-                <ProductImage
-                  imageUrl={item.product.image_url}
-                  alt={item.product.name}
-                  className="w-16 h-16 rounded object-cover"
-                  placeholderSize="small"
-                />
-
-                <div>
-                  <p className="font-medium">{item.product.name}</p>
-                  <p className="text-sm text-gray-600">
-                    {item.quantity} × ${item.item_price.toFixed(2)}
-                  </p>
-                </div>
-              </div>
-            ))}
+          <Link to="/" className="mt-6 inline-block bg-black text-white px-6 py-2 rounded hover:bg-gray-800">
+            Return Home
+          </Link>
+        </div>
+      ) : confirmResponse && order ? (
+        <div className="max-w-xl mx-auto">
+          {/* Confirmation Banner */}
+          <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8 text-center">
+            <div className="text-5xl mb-3">✓</div>
+            <h1 className="text-3xl font-bold text-green-700 mb-2">Order Confirmed!</h1>
+            <p className="text-gray-700 mb-3">Thank you for your order. We'll send you the pickup address and time via text or email shortly.</p>
+            <p className="text-sm text-gray-600">
+              Order ID: <span className="font-mono font-semibold">{order.id.slice(0, 8)}</span>
+            </p>
           </div>
 
-          <hr className="my-6" />
+          {/* Order Details */}
+          <div className="bg-white shadow-sm rounded-lg p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
-          <p className="text-lg">
-            <span className="font-semibold">Total:</span> ${(order.total_price / 100).toFixed(2)}
-          </p>
+            {order.users?.name && (
+              <p className="text-gray-700 mb-3">
+                <span className="font-semibold">Name:</span> {order.users.name}
+              </p>
+            )}
 
-          {order.bake_days?.date && (
-            <p className="mt-2 text-gray-700">
-              <span className="font-semibold">Bake Day:</span>{' '}
-              {new Date(order.bake_days.date).toLocaleDateString()}
-            </p>
-          )}
+            {order.bake_days?.date && (
+              <p className="text-gray-700 mb-3">
+                <span className="font-semibold">Bake Day:</span>{' '}
+                {new Date(order.bake_days.date).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            )}
 
-          {order.customer_note && (
-            <p className="mt-3 text-gray-700">
-              <span className="font-semibold">Your Note:</span> {order.customer_note}
-            </p>
-          )}
+            <hr className="my-4" />
 
-          <Link
-            to="/"
-            className="mt-8 block bg-black text-white py-3 text-center rounded-lg hover:bg-gray-800 transition"
-          >
+            <h3 className="font-semibold mb-3">Items</h3>
+            <div className="space-y-3 mb-4">
+              {order.order_items.map((item) => (
+                <div key={item.id} className="flex items-center gap-3 text-sm">
+                  <span className="font-medium">{item.quantity}×</span>
+                  <span className="flex-1">{item.product.name}</span>
+                  <span className="text-gray-600">${((item.item_price * item.quantity) / 100).toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t pt-4">
+              <p className="text-lg">
+                <span className="font-semibold">Total:</span> ${(order.total_price / 100).toFixed(2)}
+              </p>
+            </div>
+
+            {order.customer_note && (
+              <div className="mt-4 p-3 bg-gray-50 rounded text-sm">
+                <p className="font-semibold text-gray-700 mb-1">Order Note:</p>
+                <p className="text-gray-600">{order.customer_note}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Next Steps */}
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">
+            <h3 className="font-semibold text-amber-900 mb-3">What's Next?</h3>
+            <ul className="space-y-2 text-sm text-amber-900">
+              <li className="flex gap-2">
+                <span className="font-bold">1.</span>
+                <span>We'll send you pickup details via text/email before bake day.</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-bold">2.</span>
+                <span>Show up during the pickup window in Provo (near Center & University).</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-bold">3.</span>
+                <span>Enjoy your fresh, artisanal sourdough!</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* CTA */}
+          <div className="flex flex-col gap-3">
+            <Link
+              to="/why-bake-days#faq"
+              className="bg-gray-100 text-gray-900 py-3 text-center rounded-lg hover:bg-gray-200 transition font-medium"
+            >
+              Questions? Check our FAQ
+            </Link>
+            <Link
+              to="/"
+              className="bg-black text-white py-3 text-center rounded-lg hover:bg-gray-800 transition font-medium"
+            >
+              Return Home
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="max-w-xl mx-auto text-center">
+          <p className="text-gray-600">Order not found.</p>
+          <Link to="/" className="mt-4 inline-block text-blue-600 hover:underline">
             Return Home
           </Link>
         </div>

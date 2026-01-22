@@ -4,6 +4,7 @@ import 'react-calendar/dist/Calendar.css';
 import { getBakeDays, type BakeDay } from '../api/bakeDays';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
+import ProductImage from '../components/ProductImage';
 
 export default function BakeDaysPage() {
   const [bakeDays, setBakeDays] = useState<BakeDay[]>([]);
@@ -220,10 +221,11 @@ export default function BakeDaysPage() {
                       >
                         <div className="h-52 w-full overflow-hidden">
                           <Link to={`/product/${product.id}`}>
-                            <img
-                              src={product.image_url}
+                            <ProductImage
+                              imageUrl={product.image_url}
                               alt={product.name}
                               className="h-full w-full object-cover"
+                              placeholderSize="medium"
                             />
                           </Link>
                         </div>

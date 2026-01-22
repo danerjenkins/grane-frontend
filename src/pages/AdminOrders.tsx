@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import ProductImage from '../components/ProductImage';
 
 interface OrderItem {
   id: string;
@@ -136,17 +137,12 @@ export default function AdminOrders() {
                 {(order.order_items ?? []).map((item) => (
                   <div key={item.id} className="flex items-center space-x-4 border-b pb-2">
                     {/* Product Image */}
-                    {item.product?.image_url ? (
-                      <img
-                        src={item.product.image_url}
-                        alt={item.product.name}
-                        className="w-16 h-16 object-cover rounded"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-xs">
-                        No Image
-                      </div>
-                    )}
+                    <ProductImage
+                      imageUrl={item.product?.image_url}
+                      alt={item.product?.name ?? 'Product'}
+                      className="w-16 h-16 object-cover rounded"
+                      placeholderSize="small"
+                    />
 
                     {/* Product Info */}
                     <div>

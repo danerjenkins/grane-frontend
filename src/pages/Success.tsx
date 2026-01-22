@@ -72,10 +72,11 @@ export default function Success() {
           <div className="space-y-4">
             {order.order_items.map((item) => (
               <div key={item.id} className="flex items-center gap-4">
-                <img
-                  src={item.product.image_url}
+                <ProductImage
+                  imageUrl={item.product.image_url}
                   alt={item.product.name}
                   className="w-16 h-16 rounded object-cover"
+                  placeholderSize="small"
                 />
 
                 <div>

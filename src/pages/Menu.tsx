@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getProducts } from '../api/products';
 import type { Product } from '../api/products'; // 👈 type-only import
+import ProductImage from '../components/ProductImage';
 
 
 export default function Menu() {
@@ -24,10 +25,11 @@ export default function Menu() {
         <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
             <div key={product.id} className="bg-white rounded-lg shadow-md p-4 max-w-xs">
-              <img
-                src={product.image_url}
+              <ProductImage
+                imageUrl={product.image_url}
                 alt={product.name}
                 className="w-full h-48 object-cover rounded-md mb-4"
+                placeholderSize="medium"
               />
               <h2 className="text-xl font-semibold">{product.name}</h2>
               <p className="text-gray-600 mb-2">{product.description}</p>

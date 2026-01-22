@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProductById } from '../api/products';
 import { useCart } from '../context/CartContext';
+import ProductImage from '../components/ProductImage';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -52,10 +53,11 @@ export default function ProductDetail() {
         {/* Content Layout */}
         <div className="grid md:grid-cols-2 gap-10">
           {/* Product Image */}
-          <img
-            src={product.image_url}
+          <ProductImage
+            imageUrl={product.image_url}
             alt={product.name}
             className="rounded-xl w-full h-80 object-cover shadow-sm"
+            placeholderSize="large"
           />
 
           {/* Product Info */}

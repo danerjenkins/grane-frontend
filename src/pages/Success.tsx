@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 
 interface OrderItem {
   id: string;
@@ -25,7 +25,7 @@ export default function Success() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const session_id = searchParams.get("session_id");
+  const session_id = searchParams.get('session_id');
 
   useEffect(() => {
     if (!session_id) return;
@@ -33,7 +33,7 @@ export default function Success() {
     fetch(`${import.meta.env.VITE_API_URL}/orders/by-session/${session_id}`)
       .then((res) => res.json())
       .then((data) => setOrder(data))
-      .catch((err) => console.error("Error loading order:", err))
+      .catch((err) => console.error('Error loading order:', err))
       .finally(() => setLoading(false));
   }, [session_id]);
 
@@ -49,21 +49,16 @@ export default function Success() {
         <p className="text-center text-gray-600">Order not found.</p>
       ) : (
         <div className="max-w-xl mx-auto bg-white shadow-lg p-6 rounded-lg">
-          <h1 className="text-3xl font-bold text-center text-green-700 mb-6">
-            Thank You! 🎉
-          </h1>
+          <h1 className="text-3xl font-bold text-center text-green-700 mb-6">Thank You! 🎉</h1>
 
           <p className="text-center text-gray-700">
             Your order has been received and paid successfully.
           </p>
 
-          <p className="text-center text-gray-500 text-sm mt-1">
-            Order ID: {order.id.slice(0, 8)}
-          </p>
+          <p className="text-center text-gray-500 text-sm mt-1">Order ID: {order.id.slice(0, 8)}</p>
           <p className="mt-2 text-gray-700">
-  <span className="font-semibold">Customer:</span> {order.users?.name}
-</p>
-
+            <span className="font-semibold">Customer:</span> {order.users?.name}
+          </p>
 
           <hr className="my-6" />
 
@@ -82,7 +77,7 @@ export default function Success() {
                 <div>
                   <p className="font-medium">{item.product.name}</p>
                   <p className="text-sm text-gray-600">
-                    {item.quantity} × ${(item.item_price).toFixed(2)}
+                    {item.quantity} × ${item.item_price.toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -92,21 +87,19 @@ export default function Success() {
           <hr className="my-6" />
 
           <p className="text-lg">
-            <span className="font-semibold">Total:</span>{" "}
-            ${(order.total_price / 100).toFixed(2)}
+            <span className="font-semibold">Total:</span> ${(order.total_price / 100).toFixed(2)}
           </p>
 
           {order.bake_days?.date && (
             <p className="mt-2 text-gray-700">
-              <span className="font-semibold">Bake Day:</span>{" "}
+              <span className="font-semibold">Bake Day:</span>{' '}
               {new Date(order.bake_days.date).toLocaleDateString()}
             </p>
           )}
 
           {order.customer_note && (
             <p className="mt-3 text-gray-700">
-              <span className="font-semibold">Your Note:</span>{" "}
-              {order.customer_note}
+              <span className="font-semibold">Your Note:</span> {order.customer_note}
             </p>
           )}
 

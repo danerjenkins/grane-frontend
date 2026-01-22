@@ -3,7 +3,6 @@ import { getProducts } from '../api/products';
 import type { Product } from '../api/products'; // 👈 type-only import
 import ProductImage from '../components/ProductImage';
 
-
 export default function Menu() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);

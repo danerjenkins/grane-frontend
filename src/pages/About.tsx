@@ -5,24 +5,35 @@ export default function About() {
 
       <div className="max-w-2xl space-y-6 text-lg text-gray-700 leading-relaxed">
         <p>
-          Hi! I'm Dane: BYU student, runner,
-          Catan enthusiast, and the baker behind <span className="font-semibold">Grane</span>.
-          I bake naturally fermented sourdough here in Provo, Utah.
+          Hi! I'm Dane: BYU student, runner, Catan enthusiast, and the baker behind{' '}
+          <span className="font-semibold">Grane</span>. I bake naturally fermented sourdough here in
+          Provo, Utah.
         </p>
-
         <p>
-          What started as a simple curiosity when I was 16 turned into a passionate chase for the perfect loaf. I love the slow, patient rhythm of sourdough. I love 
-          the way three simple ingredients can turn into something alive, flavorful, and deeply comforting. Baking after classes and work as well as on weekends
-          is always a highlight of my week.
+          What started as a simple curiosity when I was 16 turned into a passionate chase for the
+          perfect loaf. I love the slow, patient rhythm of sourdough. I love the way three simple
+          ingredients can turn into something alive, flavorful, and deeply comforting. Baking after
+          classes and work as well as on weekends is always a highlight of my week.
         </p>
-
         <p>
-          Between studying Information Systems, working on tech projects, and the occasional run, making bread has become my way to slow down and create something real with my hands. Every bake is small-batch, personal, and made with care.
+          Between studying Information Systems, working on tech projects, and the occasional run,
+          making bread has become my way to slow down and create something real with my hands. Every
+          bake is small-batch, personal, and made with care.
         </p>
-
         <p>
-          Grane is more than a side hustle for me it’s the beginning of a dream. I’m building it into a small in-home microbakery where I can share naturally fermented bread with friends, neighbors, and the community. Thank you for following along and being part of this journey.
+          Grane is more than a side hustle for me it’s the beginning of a dream. I’m building it
+          into a small in-home microbakery where I can share naturally fermented bread with friends,
+          neighbors, and the community. Thank you for following along and being part of this
+          journey.
         </p>
+        <p className="pt-4">
+          <a
+            href="/why-bake-days#faq"
+            className="text-neutral-900 font-semibold underline hover:text-neutral-700 transition"
+          >
+            Have questions? Check out our FAQ →
+          </a>
+        </p>{' '}
       </div>
 
       {/* Profile Image */}

@@ -33,6 +33,14 @@ export default function Contact() {
           If you're unsure what to order or new to sourdough, I’m happy to help you pick something
           you'll love.
         </p>
+        <p className="pt-4 text-neutral-900">
+          <a
+            href="/why-bake-days#faq"
+            className="font-semibold underline hover:text-neutral-700 transition"
+          >
+            Check our FAQ →
+          </a>
+        </p>{' '}
       </div>
 
       {/* Image */}

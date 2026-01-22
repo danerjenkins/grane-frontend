@@ -1,7 +1,21 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Calendar, Clock, Leaf } from 'lucide-react';
+import { useEffect } from 'react';
 
 export default function WhyBakeDays() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === '#faq') {
+      const faqElement = document.getElementById('faq');
+      if (faqElement) {
+        setTimeout(() => {
+          faqElement.scrollIntoView({ behavior: 'smooth' });
+        }, 0);
+      }
+    }
+  }, [location.hash]);
+
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
       {/* Hero Section */}
@@ -11,10 +25,12 @@ export default function WhyBakeDays() {
             Why Bake Days
           </h1>
           <p className="text-xl md:text-2xl text-neutral-700 leading-relaxed mb-4">
-            Small-batch baking means everything is made fresh, ordered beforehand, and baked specifically for you on a scheduled bake day.
+            Small-batch baking means everything is made fresh, ordered beforehand, and baked
+            specifically for you on a scheduled bake day.
           </p>
           <p className="text-lg text-neutral-600 leading-relaxed mb-10">
-            No guessing. No sitting on shelves. Just exceptional, artisanal sourdough made when you need it.
+            No guessing. No sitting on shelves. Just exceptional, artisanal sourdough made when you
+            need it.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
@@ -61,7 +77,8 @@ export default function WhyBakeDays() {
               </div>
               <h3 className="text-xl font-semibold mb-3">2. Order before cutoff</h3>
               <p className="text-neutral-600 leading-relaxed">
-                Reserve your loaves and items before the ordering window closes. Quantities are limited.
+                Reserve your loaves and items before the ordering window closes. Quantities are
+                limited.
               </p>
             </div>
 
@@ -84,7 +101,9 @@ export default function WhyBakeDays() {
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold font-serif mb-3">Why bake days are better</h2>
-            <p className="text-lg text-neutral-600">The benefits of small-batch, intentional baking</p>
+            <p className="text-lg text-neutral-600">
+              The benefits of small-batch, intentional baking
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -92,7 +111,8 @@ export default function WhyBakeDays() {
             <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm transition hover:shadow-md">
               <h3 className="text-lg font-semibold mb-3">Maximum freshness</h3>
               <p className="text-neutral-600 leading-relaxed">
-                Your bread is baked the day you pick it up. No day-old loaves, no deep freezing—just peak quality.
+                Your bread is baked the day you pick it up. No day-old loaves, no deep freezing—just
+                peak quality.
               </p>
             </div>
 
@@ -100,7 +120,8 @@ export default function WhyBakeDays() {
             <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm transition hover:shadow-md">
               <h3 className="text-lg font-semibold mb-3">Predictable supply</h3>
               <p className="text-neutral-600 leading-relaxed">
-                You always know what's available and when. No more checking back hoping bread is in stock.
+                You always know what's available and when. No more checking back hoping bread is in
+                stock.
               </p>
             </div>
 
@@ -108,7 +129,8 @@ export default function WhyBakeDays() {
             <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm transition hover:shadow-md">
               <h3 className="text-lg font-semibold mb-3">Better planning</h3>
               <p className="text-neutral-600 leading-relaxed">
-                Schedule your pickup in advance. Perfect for meal planning and reducing last-minute stress.
+                Schedule your pickup in advance. Perfect for meal planning and reducing last-minute
+                stress.
               </p>
             </div>
 
@@ -116,7 +138,8 @@ export default function WhyBakeDays() {
             <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm transition hover:shadow-md">
               <h3 className="text-lg font-semibold mb-3">Support intentional craftsmanship</h3>
               <p className="text-neutral-600 leading-relaxed">
-                Pre-orders mean I bake exactly what you need—no waste, no overproduction. Pure craft.
+                Pre-orders mean I bake exactly what you need—no waste, no overproduction. Pure
+                craft.
               </p>
             </div>
 
@@ -124,7 +147,8 @@ export default function WhyBakeDays() {
             <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm transition hover:shadow-md">
               <h3 className="text-lg font-semibold mb-3">Community connection</h3>
               <p className="text-neutral-600 leading-relaxed">
-                You're supporting a small, local microbakery and building direct relationships with what you eat.
+                You're supporting a small, local microbakery and building direct relationships with
+                what you eat.
               </p>
             </div>
 
@@ -153,7 +177,8 @@ export default function WhyBakeDays() {
                 ✓
               </div>
               <p className="text-lg text-neutral-700 leading-relaxed">
-                <span className="font-semibold">Orders have deadlines.</span> Each bake day has a cutoff time to place your order. This helps me plan baking schedules accurately.
+                <span className="font-semibold">Orders have deadlines.</span> Each bake day has a
+                cutoff time to place your order. This helps me plan baking schedules accurately.
               </p>
             </div>
 
@@ -162,7 +187,9 @@ export default function WhyBakeDays() {
                 ✓
               </div>
               <p className="text-lg text-neutral-700 leading-relaxed">
-                <span className="font-semibold">Quantities are limited.</span> Small-batch means quantities are carefully controlled. Popular items may sell out, so ordering early is wise.
+                <span className="font-semibold">Quantities are limited.</span> Small-batch means
+                quantities are carefully controlled. Popular items may sell out, so ordering early
+                is wise.
               </p>
             </div>
 
@@ -171,7 +198,9 @@ export default function WhyBakeDays() {
                 ✓
               </div>
               <p className="text-lg text-neutral-700 leading-relaxed">
-                <span className="font-semibold">Pickup is local.</span> All pickups are in Provo, Utah on the scheduled bake day. Exact time and location details arrive after you order.
+                <span className="font-semibold">Pickup is local.</span> All pickups are in Provo,
+                Utah on the scheduled bake day. Exact time and location details arrive after you
+                order.
               </p>
             </div>
 
@@ -180,7 +209,8 @@ export default function WhyBakeDays() {
                 ✓
               </div>
               <p className="text-lg text-neutral-700 leading-relaxed">
-                <span className="font-semibold">Anything is possible.</span> Can't wait until a set bake day? Have special requests? Reach out—we can talk about custom orders.
+                <span className="font-semibold">Anything is possible.</span> Can't wait until a set
+                bake day? Have special requests? Reach out—we can talk about custom orders.
               </p>
             </div>
           </div>
@@ -188,7 +218,7 @@ export default function WhyBakeDays() {
       </section>
 
       {/* FAQ Section */}
-      <section className="px-4 py-16">
+      <section id="faq" className="px-4 py-16">
         <div className="mx-auto max-w-3xl">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold font-serif mb-3">Frequently asked questions</h2>
@@ -201,12 +231,19 @@ export default function WhyBakeDays() {
                 What makes Grane bread different?
                 <span className="transition group-open:rotate-180">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
                   </svg>
                 </span>
               </summary>
               <p className="mt-4 text-neutral-700 leading-relaxed">
-                Every loaf is naturally fermented using a sourdough culture, hand-shaped, and baked in small batches. We use just three ingredients: flour, water, and salt. No commercial yeast, no additives, no shortcuts. Each bake is intentional and personal.
+                Every loaf is naturally fermented using a sourdough culture, hand-shaped, and baked
+                in small batches. We use just three ingredients: flour, water, and salt. No
+                commercial yeast, no additives, no shortcuts. Each bake is intentional and personal.
               </p>
             </details>
 
@@ -216,12 +253,19 @@ export default function WhyBakeDays() {
                 How far in advance do I need to order?
                 <span className="transition group-open:rotate-180">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
                   </svg>
                 </span>
               </summary>
               <p className="mt-4 text-neutral-700 leading-relaxed">
-                Most bake days have a 24-48 hour ordering window. You'll see the exact cutoff time when you choose your bake day. This timing allows me to source ingredients and plan my baking schedule precisely.
+                Most bake days have a 24-48 hour ordering window. You'll see the exact cutoff time
+                when you choose your bake day. This timing allows me to source ingredients and plan
+                my baking schedule precisely.
               </p>
             </details>
 
@@ -231,12 +275,19 @@ export default function WhyBakeDays() {
                 Can I freeze my bread?
                 <span className="transition group-open:rotate-180">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
                   </svg>
                 </span>
               </summary>
               <p className="mt-4 text-neutral-700 leading-relaxed">
-                Absolutely! Sourdough freezes beautifully. Simply wrap your loaf in foil or a freezer bag, and it will keep for several weeks. Thaw at room temperature or reheat wrapped in foil for a few minutes in the oven to restore freshness.
+                Absolutely! Sourdough freezes beautifully. Simply wrap your loaf in foil or a
+                freezer bag, and it will keep for several weeks. Thaw at room temperature or reheat
+                wrapped in foil for a few minutes in the oven to restore freshness.
               </p>
             </details>
 
@@ -246,12 +297,25 @@ export default function WhyBakeDays() {
                 What if I need something custom?
                 <span className="transition group-open:rotate-180">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
                   </svg>
                 </span>
               </summary>
               <p className="mt-4 text-neutral-700 leading-relaxed">
-                Have a special request or unusual timeline? Reach out directly via <a href="/contact" className="font-semibold text-neutral-900 underline hover:text-neutral-700">the contact page</a>. I love working on custom orders and can often accommodate requests with a bit of notice.
+                Have a special request or unusual timeline? Reach out directly via{' '}
+                <a
+                  href="/contact"
+                  className="font-semibold text-neutral-900 underline hover:text-neutral-700"
+                >
+                  the contact page
+                </a>
+                . I love working on custom orders and can often accommodate requests with a bit of
+                notice.
               </p>
             </details>
 
@@ -261,12 +325,20 @@ export default function WhyBakeDays() {
                 What's the best way to store fresh sourdough?
                 <span className="transition group-open:rotate-180">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
                   </svg>
                 </span>
               </summary>
               <p className="mt-4 text-neutral-700 leading-relaxed">
-                Keep your loaf in a paper bag or linen cloth at room temperature. Avoid plastic bags, which trap moisture and soften the crust. The bread will stay delicious for 2-3 days. For longer storage, wrap and freeze. Never refrigerate—cold temperatures stale bread faster.
+                Keep your loaf in a paper bag or linen cloth at room temperature. Avoid plastic
+                bags, which trap moisture and soften the crust. The bread will stay delicious for
+                2-3 days. For longer storage, wrap and freeze. Never refrigerate—cold temperatures
+                stale bread faster.
               </p>
             </details>
           </div>

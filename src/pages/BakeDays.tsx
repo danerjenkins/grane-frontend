@@ -368,6 +368,18 @@ export default function BakeDaysPage() {
         </div>
       </div>
 
+      {/* FAQ Link */}
+      <div className="mt-12 text-center">
+        <p className="text-neutral-600">
+          <a
+            href="/why-bake-days#faq"
+            className="font-semibold text-neutral-900 underline hover:text-neutral-700 transition"
+          >
+            Have questions? Check our FAQ →
+          </a>
+        </p>
+      </div>
+
       {/* Calendar override styles */}
       <style>
         {`

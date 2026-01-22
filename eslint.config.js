@@ -20,13 +20,13 @@ export default tseslint.config(
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       prettier,
-      'unused-imports': unusedimports
+      'unused-imports': unusedimports,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'prettier/prettier': 'error',
-      "unused-imports/no-unused-imports": "error"
+      'unused-imports/no-unused-imports': 'error',
     },
   }
 );

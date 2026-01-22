@@ -4,64 +4,186 @@ import { useCart } from '../context/CartContext';
 export default function CheckoutPage() {
   const { cart, selectedBakeDay, updateQuantity, removeFromCart } = useCart();
   const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [orderNote, setOrderNote] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [note, setNote] = useState('');
+  // Validation errors
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    phone: '',
+  });
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  // Validate fields
+  const validateName = (name: string) => {
+    return name.trim().length > 0;
+  };
+
+  const validateEmail = (email: string) => {
+    if (!email.trim()) return false; // required
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone: string) => {
+    return phone.trim().length > 0;
+  };
+
+  const validateContact = () => {
+    return customerEmail.trim().length > 0 && customerPhone.trim().length > 0;
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return (
+      cart.length > 0 &&
+      selectedBakeDay &&
+      validateName(customerName) &&
+      validateEmail(customerEmail) &&
+      validateContact()
+    );
+  };
+
   const handleCheckout = async () => {
+    // Clear previous errors
+    setErrors({ name: '', email: '', phone: '' });
+
+    // Validate
+    const newErrors = {
+      name: !validateName(customerName) ? 'Name is required' : '',
+      email: !validateEmail(customerEmail) ? 'Email is required and must be valid' : '',
+      phone: !validatePhone(customerPhone) ? 'Phone is required' : '',
+    };
+
+    setErrors(newErrors);
+
+    // If any errors, don't submit
+    if (newErrors.name || newErrors.email || newErrors.phone) {
+      return;
+    }
+
     if (!selectedBakeDay) {
       alert('Please choose a bake day.');
       return;
     }
-    if (!customerName.trim()) {
-      alert('Please include your name.');
-      return;
-    }
-    if (!note.trim()) {
-      alert('Please leave contact information so I can send you the pickup location');
-      return;
-    }
 
-    const body = {
-      bake_day_id: selectedBakeDay.id,
-      customer_note: note,
-      customer_name: customerName,
-      items: cart.map((item) => ({
-        product_id: item.product_id,
-        quantity: item.quantity,
-      })),
-    };
+    setIsSubmitting(true);
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/checkout`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+    try {
+      const body = {
+        bake_day_id: selectedBakeDay.id,
+        customer_name: customerName.trim(),
+        customer_email: customerEmail.trim(),
+        customer_phone: customerPhone.trim(),
+        customer_note: orderNote.trim() || undefined,
+        items: cart.map((item) => ({
+          product_id: item.product_id,
+          quantity: item.quantity,
+        })),
+      };
 
-    const data = await res.json();
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
 
-    if (data.url) {
-      window.location.href = data.url; // redirect to Stripe Checkout
-    } else {
-      console.error('Checkout Error', data);
-      alert('Checkout failed. See console.');
+      const data = await res.json();
+
+      if (data.url) {
+        window.location.href = data.url; // redirect to Stripe Checkout
+      } else {
+        console.error('Checkout Error', data);
+        alert('Checkout failed. Please try again.');
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.error('Checkout Error', error);
+      alert('Checkout failed. Please try again.');
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
-      <div className="mb-8">
-        <label className="block font-semibold mb-1">Your Name</label>
-        <input
-          className="border rounded p-2 w-full"
-          type="text"
-          value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-          placeholder="Enter your name"
-          required
-        />
+
+      {/* Customer Information */}
+      <div className="mb-8 space-y-6">
+        <h2 className="text-xl font-semibold">Your Information</h2>
+
+        {/* Name */}
+        <div>
+          <label className="block font-semibold mb-1">
+            Name <span className="text-red-500">*</span>
+          </label>
+          <input
+            className={`border rounded p-2 w-full ${errors.name ? 'border-red-500' : ''}`}
+            type="text"
+            value={customerName}
+            onChange={(e) => {
+              setCustomerName(e.target.value);
+              if (errors.name) setErrors({ ...errors, name: '' });
+            }}
+            placeholder="Enter your name"
+          />
+          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block font-semibold mb-1">
+            Email <span className="text-red-500">*</span>
+          </label>
+          <input
+            className={`border rounded p-2 w-full ${errors.email ? 'border-red-500' : ''}`}
+            type="email"
+            value={customerEmail}
+            onChange={(e) => {
+              setCustomerEmail(e.target.value);
+              if (errors.email) setErrors({ ...errors, email: '' });
+            }}
+            placeholder="your@email.com"
+          />
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+        </div>
+
+        {/* Phone */}
+        <div>
+          <label className="block font-semibold mb-1">
+            Phone <span className="text-red-500">*</span>
+          </label>
+          <input
+            className={`border rounded p-2 w-full ${errors.phone ? 'border-red-500' : ''}`}
+            type="tel"
+            value={customerPhone}
+            onChange={(e) => {
+              setCustomerPhone(e.target.value);
+              if (errors.phone) setErrors({ ...errors, phone: '' });
+            }}
+            placeholder="(123) 456-7890"
+          />
+          {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+          <p className="text-xs text-gray-500 mt-1">
+            We'll text or email you the pickup address after payment
+          </p>
+        </div>
+
+        {/* Order Note (Optional) */}
+        <div>
+          <label className="block font-semibold mb-1">Order note (optional)</label>
+          <textarea
+            className="border rounded p-2 w-full"
+            rows={3}
+            value={orderNote}
+            onChange={(e) => setOrderNote(e.target.value)}
+            placeholder="Any special requests or notes about your order..."
+          />
+        </div>
       </div>
       {/* Cart Items */}
       <div className="mb-8">
@@ -120,29 +242,19 @@ export default function CheckoutPage() {
         )}
       </div>
 
-      {/* Bake Day Selector */}
-      <div className="mb-8">
-        <p className="font-semibold mb-1">
+      {/* Bake Day Info */}
+      <div className="mb-8 bg-amber-50 p-4 rounded-lg">
+        <p className="font-semibold mb-2">
           Bake Day:{' '}
           {selectedBakeDay ? new Date(selectedBakeDay.date).toLocaleDateString() : 'None selected'}
         </p>
-        <p>Orders are by pick up only and can be picked up on your selected bake day from 6pm to 9pm. If ordering for Thanksgiving, pick up is from 10am to 5pm. </p>
-        <p> The pickup location is in Provo near Center and University. I will send you the address on confirmation of your order. </p>
-        <p>Please message me at (702)767-3350 for questions about pickup!</p>
-      </div>
-
-      {/* Customer Note */}
-      <div className="mb-8">
-        <label className="block font-semibold mb-1">Contact Information</label>
-        <p>Please leave contact information so I can send you the pickup location. Include any notes as well</p>
-        <textarea
-          className="border rounded p-2 w-full"
-          rows={3}
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="Email or phone number. Include any additional comments"
-          required
-        />
+        <div className="text-sm text-gray-700 space-y-1">
+          <p>📍 Pickup in Provo (near Center & University)</p>
+          <p>🕕 Pickup window: 6pm - 9pm on bake day</p>
+          <p className="text-xs text-gray-600 mt-2">
+            Exact address will be sent after payment. Questions? Text (702) 767-3350
+          </p>
+        </div>
       </div>
 
       {/* Total + Checkout Button */}
@@ -151,9 +263,14 @@ export default function CheckoutPage() {
 
         <button
           onClick={handleCheckout}
-          className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800"
+          disabled={!isFormValid() || isSubmitting}
+          className={`px-6 py-3 rounded font-semibold transition ${
+            !isFormValid() || isSubmitting
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-black text-white hover:bg-gray-800'
+          }`}
         >
-          Continue to Payment
+          {isSubmitting ? 'Redirecting...' : 'Continue to Payment'}
         </button>
       </div>
     </div>

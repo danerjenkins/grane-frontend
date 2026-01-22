@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import ProductImage from '../components/ProductImage';
 
 interface OrderItem {
   id: string;

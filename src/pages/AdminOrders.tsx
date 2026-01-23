@@ -1,50 +1,18 @@
 import { useEffect, useState } from 'react';
+import { getOrders, markOrderCompleted, type Order } from '../api/orders';
 import ProductImage from '../components/ProductImage';
-
-interface OrderItem {
-  id: string;
-  quantity: number;
-  item_price: number | null;
-  product: {
-    id: string;
-    name: string;
-    image_url: string;
-    price: number;
-    description: string;
-  } | null;
-}
-
-interface Order {
-  id: string;
-  created_at: string;
-  bake_days: { date: string } | null;
-  customer_note: string | null;
-  total_price: number | null;
-  stripe_status: string | null; // PAYMENT STATUS
-  status: string | null; // FULFILLMENT STATUS
-  order_items: OrderItem[] | null;
-  user?: { id: string; name: string | null };
-}
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // PATCH to mark order as completed
   const markAsCompleted = async (orderId: string) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders/${orderId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const updated = await markOrderCompleted(orderId);
 
-      const data = await res.json();
-
-      if (data.success) {
-        setOrders((prev) =>
-          prev.map((o) => (o.id === orderId ? { ...o, status: 'completed' } : o))
-        );
-      }
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, status: updated.status ?? 'completed' } : o))
+      );
     } catch (err) {
       console.error('Error marking completed:', err);
     }
@@ -52,14 +20,25 @@ export default function AdminOrders() {
 
   // Fetch orders
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/orders`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('ORDERS FROM API:', data);
+    let active = true;
+
+    const loadOrders = async () => {
+      try {
+        const data = await getOrders();
+        if (!active) return;
         setOrders(data);
-      })
-      .catch((err) => console.error('Error loading orders:', err))
-      .finally(() => setLoading(false));
+      } catch (err) {
+        console.error('Error loading orders:', err);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    loadOrders();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
@@ -115,7 +94,7 @@ export default function AdminOrders() {
               {/* ---------------- BAKE DAY + TOTAL ---------------- */}
               <p className="text-gray-600 text-sm">
                 <span className="font-semibold">Bake Day:</span>{' '}
-                {order.bake_days?.date ?? 'Unknown'}
+                {order.bake_days?.[0]?.date ?? 'Unknown'}
               </p>
 
               <p className="text-gray-600 text-sm">

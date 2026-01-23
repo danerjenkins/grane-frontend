@@ -33,7 +33,14 @@ export default function App() {
         <Route path="/bake-days" element={<BakeDaysPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+        <Route
+          path="/admin/orders"
+          element={
+            <AdminRoute>
+              <AdminOrders />
+            </AdminRoute>
+          }
+        />
         <Route path="/success" element={<Success />} />
         <Route path="/product/:id" element={<ProductDetail />} />
       </Routes>

@@ -66,6 +66,9 @@ const Navbar = () => {
           <Link to="/bake-days" className="nav-link">
             Order
           </Link>
+          <Link to="/login" className="nav-link">
+            Admin
+          </Link>
           {/* <Link to="/account" className="nav-link">Account</Link> */}
 
           {/* Desktop Cart */}
@@ -146,6 +149,9 @@ const Navbar = () => {
           </Link>
           <Link to="/bake-days" className="nav-link">
             Order
+          </Link>
+          <Link to="/login" className="nav-link">
+            Admin
           </Link>
           {/* <Link to="/account" className="nav-link">Account</Link> */}
         </div>

@@ -1,3 +1,5 @@
+import { supabase } from './supabaseClient';
+
 export interface Product {
   id: string;
   name: string;
@@ -8,24 +10,22 @@ export interface Product {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/products`);
+  const { data, error } = await supabase.from('products').select('*');
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch products: ${res.statusText}`);
+  if (error) {
+    throw error;
   }
 
-  const data = await res.json();
-  return data;
+  return data ?? [];
 }
 
-export async function getProductById(id: string) {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/products/${id}`);
+export async function getProductById(id: string): Promise<Product | null> {
+  const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
 
-  if (!res.ok) {
-    console.error("Product lookup failed:", res.status, res.statusText);
+  if (error) {
+    console.error('Product lookup failed:', error);
     return null;
   }
 
-  return res.json();
+  return data;
 }
-

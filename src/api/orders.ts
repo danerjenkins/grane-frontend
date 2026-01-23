@@ -72,11 +72,11 @@ export async function getOrders(): Promise<Order[]> {
   return (data ?? []).map((order: any) => ({
     ...order,
     bake_days: order.bake_days ?? null,
-    user: Array.isArray(order.user) ? order.user[0] ?? null : order.user ?? null,
+    user: Array.isArray(order.user) ? (order.user[0] ?? null) : (order.user ?? null),
     order_items: Array.isArray(order.order_items)
       ? order.order_items.map((item: any) => ({
           ...item,
-          product: Array.isArray(item.product) ? item.product[0] ?? null : item.product ?? null,
+          product: Array.isArray(item.product) ? (item.product[0] ?? null) : (item.product ?? null),
         }))
       : null,
   }));
@@ -95,4 +95,57 @@ export async function markOrderCompleted(orderId: string): Promise<Order> {
   }
 
   return data;
+}
+
+export async function getOrderBySessionId(sessionId: string): Promise<Order> {
+  const { data, error } = await supabase
+    .from('orders')
+    .select(
+      `
+      id,
+      created_at,
+      bake_day_id,
+      customer_note,
+      total_price,
+      price_with_tax,
+      status,
+      stripe_status,
+      stripe_session_id,
+      bake_days (date),
+      user:users (
+        id,
+        name
+      ),
+      order_items (
+        id,
+        quantity,
+        item_price,
+        product:product_id (
+          id,
+          name,
+          image_url,
+          price,
+          description
+        )
+      )
+    `
+    )
+    .eq('stripe_session_id', sessionId)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    ...data,
+    bake_days: data.bake_days ?? null,
+    user: Array.isArray(data.user) ? (data.user[0] ?? undefined) : data.user,
+    order_items: Array.isArray(data.order_items)
+      ? data.order_items.map((item: any) => ({
+          ...item,
+          product: Array.isArray(item.product) ? (item.product[0] ?? null) : (item.product ?? null),
+        }))
+      : null,
+  };
 }

@@ -1,24 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-
-interface OrderItem {
-  id: string;
-  quantity: number;
-  item_price: number;
-  product: {
-    name: string;
-    image_url: string;
-  };
-}
-
-interface Order {
-  users: { name: string };
-  id: string;
-  bake_days: { date: string } | null;
-  total_price: number;
-  customer_note: string | null;
-  order_items: OrderItem[];
-}
+import { getOrderBySessionId, type Order } from '../api/orders';
 
 interface ConfirmResponse {
   success: boolean;
@@ -59,9 +41,8 @@ export default function Success() {
         setError('Failed to confirm your payment. Please contact support.');
       })
       .finally(() => {
-        // Then fetch order details
-        fetch(`${import.meta.env.VITE_API_URL}/orders/by-session/${session_id}`)
-          .then((res) => res.json())
+        // Then fetch order details from Supabase via frontend API
+        getOrderBySessionId(session_id)
           .then((data) => setOrder(data))
           .catch((err) => {
             console.error('Error loading order:', err);
@@ -123,16 +104,16 @@ export default function Success() {
           <div className="bg-white shadow-sm rounded-lg p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
-            {order.users?.name && (
+            {order.user?.name && (
               <p className="text-gray-700 mb-3">
-                <span className="font-semibold">Name:</span> {order.users.name}
+                <span className="font-semibold">Name:</span> {order.user.name}
               </p>
             )}
 
-            {order.bake_days?.date && (
+            {order.bake_days?.[0]?.date && (
               <p className="text-gray-700 mb-3">
                 <span className="font-semibold">Bake Day:</span>{' '}
-                {new Date(order.bake_days.date).toLocaleDateString('en-US', {
+                {new Date(order.bake_days[0].date).toLocaleDateString('en-US', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -145,12 +126,12 @@ export default function Success() {
 
             <h3 className="font-semibold mb-3">Items</h3>
             <div className="space-y-3 mb-4">
-              {order.order_items.map((item) => (
+              {(order.order_items ?? []).map((item) => (
                 <div key={item.id} className="flex items-center gap-3 text-sm">
                   <span className="font-medium">{item.quantity}×</span>
-                  <span className="flex-1">{item.product.name}</span>
+                  <span className="flex-1">{item.product?.name}</span>
                   <span className="text-gray-600">
-                    ${((item.item_price * item.quantity) / 100).toFixed(2)}
+                    ${(((item.item_price ?? 0) * item.quantity) / 100).toFixed(2)}
                   </span>
                 </div>
               ))}
@@ -159,7 +140,7 @@ export default function Success() {
             <div className="border-t pt-4">
               <p className="text-lg">
                 <span className="font-semibold">Total:</span> $
-                {(order.total_price / 100).toFixed(2)}
+                {((order.total_price ?? 0) / 100).toFixed(2)}
               </p>
             </div>
 

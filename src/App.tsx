@@ -12,6 +12,11 @@ import Success from './pages/Success';
 import ProductDetail from './pages/ProductDetail';
 import Login from './pages/Login';
 import AdminRoute from './routes/AdminRoute';
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminHome from './pages/admin/AdminHome';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminAccounts from './pages/admin/AdminAccounts';
+import AdminBakeDays from './pages/admin/AdminBakeDays';
 import { useEffect } from 'react';
 
 export default function App() {
@@ -34,13 +39,19 @@ export default function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/login" element={<Login />} />
         <Route
-          path="/admin/orders"
+          path="/admin"
           element={
             <AdminRoute>
-              <AdminOrders />
+              <AdminLayout />
             </AdminRoute>
           }
-        />
+        >
+          <Route index element={<AdminHome />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="accounts" element={<AdminAccounts />} />
+          <Route path="bake-days" element={<AdminBakeDays />} />
+        </Route>
         <Route path="/success" element={<Success />} />
         <Route path="/product/:id" element={<ProductDetail />} />
       </Routes>

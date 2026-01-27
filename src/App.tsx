@@ -17,6 +17,7 @@ import AdminHome from './pages/admin/AdminHome';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminAccounts from './pages/admin/AdminAccounts';
 import AdminBakeDays from './pages/admin/AdminBakeDays';
+import AdminBakeDayDetail from './pages/admin/AdminBakeDayDetail.tsx';
 import { useEffect } from 'react';
 
 export default function App() {
@@ -51,6 +52,7 @@ export default function App() {
           <Route path="orders" element={<AdminOrders />} />
           <Route path="accounts" element={<AdminAccounts />} />
           <Route path="bake-days" element={<AdminBakeDays />} />
+          <Route path="bake-days/:bakeDayId" element={<AdminBakeDayDetail />} />
         </Route>
         <Route path="/success" element={<Success />} />
         <Route path="/product/:id" element={<ProductDetail />} />

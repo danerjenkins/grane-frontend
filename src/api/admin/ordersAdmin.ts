@@ -226,6 +226,25 @@ export async function removeOrderItem(id: string): Promise<void> {
   }
 }
 
+/**
+ * Delete an order and its items (no DB cascade assumed)
+ */
+export async function deleteOrderWithItems(orderId: string): Promise<void> {
+  // Delete items first
+  const { error: itemsError } = await supabase.from('order_items').delete().eq('order_id', orderId);
+
+  if (itemsError) {
+    throw new Error(`Failed to delete order items: ${itemsError.message}`);
+  }
+
+  // Delete order
+  const { error: orderError } = await supabase.from('orders').delete().eq('id', orderId);
+
+  if (orderError) {
+    throw new Error(`Failed to delete order: ${orderError.message}`);
+  }
+}
+
 export default {
   listOrders,
   getOrderById,
@@ -237,4 +256,5 @@ export default {
   createOrderItem,
   updateOrderItem,
   removeOrderItem,
+  deleteOrderWithItems,
 };

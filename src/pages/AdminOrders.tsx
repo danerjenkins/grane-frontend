@@ -6,6 +6,7 @@ import {
   createOrderItem,
   updateOrderItem,
   removeOrderItem,
+  deleteOrderWithItems,
 } from '../api/admin/ordersAdmin';
 import { listBakeDays } from '../api/admin/bakeDaysAdmin';
 import { listProducts } from '../api/admin/productsAdmin';
@@ -68,6 +69,7 @@ export default function AdminOrders() {
   });
   const [orderSaving, setOrderSaving] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
+  const [pageSuccess, setPageSuccess] = useState<string | null>(null);
   const [itemModalMode, setItemModalMode] = useState<'add' | 'edit' | null>(null);
   const [editingItem, setEditingItem] = useState<OrderItem | null>(null);
   const [itemForm, setItemForm] = useState<ItemForm>({
@@ -77,6 +79,9 @@ export default function AdminOrders() {
   });
   const [itemSaving, setItemSaving] = useState(false);
   const [itemError, setItemError] = useState<string | null>(null);
+  const [deleteAck, setDeleteAck] = useState(false);
+  const [deleteInput, setDeleteInput] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -217,6 +222,9 @@ export default function AdminOrders() {
   const closeDetails = () => {
     setSelectedOrderId(null);
     setSelectedOrder(null);
+    setDeleteAck(false);
+    setDeleteInput('');
+    setDeleteLoading(false);
   };
 
   const formatMoney = (value: number | null | undefined) => {
@@ -241,6 +249,15 @@ export default function AdminOrders() {
     const fresh = await getOrderWithItems(orderId);
     setSelectedOrder(fresh);
     setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, ...fresh } : o)));
+  };
+
+  const refreshOrdersList = async () => {
+    try {
+      const data = await listOrdersWithItems();
+      setOrders(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to refresh orders');
+    }
   };
 
   const isOrderDirty = useMemo(() => {
@@ -397,9 +414,46 @@ export default function AdminOrders() {
     }
   };
 
+  const paidLike = (selectedOrder?.stripe_status || '').toLowerCase();
+  const requiresFullId = ['paid', 'succeeded', 'complete'].some((token) =>
+    paidLike.includes(token)
+  );
+  const requiredDeleteToken = selectedOrder
+    ? requiresFullId
+      ? selectedOrder.id
+      : shortId(selectedOrder.id)
+    : '';
+
+  const handleDeleteOrder = async () => {
+    if (!selectedOrder) return;
+    if (!deleteAck || deleteInput.trim() !== requiredDeleteToken) return;
+    const confirm = window.confirm('Delete this order permanently?');
+    if (!confirm) return;
+
+    setDeleteLoading(true);
+    setError(null);
+    try {
+      await deleteOrderWithItems(selectedOrder.id);
+      closeDetails();
+      await refreshOrdersList();
+      setPageSuccess('Order deleted.');
+      setTimeout(() => setPageSuccess(null), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete order');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-neutral-50 px-6 py-10">
       <div className="max-w-7xl mx-auto space-y-6">
+        {pageSuccess && (
+          <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg">
+            {pageSuccess}
+          </div>
+        )}
+
         {/* Error banner */}
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-lg">
@@ -865,6 +919,61 @@ export default function AdminOrders() {
                     {orderSaving ? 'Saving...' : 'Save changes'}
                   </button>
                 </div>
+
+                {/* Danger Zone */}
+                <section className="space-y-3">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-red-800">Danger Zone</h3>
+                    <p className="text-sm text-red-700 mt-1">
+                      Deleting an order removes the order and all its items. This cannot be undone.
+                    </p>
+                    {requiresFullId && (
+                      <p className="text-xs text-red-700 mt-1">
+                        Warning: Stripe indicates this order is paid. Type the full order id to
+                        confirm.
+                      </p>
+                    )}
+
+                    <div className="mt-3 space-y-3">
+                      <label className="flex items-center gap-2 text-sm text-red-800">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 text-red-600 border-red-300 rounded"
+                          checked={deleteAck}
+                          onChange={(e) => setDeleteAck(e.target.checked)}
+                        />
+                        I understand this is permanent
+                      </label>
+
+                      <div className="space-y-1">
+                        <label className="text-sm text-red-800">
+                          Type{' '}
+                          <span className="font-mono">{requiredDeleteToken || 'order id'}</span> to
+                          confirm
+                        </label>
+                        <input
+                          type="text"
+                          value={deleteInput}
+                          onChange={(e) => setDeleteInput(e.target.value)}
+                          className="w-full px-3 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                        />
+                      </div>
+
+                      <button
+                        onClick={handleDeleteOrder}
+                        disabled={
+                          deleteLoading ||
+                          !deleteAck ||
+                          !requiredDeleteToken ||
+                          deleteInput.trim() !== requiredDeleteToken
+                        }
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {deleteLoading ? 'Deleting...' : 'Delete Order'}
+                      </button>
+                    </div>
+                  </div>
+                </section>
               </div>
             ) : (
               <div className="p-6 text-neutral-600">Details coming next step.</div>

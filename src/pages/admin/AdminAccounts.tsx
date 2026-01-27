@@ -7,7 +7,11 @@ import {
   countUserOrders,
   createUser,
 } from '../../api/admin/usersAdmin';
-import { grantAdminRole, revokeAdminRole } from '../../api/admin/userRolesAdmin';
+import {
+  grantAdminRole,
+  revokeAdminRole,
+  getUserRolesByUserId,
+} from '../../api/admin/userRolesAdmin';
 import { getSession } from '../../api/auth';
 import type { UserRow } from '../../api/admin/types';
 
@@ -47,6 +51,8 @@ export default function AdminAccounts() {
 
   // Admin role state
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userRoles, setUserRoles] = useState<string[]>([]); // Track all roles from user_roles table
+  const [userRolesMap, setUserRolesMap] = useState<Record<string, string[]>>({}); // Map of user ID to roles for table display
   const [adminToggling, setAdminToggling] = useState(false);
 
   // Delete profile state
@@ -96,6 +102,7 @@ export default function AdminAccounts() {
     setEditPhone('');
     setProfileDirty(false);
     setIsAdmin(false);
+    setUserRoles([]);
   };
 
   const loadUsers = async () => {
@@ -104,6 +111,19 @@ export default function AdminAccounts() {
       setError(null);
       const data = await listUsers();
       setUsers(data);
+
+      // Fetch roles for each user to display admin status in table
+      const rolesMap: Record<string, string[]> = {};
+      for (const user of data) {
+        try {
+          const roles = await getUserRolesByUserId(user.id);
+          rolesMap[user.id] = roles.map((role) => role.role);
+        } catch (err) {
+          console.error(`Failed to load roles for user ${user.id}:`, err);
+          rolesMap[user.id] = [];
+        }
+      }
+      setUserRolesMap(rolesMap);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load users');
     } finally {
@@ -122,8 +142,11 @@ export default function AdminAccounts() {
       setEditPhone(user.phone || '');
       setProfileDirty(false);
 
-      // Check admin status from both users.is_admin and user_roles
-      const isUserAdmin = user.is_admin === true;
+      // Fetch all roles from user_roles table
+      const roles = await getUserRolesByUserId(userId);
+      const roleNames = roles.map((role) => role.role);
+      setUserRoles(roleNames);
+      const isUserAdmin = roleNames.includes('admin');
       setIsAdmin(isUserAdmin);
 
       // Load linked order count
@@ -266,7 +289,6 @@ export default function AdminAccounts() {
         email: createForm.email.trim(),
         name: createForm.name.trim() || null,
         phone: createForm.phone.trim() || null,
-        is_admin: false,
       });
       // Clear form and close modal
       setCreateForm({ name: '', email: '', phone: '' });
@@ -338,7 +360,7 @@ export default function AdminAccounts() {
                       Phone
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
-                      Admin
+                      Roles
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                       Created
@@ -364,10 +386,21 @@ export default function AdminAccounts() {
                       <td className="px-6 py-4 text-sm text-neutral-700">{user.email || '—'}</td>
                       <td className="px-6 py-4 text-sm text-neutral-700">{user.phone || '—'}</td>
                       <td className="px-6 py-4">
-                        {user.is_admin ? (
-                          <span className="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800">
-                            Admin
-                          </span>
+                        {(userRolesMap[user.id] || []).length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {(userRolesMap[user.id] || []).map((role) => (
+                              <span
+                                key={role}
+                                className={`px-2 py-1 text-xs font-semibold rounded ${
+                                  role === 'admin'
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-neutral-100 text-neutral-800'
+                                }`}
+                              >
+                                {role}
+                              </span>
+                            ))}
+                          </div>
                         ) : (
                           <span className="text-sm text-neutral-500">—</span>
                         )}
@@ -543,6 +576,27 @@ export default function AdminAccounts() {
                     {adminToggling && (
                       <p className="text-xs text-neutral-600">Updating admin access...</p>
                     )}
+                  </div>
+
+                  {/* Roles Section */}
+                  <div className="bg-neutral-50 rounded-lg p-4 space-y-3">
+                    <h3 className="text-lg font-semibold text-neutral-900">Roles</h3>
+                    <div className="space-y-2">
+                      {userRoles.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {userRoles.map((role) => (
+                            <span
+                              key={role}
+                              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+                            >
+                              {role}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-neutral-600">No roles assigned</p>
+                      )}
+                    </div>
                   </div>
 
                   {/* Danger Zone Section */}

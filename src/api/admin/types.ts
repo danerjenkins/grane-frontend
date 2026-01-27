@@ -44,7 +44,6 @@ export interface UserRow {
   name: string | null;
   phone: string | null;
   email: string | null;
-  is_admin: boolean | null;
   created_at: string;
 }
 

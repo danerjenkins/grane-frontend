@@ -117,20 +117,6 @@ export default function AdminHome() {
                     {currentUser.phone || '—'}
                   </p>
                 </div>
-                <div>
-                  <p className="text-sm text-neutral-500">Admin Status</p>
-                  <p className="text-lg font-semibold">
-                    {currentUser.is_admin ? (
-                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm inline-block">
-                        ✓ Admin
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 bg-neutral-200 text-neutral-800 rounded text-sm inline-block">
-                        User
-                      </span>
-                    )}
-                  </p>
-                </div>
               </div>
             </div>
           ) : (

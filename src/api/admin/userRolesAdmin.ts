@@ -3,6 +3,8 @@ import type { UserRole } from './types';
 
 /**
  * User Roles CRUD operations
+ * NOTE: user_roles table is the ONLY source of truth for admin verification
+ * The is_admin() RPC function queries this table to determine admin status
  */
 
 export async function listUserRoles(): Promise<UserRole[]> {
@@ -43,29 +45,10 @@ export async function getUserRolesByUserId(userId: string): Promise<UserRole[]> 
 
 /**
  * Grant admin role to a user
- * Updates both users.is_admin and upserts user_roles
+ * ONLY modifies user_roles table - this is the source of truth for admin status
  */
 export async function grantAdminRole(userId: string): Promise<void> {
-  // First, update the is_admin flag on the user
-  const { error: updateError } = await supabase
-    .from('users')
-    .update({ is_admin: true })
-    .eq('id', userId);
-
-  if (updateError) {
-    const isRLSError =
-      updateError.message?.toLowerCase().includes('row-level security') ||
-      updateError.code === 'PGRST301' ||
-      updateError.message?.toLowerCase().includes('permission denied') ||
-      updateError.code === '42501';
-
-    if (isRLSError) {
-      throw new Error('Access denied: You may not have admin permissions to grant admin access.');
-    }
-    throw new Error(`Failed to grant admin role: ${updateError.message}`);
-  }
-
-  // Then, insert the admin role into user_roles (ignore if already exists)
+  // Insert the admin role into user_roles (ignore if already exists)
   const { error: insertError } = await supabase.from('user_roles').insert({
     user_id: userId,
     role: 'admin',
@@ -82,35 +65,16 @@ export async function grantAdminRole(userId: string): Promise<void> {
     if (isRLSError) {
       throw new Error('Access denied: You may not have permissions to modify user roles.');
     }
-    throw new Error(`Failed to insert admin role: ${insertError.message}`);
+    throw new Error(`Failed to grant admin role: ${insertError.message}`);
   }
 }
 
 /**
  * Revoke admin role from a user
- * Updates both users.is_admin and deletes from user_roles
+ * ONLY deletes from user_roles table - this is the source of truth for admin status
  */
 export async function revokeAdminRole(userId: string): Promise<void> {
-  // First, update the is_admin flag on the user
-  const { error: updateError } = await supabase
-    .from('users')
-    .update({ is_admin: false })
-    .eq('id', userId);
-
-  if (updateError) {
-    const isRLSError =
-      updateError.message?.toLowerCase().includes('row-level security') ||
-      updateError.code === 'PGRST301' ||
-      updateError.message?.toLowerCase().includes('permission denied') ||
-      updateError.code === '42501';
-
-    if (isRLSError) {
-      throw new Error('Access denied: You may not have admin permissions to revoke admin access.');
-    }
-    throw new Error(`Failed to revoke admin role: ${updateError.message}`);
-  }
-
-  // Then, delete the admin role from user_roles
+  // Delete the admin role from user_roles
   const { error: deleteError } = await supabase
     .from('user_roles')
     .delete()

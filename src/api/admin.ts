@@ -1,33 +1,24 @@
 import { supabase } from './supabaseClient';
 
+/**
+ * Check if the current user is an admin
+ * Uses RPC function is_admin() which queries user_roles table
+ * This is the ONLY source of truth for admin verification
+ */
 export async function isAdmin(): Promise<boolean> {
   try {
-    // Get the current authenticated user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return false;
-    }
-
-    // Check if user has admin role in user_roles table
-    const { data, error } = await supabase
-      .from('user_roles')
-      .select('user_id')
-      .eq('user_id', user.id)
-      .eq('role', 'admin')
-      .maybeSingle();
+    // Call the SECURITY DEFINER function is_admin() which checks user_roles
+    const { data, error } = await supabase.rpc('is_admin');
 
     if (error) {
-      throw new Error(error.message);
+      console.error('Failed to check admin status:', error);
+      return false; // Default to non-admin on error for safety
     }
 
-    return !!data;
+    return data === true;
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Failed to check admin status';
-    throw new Error(message);
+    console.error('Exception checking admin status:', err);
+    return false; // Default to non-admin on error for safety
   }
 }
 

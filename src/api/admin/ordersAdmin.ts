@@ -1,5 +1,5 @@
 import { supabase } from '../supabaseClient';
-import type { Order, OrderWithItems } from './types';
+import type { Order, OrderItem, OrderWithItems } from './types';
 
 /**
  * Orders CRUD operations
@@ -178,6 +178,54 @@ export async function getOrderWithItems(id: string): Promise<OrderWithItems> {
   return data as unknown as OrderWithItems;
 }
 
+// ---------------- ORDER ITEMS CRUD ----------------
+
+export async function createOrderItem(
+  payload: Pick<OrderItem, 'order_id' | 'product_id' | 'quantity' | 'item_price'>
+): Promise<OrderItem> {
+  const { data, error } = await supabase.from('order_items').insert([payload]).select().single();
+
+  if (error) {
+    throw new Error(`Failed to create order item: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error('Order item creation returned no data');
+  }
+
+  return data;
+}
+
+export async function updateOrderItem(
+  id: string,
+  patch: Partial<Pick<OrderItem, 'product_id' | 'quantity' | 'item_price'>>
+): Promise<OrderItem> {
+  const { data, error } = await supabase
+    .from('order_items')
+    .update(patch)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to update order item: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error('Order item update returned no data');
+  }
+
+  return data;
+}
+
+export async function removeOrderItem(id: string): Promise<void> {
+  const { error } = await supabase.from('order_items').delete().eq('id', id);
+
+  if (error) {
+    throw new Error(`Failed to delete order item: ${error.message}`);
+  }
+}
+
 export default {
   listOrders,
   getOrderById,
@@ -186,4 +234,7 @@ export default {
   removeOrder,
   listOrdersWithItems,
   getOrderWithItems,
+  createOrderItem,
+  updateOrderItem,
+  removeOrderItem,
 };

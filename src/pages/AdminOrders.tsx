@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { listOrdersWithItems, getOrderWithItems } from '../api/admin/ordersAdmin';
+import {
+  listOrdersWithItems,
+  getOrderWithItems,
+  updateOrder,
+  createOrderItem,
+  updateOrderItem,
+  removeOrderItem,
+} from '../api/admin/ordersAdmin';
 import { listBakeDays } from '../api/admin/bakeDaysAdmin';
-import type { BakeDay, OrderWithItems } from '../api/admin/types';
+import { listProducts } from '../api/admin/productsAdmin';
+import type { BakeDay, OrderItem, OrderWithItems, Product } from '../api/admin/types';
 
 type SortDir = 'asc' | 'desc';
 type DateFilter = '7d' | '30d' | 'all';
@@ -12,6 +20,23 @@ interface Filters {
   stripeStatus: string;
   bakeDayId: string;
   dateRange: DateFilter;
+}
+
+interface OrderForm {
+  status: string;
+  stripe_status: string;
+  customer_note: string;
+  bake_day_id: string;
+  total_price: string;
+  price_with_tax: string;
+  stripe_session_id: string;
+  stripeUnlocked: boolean;
+}
+
+interface ItemForm {
+  product_id: string;
+  quantity: string;
+  item_price: string;
 }
 
 export default function AdminOrders() {
@@ -30,6 +55,28 @@ export default function AdminOrders() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [orderForm, setOrderForm] = useState<OrderForm>({
+    status: '',
+    stripe_status: '',
+    customer_note: '',
+    bake_day_id: '',
+    total_price: '',
+    price_with_tax: '',
+    stripe_session_id: '',
+    stripeUnlocked: false,
+  });
+  const [orderSaving, setOrderSaving] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
+  const [itemModalMode, setItemModalMode] = useState<'add' | 'edit' | null>(null);
+  const [editingItem, setEditingItem] = useState<OrderItem | null>(null);
+  const [itemForm, setItemForm] = useState<ItemForm>({
+    product_id: '',
+    quantity: '1',
+    item_price: '',
+  });
+  const [itemSaving, setItemSaving] = useState(false);
+  const [itemError, setItemError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -55,6 +102,43 @@ export default function AdminOrders() {
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadProducts = async () => {
+      try {
+        const data = await listProducts();
+        if (!active) return;
+        setProducts(data);
+      } catch (err) {
+        if (!active) return;
+        setError(err instanceof Error ? err.message : 'Failed to load products');
+      }
+    };
+
+    loadProducts();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedOrder) return;
+
+    setOrderSuccess(null);
+    setOrderForm({
+      status: selectedOrder.status ?? '',
+      stripe_status: selectedOrder.stripe_status ?? '',
+      customer_note: selectedOrder.customer_note ?? '',
+      bake_day_id: selectedOrder.bake_day_id ?? '',
+      total_price: selectedOrder.total_price != null ? selectedOrder.total_price.toString() : '',
+      price_with_tax:
+        selectedOrder.price_with_tax != null ? selectedOrder.price_with_tax.toString() : '',
+      stripe_session_id: selectedOrder.stripe_session_id ?? '',
+      stripeUnlocked: false,
+    });
+  }, [selectedOrder]);
 
   const filtered = useMemo(() => {
     const now = new Date();
@@ -145,6 +229,172 @@ export default function AdminOrders() {
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return isNaN(date.getTime()) ? '—' : date.toLocaleDateString();
+  };
+
+  const parseNullableNumber = (value: string) => {
+    if (value.trim() === '') return null;
+    const parsed = Number(value);
+    return Number.isNaN(parsed) ? null : parsed;
+  };
+
+  const refreshOrderDetails = async (orderId: string) => {
+    const fresh = await getOrderWithItems(orderId);
+    setSelectedOrder(fresh);
+    setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, ...fresh } : o)));
+  };
+
+  const isOrderDirty = useMemo(() => {
+    if (!selectedOrder) return false;
+
+    const fields: Array<keyof OrderForm> = [
+      'status',
+      'stripe_status',
+      'customer_note',
+      'bake_day_id',
+      'total_price',
+      'price_with_tax',
+      'stripe_session_id',
+    ];
+
+    return fields.some((field) => {
+      if (field === 'stripe_session_id' && !orderForm.stripeUnlocked) return false;
+
+      const current = orderForm[field] ?? '';
+      const originalValue = (() => {
+        switch (field) {
+          case 'total_price':
+            return selectedOrder.total_price != null ? selectedOrder.total_price.toString() : '';
+          case 'price_with_tax':
+            return selectedOrder.price_with_tax != null
+              ? selectedOrder.price_with_tax.toString()
+              : '';
+          case 'bake_day_id':
+            return selectedOrder.bake_day_id ?? '';
+          case 'customer_note':
+            return selectedOrder.customer_note ?? '';
+          case 'stripe_session_id':
+            return selectedOrder.stripe_session_id ?? '';
+          case 'status':
+            return selectedOrder.status ?? '';
+          case 'stripe_status':
+            return selectedOrder.stripe_status ?? '';
+          default:
+            return '';
+        }
+      })();
+
+      return current !== (originalValue ?? '');
+    });
+  }, [orderForm, selectedOrder]);
+
+  const handleSaveOrder = async () => {
+    if (!selectedOrder) return;
+    setOrderSaving(true);
+    setError(null);
+    try {
+      const payload = {
+        status: orderForm.status.trim() || null,
+        stripe_status: orderForm.stripe_status.trim() || null,
+        customer_note: orderForm.customer_note.trim() || null,
+        bake_day_id: orderForm.bake_day_id || null,
+        total_price: parseNullableNumber(orderForm.total_price),
+        price_with_tax: parseNullableNumber(orderForm.price_with_tax),
+        stripe_session_id: orderForm.stripeUnlocked
+          ? orderForm.stripe_session_id.trim() || null
+          : (selectedOrder.stripe_session_id ?? null),
+      };
+
+      const updated = await updateOrder(selectedOrder.id, payload);
+      setOrderSuccess('Saved changes');
+      setTimeout(() => setOrderSuccess(null), 2500);
+      // Keep list in sync
+      setOrders((prev) => prev.map((o) => (o.id === updated.id ? { ...o, ...updated } : o)));
+      // Refresh details to pick up nested relations
+      await refreshOrderDetails(selectedOrder.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save order');
+    } finally {
+      setOrderSaving(false);
+    }
+  };
+
+  const openAddItem = () => {
+    setItemError(null);
+    setEditingItem(null);
+    setItemForm({
+      product_id: products[0]?.id ?? '',
+      quantity: '1',
+      item_price: products[0]?.price != null ? products[0].price.toString() : '',
+    });
+    setItemModalMode('add');
+  };
+
+  const openEditItem = (item: OrderItem) => {
+    setItemError(null);
+    setEditingItem(item);
+    setItemForm({
+      product_id: item.product_id,
+      quantity: item.quantity.toString(),
+      item_price: item.item_price != null ? item.item_price.toString() : '',
+    });
+    setItemModalMode('edit');
+  };
+
+  const closeItemModal = () => {
+    setItemModalMode(null);
+    setEditingItem(null);
+  };
+
+  const handleSaveItem = async () => {
+    if (!selectedOrder) return;
+    if (!itemForm.product_id) {
+      setItemError('Product is required');
+      return;
+    }
+    const quantity = parseInt(itemForm.quantity, 10);
+    const itemPrice = parseNullableNumber(itemForm.item_price);
+    if (Number.isNaN(quantity) || quantity <= 0) {
+      setItemError('Quantity must be greater than 0');
+      return;
+    }
+
+    setItemSaving(true);
+    setItemError(null);
+    try {
+      if (itemModalMode === 'add') {
+        await createOrderItem({
+          order_id: selectedOrder.id,
+          product_id: itemForm.product_id,
+          quantity,
+          item_price: itemPrice,
+        });
+      } else if (itemModalMode === 'edit' && editingItem) {
+        await updateOrderItem(editingItem.id, {
+          product_id: itemForm.product_id,
+          quantity,
+          item_price: itemPrice,
+        });
+      }
+
+      await refreshOrderDetails(selectedOrder.id);
+      closeItemModal();
+    } catch (err) {
+      setItemError(err instanceof Error ? err.message : 'Failed to save item');
+    } finally {
+      setItemSaving(false);
+    }
+  };
+
+  const handleDeleteItem = async (item: OrderItem) => {
+    if (!selectedOrder) return;
+    const confirm = window.confirm('Delete this item?');
+    if (!confirm) return;
+    try {
+      await removeOrderItem(item.id);
+      await refreshOrderDetails(selectedOrder.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete item');
+    }
   };
 
   return (
@@ -366,45 +616,346 @@ export default function AdminOrders() {
             {detailsLoading ? (
               <div className="p-6 text-neutral-600">Loading details...</div>
             ) : selectedOrder ? (
-              <div className="p-6 space-y-4">
-                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                  <p className="text-sm text-neutral-500">Created</p>
-                  <p className="text-lg font-semibold text-neutral-900">
-                    {formatDate(selectedOrder.created_at)}
-                  </p>
+              <div className="p-6 space-y-5">
+                {orderSuccess && (
+                  <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg">
+                    {orderSuccess}
+                  </div>
+                )}
+
+                {/* Summary */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
+                    <p className="text-sm text-neutral-500">Created</p>
+                    <p className="text-lg font-semibold text-neutral-900">
+                      {formatDate(selectedOrder.created_at)}
+                    </p>
+                  </div>
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
+                    <p className="text-sm text-neutral-500">User</p>
+                    <p className="text-sm text-neutral-800 break-all">
+                      {selectedOrder.user?.id ?? selectedOrder.user_id}
+                    </p>
+                    {selectedOrder.user?.name && (
+                      <p className="text-xs text-neutral-600">{selectedOrder.user.name}</p>
+                    )}
+                  </div>
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
+                    <p className="text-sm text-neutral-500">Stripe</p>
+                    <Badge tone={selectedOrder.stripe_status === 'paid' ? 'green' : 'blue'}>
+                      {selectedOrder.stripe_status ?? '—'}
+                    </Badge>
+                  </div>
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
+                    <p className="text-sm text-neutral-500">Status</p>
+                    <Badge tone={selectedOrder.status === 'completed' ? 'green' : 'amber'}>
+                      {selectedOrder.status ?? '—'}
+                    </Badge>
+                  </div>
                 </div>
-                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                  <p className="text-sm text-neutral-500">Total</p>
-                  <p className="text-lg font-semibold text-neutral-900">
-                    {formatMoney(selectedOrder.price_with_tax ?? selectedOrder.total_price)}
-                  </p>
-                </div>
-                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                  <p className="text-sm text-neutral-500">Status</p>
-                  <Badge tone={selectedOrder.status === 'completed' ? 'green' : 'amber'}>
-                    {selectedOrder.status ?? '—'}
-                  </Badge>
-                </div>
-                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                  <p className="text-sm text-neutral-500">Stripe</p>
-                  <Badge tone={selectedOrder.stripe_status === 'paid' ? 'green' : 'blue'}>
-                    {selectedOrder.stripe_status ?? '—'}
-                  </Badge>
-                </div>
-                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                  <p className="text-sm text-neutral-500">Customer note</p>
-                  <p className="text-neutral-800 whitespace-pre-wrap">
-                    {selectedOrder.customer_note || '—'}
-                  </p>
-                </div>
-                <div className="bg-white border border-neutral-200 rounded-lg p-4">
-                  <p className="text-sm text-neutral-500 mb-2">Items</p>
-                  <p className="text-neutral-600 text-sm">Details coming next step.</p>
+
+                {/* Scheduling */}
+                <section className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-neutral-900">Scheduling</h3>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm text-neutral-700">Bake day</label>
+                    <select
+                      value={orderForm.bake_day_id}
+                      onChange={(e) => setOrderForm((f) => ({ ...f, bake_day_id: e.target.value }))}
+                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Unset</option>
+                      {bakeDays.map((bd) => (
+                        <option key={bd.id} value={bd.id}>
+                          {bd.date}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </section>
+
+                {/* Statuses */}
+                <section className="space-y-2">
+                  <h3 className="text-lg font-semibold text-neutral-900">Statuses</h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-sm text-neutral-700">Status</label>
+                      <input
+                        value={orderForm.status}
+                        onChange={(e) => setOrderForm((f) => ({ ...f, status: e.target.value }))}
+                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-sm text-neutral-700">Stripe status</label>
+                      <input
+                        value={orderForm.stripe_status}
+                        onChange={(e) =>
+                          setOrderForm((f) => ({ ...f, stripe_status: e.target.value }))
+                        }
+                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                {/* Pricing */}
+                <section className="space-y-2">
+                  <h3 className="text-lg font-semibold text-neutral-900">Pricing</h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-sm text-neutral-700">Total price</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={orderForm.total_price}
+                        onChange={(e) =>
+                          setOrderForm((f) => ({ ...f, total_price: e.target.value }))
+                        }
+                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-sm text-neutral-700">Price with tax</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={orderForm.price_with_tax}
+                        onChange={(e) =>
+                          setOrderForm((f) => ({ ...f, price_with_tax: e.target.value }))
+                        }
+                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm text-neutral-700">Stripe session ID</label>
+                        <label className="flex items-center gap-2 text-xs text-neutral-600">
+                          <input
+                            type="checkbox"
+                            checked={orderForm.stripeUnlocked}
+                            onChange={(e) =>
+                              setOrderForm((f) => ({ ...f, stripeUnlocked: e.target.checked }))
+                            }
+                            className="w-4 h-4 text-blue-600 border-neutral-300 rounded"
+                          />
+                          Unlock edit
+                        </label>
+                      </div>
+                      <input
+                        type="text"
+                        value={orderForm.stripe_session_id}
+                        onChange={(e) =>
+                          setOrderForm((f) => ({ ...f, stripe_session_id: e.target.value }))
+                        }
+                        disabled={!orderForm.stripeUnlocked}
+                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-neutral-100"
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                {/* Notes */}
+                <section className="space-y-2">
+                  <h3 className="text-lg font-semibold text-neutral-900">Notes</h3>
+                  <textarea
+                    value={orderForm.customer_note}
+                    onChange={(e) => setOrderForm((f) => ({ ...f, customer_note: e.target.value }))}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </section>
+
+                {/* Items */}
+                <section className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-neutral-900">Items</h3>
+                    <button
+                      onClick={openAddItem}
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      + Add item
+                    </button>
+                  </div>
+
+                  {itemError && (
+                    <div className="bg-red-100 border border-red-400 text-red-800 px-3 py-2 rounded-lg text-sm">
+                      {itemError}
+                    </div>
+                  )}
+
+                  <div className="bg-white border border-neutral-200 rounded-lg overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead className="bg-neutral-100 border-b border-neutral-200">
+                        <tr>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                            Product
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                            Qty
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                            Item price
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                            Line total
+                          </th>
+                          <th className="px-3 py-2 text-right text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-neutral-200">
+                        {(selectedOrder.order_items ?? []).map((item) => {
+                          const product =
+                            item.product ?? products.find((p) => p.id === item.product_id);
+                          const lineTotal =
+                            item.item_price != null
+                              ? (item.item_price * item.quantity).toFixed(2)
+                              : '—';
+                          return (
+                            <tr key={item.id}>
+                              <td className="px-3 py-2 text-neutral-900">
+                                {product?.name ?? 'Unknown'}
+                              </td>
+                              <td className="px-3 py-2 text-neutral-900">{item.quantity}</td>
+                              <td className="px-3 py-2 text-neutral-900">
+                                {item.item_price != null ? `$${item.item_price.toFixed(2)}` : '—'}
+                              </td>
+                              <td className="px-3 py-2 text-neutral-900">
+                                {lineTotal === '—' ? '—' : `$${lineTotal}`}
+                              </td>
+                              <td className="px-3 py-2 text-right space-x-2">
+                                <button
+                                  className="text-blue-600 hover:text-blue-800 text-sm"
+                                  onClick={() => openEditItem(item)}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  className="text-red-600 hover:text-red-800 text-sm"
+                                  onClick={() => handleDeleteItem(item)}
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {(selectedOrder.order_items ?? []).length === 0 && (
+                          <tr>
+                            <td className="px-3 py-3 text-neutral-600" colSpan={5}>
+                              No items yet.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    onClick={handleSaveOrder}
+                    disabled={!isOrderDirty || orderSaving}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {orderSaving ? 'Saving...' : 'Save changes'}
+                  </button>
                 </div>
               </div>
             ) : (
               <div className="p-6 text-neutral-600">Details coming next step.</div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Item Modal */}
+      {itemModalMode && (
+        <div
+          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeItemModal();
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-lg">
+            <div className="p-4 border-b border-neutral-200 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-neutral-900">
+                {itemModalMode === 'add' ? 'Add item' : 'Edit item'}
+              </h3>
+              <button
+                onClick={closeItemModal}
+                className="text-neutral-600 hover:text-neutral-900 px-3 py-1 rounded-lg hover:bg-neutral-100"
+              >
+                Close
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div className="space-y-1">
+                <label className="text-sm text-neutral-700">Product</label>
+                <select
+                  value={itemForm.product_id}
+                  onChange={(e) => setItemForm((f) => ({ ...f, product_id: e.target.value }))}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select product</option>
+                  {products.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-sm text-neutral-700">Quantity</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={itemForm.quantity}
+                    onChange={(e) => setItemForm((f) => ({ ...f, quantity: e.target.value }))}
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm text-neutral-700">Item price</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={itemForm.item_price}
+                    onChange={(e) => setItemForm((f) => ({ ...f, item_price: e.target.value }))}
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              {itemError && (
+                <div className="bg-red-100 border border-red-400 text-red-800 px-3 py-2 rounded-lg text-sm">
+                  {itemError}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  onClick={closeItemModal}
+                  className="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-100"
+                  disabled={itemSaving}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveItem}
+                  disabled={itemSaving}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {itemSaving ? 'Saving...' : 'Save item'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -12,6 +12,16 @@ export async function listBakeDayProducts(): Promise<BakeDayProduct[]> {
     .order('bake_day_id', { ascending: false });
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied');
+
+    if (isRLSError) {
+      throw new Error(
+        'Access denied: You may not have admin permissions for bake day products. Please check your account permissions.'
+      );
+    }
     throw new Error(`Failed to list bake day products: ${error.message}`);
   }
 
@@ -46,6 +56,17 @@ export async function createBakeDayProduct(
     .single();
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied') ||
+      error.code === '42501';
+
+    if (isRLSError) {
+      throw new Error(
+        'Access denied: You may not have admin permissions to create bake day products.'
+      );
+    }
     throw new Error(`Failed to create bake day product: ${error.message}`);
   }
 
@@ -64,24 +85,55 @@ export async function updateBakeDayProduct(
     .from('bake_day_products')
     .update(patch)
     .eq('id', id)
-    .select()
-    .single();
+    .select();
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied') ||
+      error.code === '42501';
+
+    if (isRLSError) {
+      throw new Error(
+        'Access denied: You may not have admin permissions to update bake day products.'
+      );
+    }
+
+    // Handle "cannot coerce to single object" error which often indicates RLS blocking the update
+    if (error.message?.toLowerCase().includes('cannot coerce')) {
+      throw new Error(
+        'Access denied: Unable to update this bake day product. Please check your admin permissions.'
+      );
+    }
+
     throw new Error(`Failed to update bake day product: ${error.message}`);
   }
 
-  if (!data) {
-    throw new Error('Bake day product update returned no data');
+  if (!data || data.length === 0) {
+    throw new Error(
+      'Bake day product not found or access denied. The update may have been blocked by permissions.'
+    );
   }
 
-  return data;
+  return data[0];
 }
 
 export async function removeBakeDayProduct(id: string): Promise<void> {
   const { error } = await supabase.from('bake_day_products').delete().eq('id', id);
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied') ||
+      error.code === '42501';
+
+    if (isRLSError) {
+      throw new Error(
+        'Access denied: You may not have admin permissions to delete bake day products.'
+      );
+    }
     throw new Error(`Failed to delete bake day product: ${error.message}`);
   }
 }
@@ -114,6 +166,16 @@ export async function listBakeDayProductsWithProduct(): Promise<BakeDayProductWi
     .order('bake_day_id', { ascending: false });
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied');
+
+    if (isRLSError) {
+      throw new Error(
+        'Access denied: You may not have admin permissions to view bake day products with product details.'
+      );
+    }
     throw new Error(`Failed to list bake day products with product: ${error.message}`);
   }
 
@@ -151,6 +213,16 @@ export async function listBakeDayProductsByBakeDayId(
     .order('product_id', { ascending: true });
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied');
+
+    if (isRLSError) {
+      throw new Error(
+        'Access denied: You may not have admin permissions to view products for this bake day.'
+      );
+    }
     throw new Error(`Failed to list bake day products: ${error.message}`);
   }
 

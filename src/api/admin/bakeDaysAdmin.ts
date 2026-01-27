@@ -12,6 +12,16 @@ export async function listBakeDays(): Promise<BakeDay[]> {
     .order('date', { ascending: false });
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied');
+
+    if (isRLSError) {
+      throw new Error(
+        'Access denied: You may not have admin permissions for bake days. Please check your account permissions.'
+      );
+    }
     throw new Error(`Failed to list bake days: ${error.message}`);
   }
 
@@ -22,6 +32,14 @@ export async function getBakeDayById(id: string): Promise<BakeDay> {
   const { data, error } = await supabase.from('bake_days').select('*').eq('id', id).single();
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied');
+
+    if (isRLSError) {
+      throw new Error('Access denied: You may not have admin permissions for this bake day.');
+    }
     throw new Error(`Failed to get bake day: ${error.message}`);
   }
 
@@ -36,6 +54,15 @@ export async function createBakeDay(payload: Omit<BakeDay, 'id'>): Promise<BakeD
   const { data, error } = await supabase.from('bake_days').insert([payload]).select().single();
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied') ||
+      error.code === '42501';
+
+    if (isRLSError) {
+      throw new Error('Access denied: You may not have admin permissions to create bake days.');
+    }
     throw new Error(`Failed to create bake day: ${error.message}`);
   }
 
@@ -58,6 +85,15 @@ export async function updateBakeDay(
     .single();
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied') ||
+      error.code === '42501';
+
+    if (isRLSError) {
+      throw new Error('Access denied: You may not have admin permissions to update bake days.');
+    }
     throw new Error(`Failed to update bake day: ${error.message}`);
   }
 
@@ -72,6 +108,15 @@ export async function removeBakeDay(id: string): Promise<void> {
   const { error } = await supabase.from('bake_days').delete().eq('id', id);
 
   if (error) {
+    const isRLSError =
+      error.message?.toLowerCase().includes('row-level security') ||
+      error.code === 'PGRST301' ||
+      error.message?.toLowerCase().includes('permission denied') ||
+      error.code === '42501';
+
+    if (isRLSError) {
+      throw new Error('Access denied: You may not have admin permissions to delete bake days.');
+    }
     throw new Error(`Failed to delete bake day: ${error.message}`);
   }
 }

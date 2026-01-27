@@ -1,8 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import {
-  listOrdersWithItems,
-  getOrderWithItems,
-} from '../api/admin/ordersAdmin';
+import { listOrdersWithItems, getOrderWithItems } from '../api/admin/ordersAdmin';
 import { listBakeDays } from '../api/admin/bakeDaysAdmin';
 import type { BakeDay, OrderWithItems } from '../api/admin/types';
 
@@ -41,10 +38,7 @@ export default function AdminOrders() {
       try {
         setLoading(true);
         setError(null);
-        const [orderData, bakeDayData] = await Promise.all([
-          listOrdersWithItems(),
-          listBakeDays(),
-        ]);
+        const [orderData, bakeDayData] = await Promise.all([listOrdersWithItems(), listBakeDays()]);
         if (!active) return;
         setOrders(orderData);
         setBakeDays(bakeDayData);
@@ -220,7 +214,9 @@ export default function AdminOrders() {
 
             <select
               value={filters.dateRange}
-              onChange={(e) => setFilters((f) => ({ ...f, dateRange: e.target.value as DateFilter }))}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, dateRange: e.target.value as DateFilter }))
+              }
               className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All time</option>
@@ -249,7 +245,10 @@ export default function AdminOrders() {
               <table className="w-full">
                 <thead className="bg-neutral-100 border-b border-neutral-200">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider cursor-pointer" onClick={toggleSort}>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider cursor-pointer"
+                      onClick={toggleSort}
+                    >
                       Created {sortDir === 'desc' ? '↓' : '↑'}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
@@ -282,15 +281,28 @@ export default function AdminOrders() {
                       className="hover:bg-neutral-50 cursor-pointer"
                       onClick={() => openDetails(order.id)}
                     >
-                      <td className="px-4 py-3 text-sm text-neutral-900">{formatDate(order.created_at)}</td>
-                      <td className="px-4 py-3 text-sm font-mono text-neutral-800">{shortId(order.id)}</td>
+                      <td className="px-4 py-3 text-sm text-neutral-900">
+                        {formatDate(order.created_at)}
+                      </td>
+                      <td className="px-4 py-3 text-sm font-mono text-neutral-800">
+                        {shortId(order.id)}
+                      </td>
                       <td className="px-4 py-3 text-sm text-neutral-800">
-                        {order.bake_day_id ?
-                          bakeDays.find((b) => b.id === order.bake_day_id)?.date ?? shortId(order.bake_day_id) :
-                          '—'}
+                        {order.bake_day_id
+                          ? (bakeDays.find((b) => b.id === order.bake_day_id)?.date ??
+                            shortId(order.bake_day_id))
+                          : '—'}
                       </td>
                       <td className="px-4 py-3">
-                        <Badge tone={order.status === 'completed' ? 'green' : order.status === 'pending' ? 'amber' : 'gray'}>
+                        <Badge
+                          tone={
+                            order.status === 'completed'
+                              ? 'green'
+                              : order.status === 'pending'
+                                ? 'amber'
+                                : 'gray'
+                          }
+                        >
                           {order.status ?? '—'}
                         </Badge>
                       </td>
@@ -303,7 +315,11 @@ export default function AdminOrders() {
                         {formatMoney(order.price_with_tax ?? order.total_price)}
                       </td>
                       <td className="px-4 py-3 text-sm text-neutral-700">
-                        {order.customer_note ? <span className="text-blue-600 font-medium">Has note</span> : '—'}
+                        {order.customer_note ? (
+                          <span className="text-blue-600 font-medium">Has note</span>
+                        ) : (
+                          '—'
+                        )}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button
@@ -353,7 +369,9 @@ export default function AdminOrders() {
               <div className="p-6 space-y-4">
                 <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
                   <p className="text-sm text-neutral-500">Created</p>
-                  <p className="text-lg font-semibold text-neutral-900">{formatDate(selectedOrder.created_at)}</p>
+                  <p className="text-lg font-semibold text-neutral-900">
+                    {formatDate(selectedOrder.created_at)}
+                  </p>
                 </div>
                 <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
                   <p className="text-sm text-neutral-500">Total</p>
@@ -403,7 +421,13 @@ function SummaryCard({ label, value }: { label: string; value: number }) {
   );
 }
 
-function Badge({ tone, children }: { tone: 'green' | 'amber' | 'gray' | 'blue'; children: ReactNode }) {
+function Badge({
+  tone,
+  children,
+}: {
+  tone: 'green' | 'amber' | 'gray' | 'blue';
+  children: ReactNode;
+}) {
   const toneClasses = {
     green: 'bg-green-100 text-green-800',
     amber: 'bg-amber-100 text-amber-800',

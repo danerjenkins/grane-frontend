@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signInWithEmail, ensureUserProfile } from '../api/auth';
+import { isAdmin } from '../api/admin';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -18,7 +19,10 @@ export default function Login() {
       const session = await signInWithEmail(email, password);
       // Ensure user profile exists in public.users
       await ensureUserProfile(session.user.id, session.user.email);
-      navigate('/admin');
+
+      // Check if user is admin - if so, redirect to admin dashboard
+      const userIsAdmin = await isAdmin();
+      navigate(userIsAdmin ? '/admin' : '/account');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to sign in';
       setError(message);
@@ -37,7 +41,7 @@ export default function Login() {
 
         {/* Card */}
         <div className="bg-white rounded-lg shadow-sm border p-8">
-          <h1 className="text-2xl font-bold mb-2 text-center">Admin Login</h1>
+          <h1 className="text-2xl font-bold mb-2 text-center">Log In</h1>
           <p className="text-gray-600 text-sm text-center mb-6">
             Enter your credentials to continue
           </p>
@@ -92,6 +96,16 @@ export default function Login() {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
+
+          {/* Signup Link */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{' '}
+              <Link to="/signup" className="text-neutral-900 font-medium hover:underline">
+                Sign Up
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </main>

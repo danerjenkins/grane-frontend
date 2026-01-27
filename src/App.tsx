@@ -12,6 +12,9 @@ import AdminOrders from './pages/admin/AdminOrders.tsx';
 import Success from './pages/Success';
 import ProductDetail from './pages/ProductDetail';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Account from './pages/Account';
+import ProtectedRoute from './routes/ProtectedRoute';
 import AdminRoute from './routes/AdminRoute';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminHome from './pages/admin/AdminHome';
@@ -58,6 +61,15 @@ export default function App() {
         <Route path="/bake-days" element={<BakeDaysPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/account"
+          element={
+            <ProtectedRoute>
+              <Account />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin"
           element={

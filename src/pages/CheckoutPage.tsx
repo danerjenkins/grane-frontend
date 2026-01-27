@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
+import { getSession } from '../api/auth';
 
 export default function CheckoutPage() {
   const { cart, selectedBakeDay, updateQuantity, removeFromCart } = useCart();
@@ -86,9 +87,23 @@ export default function CheckoutPage() {
         })),
       };
 
+      // Prepare request headers
+      const headers: HeadersInit = { 'Content-Type': 'application/json' };
+
+      // Get current session and add auth header if logged in
+      try {
+        const session = await getSession();
+        if (session?.access_token) {
+          headers['Authorization'] = `Bearer ${session.access_token}`;
+        }
+      } catch (err) {
+        // No session or error getting session - continue without auth header (guest checkout)
+        console.log('No active session, proceeding with guest checkout');
+      }
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/checkout`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(body),
       });
 

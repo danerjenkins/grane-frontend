@@ -59,6 +59,51 @@ export async function signInWithEmail(email: string, password: string): Promise<
   };
 }
 
+/**
+ * Sign up a new user with email and password.
+ * Optionally pass name and phone to pre-populate the profile.
+ *
+ * IMPORTANT:
+ * - If email confirmations are enabled, data.session will be null
+ * - User must verify email before they can sign in
+ * - If confirmations are disabled, session is created immediately
+ */
+export async function signUp(
+  email: string,
+  password: string,
+  name?: string,
+  phone?: string
+): Promise<AuthSession | null> {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // If email confirmations are enabled, session will be null
+  // User needs to verify email before they can sign in
+  if (!data.session) {
+    // User created but needs to confirm email
+    // We can't create profile yet since we don't have a session
+    return null;
+  }
+
+  // Session exists - email confirmations are disabled
+  // Create profile row with name/phone if provided
+  if (data.session.user.id) {
+    await ensureUserProfile(data.session.user.id, email, name, phone);
+  }
+
+  return {
+    user: data.session.user,
+    access_token: data.session.access_token,
+    refresh_token: data.session.refresh_token,
+  };
+}
+
 export async function signOut(): Promise<void> {
   const { error } = await supabase.auth.signOut();
 
@@ -84,12 +129,46 @@ export async function getSession(): Promise<AuthSession | null> {
     refresh_token: data.session.refresh_token,
   };
 }
+
+/**
+ * Get the current authenticated user's session.
+ * Throws an error if user is not authenticated.
+ * Use this in components that require authentication.
+ */
+export async function getCurrentUser(): Promise<AuthSession> {
+  const session = await getSession();
+  if (!session) {
+    throw new Error('Not authenticated');
+  }
+  return session;
+}
+
+/**
+ * Helper to ensure user is authenticated.
+ * Use in route guards or components.
+ * Returns true if user is logged in, false otherwise.
+ */
+export async function isAuthenticated(): Promise<boolean> {
+  try {
+    const session = await getSession();
+    return session !== null;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Ensures a profile row exists in public.users for the authenticated user.
  * If the user exists in auth but not in public.users, creates a profile.
  * This is called on login and app initialization to ensure consistency.
+ * Can optionally pre-populate name and phone fields.
  */
-export async function ensureUserProfile(userId: string, userEmail?: string): Promise<void> {
+export async function ensureUserProfile(
+  userId: string,
+  userEmail?: string,
+  userName?: string,
+  userPhone?: string
+): Promise<void> {
   try {
     // Check if user profile exists
     const { data: existingUser, error: selectError } = await supabase
@@ -109,13 +188,12 @@ export async function ensureUserProfile(userId: string, userEmail?: string): Pro
       const { error: insertError } = await supabase.from('users').insert({
         id: userId,
         email: userEmail || null,
-        name: null,
-        phone: null,
-        created_at: new Date().toISOString(),
+        name: userName || null,
+        phone: userPhone || null,
       });
 
+      // If insert fails with duplicate, profile might have been created by another process
       if (insertError) {
-        // If insert fails with duplicate, profile might have been created by another process
         if (insertError.code === '23505') {
           // 23505 = unique constraint violation
           console.log(`Profile already exists for user ${userId}`);

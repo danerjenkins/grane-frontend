@@ -19,11 +19,7 @@ export async function listBakeDays(): Promise<BakeDay[]> {
 }
 
 export async function getBakeDayById(id: string): Promise<BakeDay> {
-  const { data, error } = await supabase
-    .from('bake_days')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data, error } = await supabase.from('bake_days').select('*').eq('id', id).single();
 
   if (error) {
     throw new Error(`Failed to get bake day: ${error.message}`);
@@ -36,14 +32,8 @@ export async function getBakeDayById(id: string): Promise<BakeDay> {
   return data;
 }
 
-export async function createBakeDay(
-  payload: Omit<BakeDay, 'id'>
-): Promise<BakeDay> {
-  const { data, error } = await supabase
-    .from('bake_days')
-    .insert([payload])
-    .select()
-    .single();
+export async function createBakeDay(payload: Omit<BakeDay, 'id'>): Promise<BakeDay> {
+  const { data, error } = await supabase.from('bake_days').insert([payload]).select().single();
 
   if (error) {
     throw new Error(`Failed to create bake day: ${error.message}`);

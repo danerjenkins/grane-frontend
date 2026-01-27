@@ -19,11 +19,7 @@ export async function listOrders(): Promise<Order[]> {
 }
 
 export async function getOrderById(id: string): Promise<Order> {
-  const { data, error } = await supabase
-    .from('orders')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data, error } = await supabase.from('orders').select('*').eq('id', id).single();
 
   if (error) {
     throw new Error(`Failed to get order: ${error.message}`);
@@ -36,14 +32,8 @@ export async function getOrderById(id: string): Promise<Order> {
   return data;
 }
 
-export async function createOrder(
-  payload: Omit<Order, 'id' | 'created_at'>
-): Promise<Order> {
-  const { data, error } = await supabase
-    .from('orders')
-    .insert([payload])
-    .select()
-    .single();
+export async function createOrder(payload: Omit<Order, 'id' | 'created_at'>): Promise<Order> {
+  const { data, error } = await supabase.from('orders').insert([payload]).select().single();
 
   if (error) {
     throw new Error(`Failed to create order: ${error.message}`);

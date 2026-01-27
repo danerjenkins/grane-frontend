@@ -19,11 +19,7 @@ export async function listProducts(): Promise<Product[]> {
 }
 
 export async function getProductById(id: string): Promise<Product> {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
 
   if (error) {
     throw new Error(`Failed to get product: ${error.message}`);
@@ -36,14 +32,8 @@ export async function getProductById(id: string): Promise<Product> {
   return data;
 }
 
-export async function createProduct(
-  payload: Omit<Product, 'id' | 'created_at'>
-): Promise<Product> {
-  const { data, error } = await supabase
-    .from('products')
-    .insert([payload])
-    .select()
-    .single();
+export async function createProduct(payload: Omit<Product, 'id' | 'created_at'>): Promise<Product> {
+  const { data, error } = await supabase.from('products').insert([payload]).select().single();
 
   if (error) {
     throw new Error(`Failed to create product: ${error.message}`);

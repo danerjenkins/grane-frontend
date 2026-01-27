@@ -19,11 +19,7 @@ export async function listUsers(): Promise<UserRow[]> {
 }
 
 export async function getUserById(id: string): Promise<UserRow> {
-  const { data, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
 
   if (error) {
     throw new Error(`Failed to get user: ${error.message}`);
@@ -36,14 +32,8 @@ export async function getUserById(id: string): Promise<UserRow> {
   return data;
 }
 
-export async function createUser(
-  payload: Omit<UserRow, 'id' | 'created_at'>
-): Promise<UserRow> {
-  const { data, error } = await supabase
-    .from('users')
-    .insert([payload])
-    .select()
-    .single();
+export async function createUser(payload: Omit<UserRow, 'id' | 'created_at'>): Promise<UserRow> {
+  const { data, error } = await supabase.from('users').insert([payload]).select().single();
 
   if (error) {
     throw new Error(`Failed to create user: ${error.message}`);
@@ -60,12 +50,7 @@ export async function updateUser(
   id: string,
   patch: Partial<Omit<UserRow, 'id' | 'created_at'>>
 ): Promise<UserRow> {
-  const { data, error } = await supabase
-    .from('users')
-    .update(patch)
-    .eq('id', id)
-    .select()
-    .single();
+  const { data, error } = await supabase.from('users').update(patch).eq('id', id).select().single();
 
   if (error) {
     throw new Error(`Failed to update user: ${error.message}`);

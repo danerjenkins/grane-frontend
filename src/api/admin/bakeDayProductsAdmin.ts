@@ -79,10 +79,7 @@ export async function updateBakeDayProduct(
 }
 
 export async function removeBakeDayProduct(id: string): Promise<void> {
-  const { error } = await supabase
-    .from('bake_day_products')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('bake_day_products').delete().eq('id', id);
 
   if (error) {
     throw new Error(`Failed to delete bake day product: ${error.message}`);
@@ -92,9 +89,7 @@ export async function removeBakeDayProduct(id: string): Promise<void> {
 /**
  * Get bake day products with product details
  */
-export async function listBakeDayProductsWithProduct(): Promise<
-  BakeDayProductWithProduct[]
-> {
+export async function listBakeDayProductsWithProduct(): Promise<BakeDayProductWithProduct[]> {
   const { data, error } = await supabase
     .from('bake_day_products')
     .select(
@@ -119,9 +114,7 @@ export async function listBakeDayProductsWithProduct(): Promise<
     .order('bake_day_id', { ascending: false });
 
   if (error) {
-    throw new Error(
-      `Failed to list bake day products with product: ${error.message}`
-    );
+    throw new Error(`Failed to list bake day products with product: ${error.message}`);
   }
 
   return (data || []) as unknown as BakeDayProductWithProduct[];
@@ -158,9 +151,7 @@ export async function listBakeDayProductsByBakeDayId(
     .order('product_id', { ascending: true });
 
   if (error) {
-    throw new Error(
-      `Failed to list bake day products: ${error.message}`
-    );
+    throw new Error(`Failed to list bake day products: ${error.message}`);
   }
 
   return (data || []) as unknown as BakeDayProductWithProduct[];

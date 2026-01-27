@@ -7,7 +7,7 @@ import Contact from './pages/Contact.tsx';
 import WhyBakeDays from './pages/WhyBakeDays.tsx';
 import BakeDaysPage from './pages/BakeDays';
 import CheckoutPage from './pages/CheckoutPage';
-import AdminOrders from './pages/AdminOrders';
+import AdminOrders from './pages/admin/AdminOrders.tsx';
 import Success from './pages/Success';
 import ProductDetail from './pages/ProductDetail';
 import Login from './pages/Login';

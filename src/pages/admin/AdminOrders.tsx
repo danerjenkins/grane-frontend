@@ -7,10 +7,10 @@ import {
   updateOrderItem,
   removeOrderItem,
   deleteOrderWithItems,
-} from '../api/admin/ordersAdmin';
-import { listBakeDays } from '../api/admin/bakeDaysAdmin';
-import { listProducts } from '../api/admin/productsAdmin';
-import type { BakeDay, OrderItem, OrderWithItems, Product } from '../api/admin/types';
+} from '../../api/admin/ordersAdmin';
+import { listBakeDays } from '../../api/admin/bakeDaysAdmin';
+import { listProducts } from '../../api/admin/productsAdmin';
+import type { BakeDay, OrderItem, OrderWithItems, Product } from '../../api/admin/types';
 
 type SortDir = 'asc' | 'desc';
 type DateFilter = '7d' | '30d' | 'all';

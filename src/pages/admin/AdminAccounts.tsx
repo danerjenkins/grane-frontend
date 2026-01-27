@@ -5,6 +5,7 @@ import {
   updateUser,
   deleteUserProfileCascade,
   countUserOrders,
+  createUser,
 } from '../../api/admin/usersAdmin';
 import { grantAdminRole, revokeAdminRole } from '../../api/admin/userRolesAdmin';
 import { getSession } from '../../api/auth';
@@ -53,6 +54,16 @@ export default function AdminAccounts() {
   const [deleteAck, setDeleteAck] = useState(false);
   const [deleteToken, setDeleteToken] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Create account state
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+  });
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     loadUsers();
@@ -242,6 +253,33 @@ export default function AdminAccounts() {
     deleteToken.trim() !== '' &&
     (deleteToken === selectedUserId || deleteToken === selectedUser?.email);
 
+  const handleCreateAccount = async () => {
+    if (!createForm.email.trim()) {
+      setCreateError('Email is required');
+      return;
+    }
+
+    try {
+      setIsCreating(true);
+      setCreateError(null);
+      await createUser({
+        email: createForm.email.trim(),
+        name: createForm.name.trim() || null,
+        phone: createForm.phone.trim() || null,
+        is_admin: false,
+      });
+      // Clear form and close modal
+      setCreateForm({ name: '', email: '', phone: '' });
+      setShowCreateModal(false);
+      // Refresh users list
+      await loadUsers();
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : 'Failed to create account');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-neutral-50 px-6 py-10">
       <div className="max-w-7xl mx-auto">
@@ -253,9 +291,17 @@ export default function AdminAccounts() {
         )}
 
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-neutral-900">Accounts</h1>
-          <p className="text-neutral-600 mt-1">Manage customers and admins</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-neutral-900">Accounts</h1>
+            <p className="text-neutral-600 mt-1">Manage customers and admins</p>
+          </div>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+          >
+            + Create Account
+          </button>
         </div>
 
         {/* Search */}
@@ -580,6 +626,94 @@ export default function AdminAccounts() {
               ) : (
                 <div className="text-neutral-600">No user data available.</div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Account Modal */}
+      {showCreateModal && (
+        <div
+          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowCreateModal(false);
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
+            <div className="p-4 border-b border-neutral-200 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-neutral-900">Create Account</h3>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="text-neutral-600 hover:text-neutral-900 px-3 py-1 rounded-lg hover:bg-neutral-100"
+              >
+                Close
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              {createError && (
+                <div className="bg-red-100 border border-red-400 text-red-800 px-3 py-2 rounded-lg text-sm">
+                  {createError}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-semibold text-neutral-700 mb-1">
+                  Email <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="email"
+                  value={createForm.email}
+                  onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
+                  placeholder="user@example.com"
+                  disabled={isCreating}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-neutral-700 mb-1">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  value={createForm.name}
+                  onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
+                  placeholder="John Doe"
+                  disabled={isCreating}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-neutral-700 mb-1">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  value={createForm.phone}
+                  onChange={(e) => setCreateForm((f) => ({ ...f, phone: e.target.value }))}
+                  placeholder="(555) 123-4567"
+                  disabled={isCreating}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  disabled={isCreating}
+                  className="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-100 font-medium transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateAccount}
+                  disabled={isCreating || !createForm.email.trim()}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isCreating ? 'Creating...' : 'Create Account'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

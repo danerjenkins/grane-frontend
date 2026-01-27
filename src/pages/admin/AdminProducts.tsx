@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { listProducts, createProduct, updateProduct, removeProduct } from '../../api/admin/productsAdmin';
+import {
+  listProducts,
+  createProduct,
+  updateProduct,
+  removeProduct,
+} from '../../api/admin/productsAdmin';
 import type { Product } from '../../api/admin/types';
 
 interface ProductFormData {
@@ -218,7 +223,9 @@ export default function AdminProducts() {
             <div className="p-8 text-center text-neutral-600">Loading products...</div>
           ) : filteredProducts.length === 0 ? (
             <div className="p-8 text-center text-neutral-600">
-              {searchQuery ? 'No products match your search.' : 'No products yet. Create one to get started!'}
+              {searchQuery
+                ? 'No products match your search.'
+                : 'No products yet. Create one to get started!'}
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -264,12 +271,18 @@ export default function AdminProducts() {
                       <td className="px-6 py-4">
                         <div className="text-sm font-medium text-neutral-900">{product.name}</div>
                         {product.description && (
-                          <div className="text-xs text-neutral-500 mt-1 line-clamp-2">{product.description}</div>
+                          <div className="text-xs text-neutral-500 mt-1 line-clamp-2">
+                            {product.description}
+                          </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-neutral-900">${product.price.toFixed(2)}</td>
+                      <td className="px-6 py-4 text-sm text-neutral-900">
+                        ${product.price.toFixed(2)}
+                      </td>
                       <td className="px-6 py-4 text-sm text-neutral-600">
-                        {product.cost_to_make !== null ? `$${product.cost_to_make.toFixed(2)}` : '—'}
+                        {product.cost_to_make !== null
+                          ? `$${product.cost_to_make.toFixed(2)}`
+                          : '—'}
                       </td>
                       <td className="px-6 py-4">
                         <span
@@ -330,7 +343,10 @@ export default function AdminProducts() {
               <div className="space-y-4">
                 {/* Name */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-semibold text-neutral-700 mb-1">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-semibold text-neutral-700 mb-1"
+                  >
                     Name <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -345,7 +361,10 @@ export default function AdminProducts() {
 
                 {/* Price */}
                 <div>
-                  <label htmlFor="price" className="block text-sm font-semibold text-neutral-700 mb-1">
+                  <label
+                    htmlFor="price"
+                    className="block text-sm font-semibold text-neutral-700 mb-1"
+                  >
                     Price <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -362,7 +381,10 @@ export default function AdminProducts() {
 
                 {/* Cost to Make */}
                 <div>
-                  <label htmlFor="cost_to_make" className="block text-sm font-semibold text-neutral-700 mb-1">
+                  <label
+                    htmlFor="cost_to_make"
+                    className="block text-sm font-semibold text-neutral-700 mb-1"
+                  >
                     Cost to Make
                   </label>
                   <input
@@ -378,7 +400,10 @@ export default function AdminProducts() {
 
                 {/* Image URL */}
                 <div>
-                  <label htmlFor="image_url" className="block text-sm font-semibold text-neutral-700 mb-1">
+                  <label
+                    htmlFor="image_url"
+                    className="block text-sm font-semibold text-neutral-700 mb-1"
+                  >
                     Image URL
                   </label>
                   <input
@@ -392,7 +417,10 @@ export default function AdminProducts() {
 
                 {/* Description */}
                 <div>
-                  <label htmlFor="description" className="block text-sm font-semibold text-neutral-700 mb-1">
+                  <label
+                    htmlFor="description"
+                    className="block text-sm font-semibold text-neutral-700 mb-1"
+                  >
                     Description
                   </label>
                   <textarea

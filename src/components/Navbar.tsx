@@ -140,21 +140,12 @@ const Navbar = () => {
                 {isLoggedIn ? (
                   <></>
                 ) : (
-                  <>
-                    <Link
-                      to="/login"
-                      className="text-neutral-900 font-medium text-sm tracking-wide hover:text-neutral-700 transition-colors relative group"
-                    >
-                      Log In
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
-                    </Link>
-                    <Link
-                      to="/signup"
-                      className="bg-amber-900 text-white px-5 py-2 rounded-full font-medium text-sm tracking-wide hover:bg-amber-800 transition-all shadow-sm hover:shadow-md"
-                    >
-                      Sign Up
-                    </Link>
-                  </>
+                  <Link
+                    to="/login"
+                    className="bg-amber-900 text-white px-5 py-2 rounded-full font-medium text-sm tracking-wide hover:bg-amber-800 transition-all shadow-sm hover:shadow-md"
+                  >
+                    Log In
+                  </Link>
                 )}
               </>
             )}
@@ -270,22 +261,13 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <></>
               ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="text-neutral-900 font-medium text-base hover:text-neutral-700 transition-colors pt-2 border-t border-neutral-200 block"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Log In
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="bg-amber-900 text-white px-5 py-2.5 rounded-full font-medium text-base text-center hover:bg-amber-800 transition-all shadow-sm"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
-                </>
+                <Link
+                  to="/login"
+                  className="bg-amber-900 text-white px-5 py-2.5 rounded-full font-medium text-base text-center hover:bg-amber-800 transition-all shadow-sm"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Log In
+                </Link>
               )}
             </>
           )}

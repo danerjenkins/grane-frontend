@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { signInWithEmail } from '../api/auth';
+import { signInWithEmail, ensureUserProfile } from '../api/auth';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,7 +15,9 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await signInWithEmail(email, password);
+      const session = await signInWithEmail(email, password);
+      // Ensure user profile exists in public.users
+      await ensureUserProfile(session.user.id, session.user.email);
       navigate('/admin');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to sign in';

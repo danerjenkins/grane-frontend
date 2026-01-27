@@ -1,3 +1,32 @@
+/**
+ * Admin Accounts Page
+ *
+ * IDENTITY STANDARD:
+ * ==================
+ * - public.users is the profile table; id is the primary key
+ * - auth.users contains authentication records (Supabase Auth)
+ * - For authenticated users: public.users.id = auth.users.id (auth.uid())
+ * - For guest users (from checkout): public.users has a generated UUID, no auth account
+ * - Admin status is stored in user_roles table (role = 'admin'), NOT in public.users.is_admin
+ *
+ * PROFILE SYNC:
+ * =============
+ * - When a user logs in, ensureUserProfile() creates a public.users row if missing (api/auth.ts)
+ * - On app init, ensureUserProfile() is called to sync any authenticated users
+ * - Guest profiles are created during checkout and are never associated with auth accounts
+ *
+ * DATA FLOW:
+ * ==========
+ * - listUsers() returns all public.users rows (both guests and authenticated users)
+ * - createUser() creates guest profiles (used by admin to manually add customers)
+ * - updateUser() modifies profile fields (name, email, phone)
+ * - deleteUserProfileCascade() safely deletes profiles and cascades to user_roles and orders
+ * - getUserRolesByUserId() fetches roles from user_roles table (source of truth for admin status)
+ *
+ * NOTE: Manually created profiles in AdminAccounts are guest profiles (no auth accounts)
+ * To create an admin user with auth, use Supabase Auth sign-up/creation flow
+ */
+
 import { useEffect, useMemo, useState } from 'react';
 import {
   listUsers,

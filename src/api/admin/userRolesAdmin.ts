@@ -48,6 +48,17 @@ export async function getUserRolesByUserId(userId: string): Promise<UserRole[]> 
  * ONLY modifies user_roles table - this is the source of truth for admin status
  */
 export async function grantAdminRole(userId: string): Promise<void> {
+  // First, verify the user exists in the users table
+  const { data: userExists, error: userCheckError } = await supabase
+    .from('users')
+    .select('id')
+    .eq('id', userId)
+    .single();
+
+  if (userCheckError || !userExists) {
+    throw new Error(`User not found: ${userId}. The user may have been deleted.`);
+  }
+
   // Insert the admin role into user_roles (ignore if already exists)
   const { error: insertError } = await supabase.from('user_roles').insert({
     user_id: userId,
@@ -65,6 +76,14 @@ export async function grantAdminRole(userId: string): Promise<void> {
     if (isRLSError) {
       throw new Error('Access denied: You may not have permissions to modify user roles.');
     }
+
+    const isForeignKeyError =
+      insertError.message?.toLowerCase().includes('foreign key') || insertError.code === '23503';
+
+    if (isForeignKeyError) {
+      throw new Error(`User not found: ${userId}. The user may have been deleted.`);
+    }
+
     throw new Error(`Failed to grant admin role: ${insertError.message}`);
   }
 }

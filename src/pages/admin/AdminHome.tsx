@@ -1,6 +1,46 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getSession } from '../../api/auth';
+import { getUserById } from '../../api/admin/usersAdmin';
+import type { UserRow } from '../../api/admin/types';
 
 export default function AdminHome() {
+  const [currentUser, setCurrentUser] = useState<UserRow | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadCurrentUser = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const session = await getSession();
+        if (!active) return;
+
+        if (!session) {
+          setError('Not logged in');
+          setLoading(false);
+          return;
+        }
+
+        const user = await getUserById(session.user.id);
+        if (!active) return;
+        setCurrentUser(user);
+      } catch (err) {
+        if (!active) return;
+        setError(err instanceof Error ? err.message : 'Failed to load user info');
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    loadCurrentUser();
+    return () => {
+      active = false;
+    };
+  }, []);
   const cards = [
     {
       title: 'Products',
@@ -39,6 +79,63 @@ export default function AdminHome() {
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-neutral-900 mb-2">Admin Dashboard</h1>
           <p className="text-neutral-600">Welcome back! Here's an overview of your operations.</p>
+        </div>
+
+        {/* Current User Info Card */}
+        <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6 mb-8">
+          <h2 className="text-lg font-semibold text-neutral-900 mb-4">Logged In As</h2>
+          {loading ? (
+            <div className="text-neutral-600">Loading account information...</div>
+          ) : error ? (
+            <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
+          ) : currentUser ? (
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-neutral-500">User ID</p>
+                  <p className="text-lg font-semibold text-neutral-900 font-mono">
+                    {currentUser.id}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-neutral-500">Name</p>
+                  <p className="text-lg font-semibold text-neutral-900">
+                    {currentUser.name || '—'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-neutral-500">Email</p>
+                  <p className="text-lg font-semibold text-neutral-900">
+                    {currentUser.email || '—'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-neutral-500">Phone</p>
+                  <p className="text-lg font-semibold text-neutral-900">
+                    {currentUser.phone || '—'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-neutral-500">Admin Status</p>
+                  <p className="text-lg font-semibold">
+                    {currentUser.is_admin ? (
+                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm inline-block">
+                        ✓ Admin
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 bg-neutral-200 text-neutral-800 rounded text-sm inline-block">
+                        User
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-neutral-600">No user data available.</div>
+          )}
         </div>
 
         {/* Cards Grid */}

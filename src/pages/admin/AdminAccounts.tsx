@@ -671,9 +671,7 @@ export default function AdminAccounts() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-neutral-700 mb-1">
-                  Name
-                </label>
+                <label className="block text-sm font-semibold text-neutral-700 mb-1">Name</label>
                 <input
                   type="text"
                   value={createForm.name}
@@ -685,9 +683,7 @@ export default function AdminAccounts() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-neutral-700 mb-1">
-                  Phone
-                </label>
+                <label className="block text-sm font-semibold text-neutral-700 mb-1">Phone</label>
                 <input
                   type="tel"
                   value={createForm.phone}

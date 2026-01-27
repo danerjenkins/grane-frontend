@@ -50,17 +50,31 @@ export async function updateUser(
   id: string,
   patch: Partial<Omit<UserRow, 'id' | 'created_at'>>
 ): Promise<UserRow> {
-  const { data, error } = await supabase.from('users').update(patch).eq('id', id).select().single();
+  const { data, error } = await supabase.from('users').update(patch).eq('id', id).select();
 
   if (error) {
+    // Check if it's an RLS policy error
+    const msg = error.message?.toLowerCase() || '';
+    const code = error.code || '';
+    if (
+      msg.includes('row-level security') ||
+      msg.includes('permission denied') ||
+      code === 'PGRST301' ||
+      code === '42501'
+    ) {
+      throw new Error('Access denied: You may not have permissions to update user profiles.');
+    }
     throw new Error(`Failed to update user: ${error.message}`);
   }
 
-  if (!data) {
-    throw new Error('User update returned no data');
+  if (!data || data.length === 0) {
+    // If no rows returned, it might be an RLS block
+    throw new Error(
+      'Access denied: You may not have permissions to update user profiles, or the user does not exist.'
+    );
   }
 
-  return data;
+  return data[0];
 }
 
 export async function removeUser(id: string): Promise<void> {

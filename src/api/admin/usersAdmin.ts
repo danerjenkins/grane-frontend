@@ -71,10 +71,87 @@ export async function removeUser(id: string): Promise<void> {
   }
 }
 
+/**
+ * Delete user profile row with cascade cleanup:
+ * 1. Delete user_roles where user_id matches
+ * 2. Update orders to set user_id to null
+ * 3. Delete from users
+ */
+export async function deleteUserProfileCascade(userId: string): Promise<void> {
+  // Step 1: Delete user roles
+  const { error: rolesError } = await supabase.from('user_roles').delete().eq('user_id', userId);
+
+  if (rolesError) {
+    const isRLSError =
+      rolesError.message?.toLowerCase().includes('row-level security') ||
+      rolesError.code === 'PGRST301' ||
+      rolesError.message?.toLowerCase().includes('permission denied') ||
+      rolesError.code === '42501';
+
+    if (isRLSError) {
+      throw new Error('Access denied: You may not have permissions to delete user roles.');
+    }
+    throw new Error(`Failed to delete user roles: ${rolesError.message}`);
+  }
+
+  // Step 2: Disassociate orders
+  const { error: ordersError } = await supabase
+    .from('orders')
+    .update({ user_id: null })
+    .eq('user_id', userId);
+
+  if (ordersError) {
+    const isRLSError =
+      ordersError.message?.toLowerCase().includes('row-level security') ||
+      ordersError.code === 'PGRST301' ||
+      ordersError.message?.toLowerCase().includes('permission denied') ||
+      ordersError.code === '42501';
+
+    if (isRLSError) {
+      throw new Error('Access denied: You may not have permissions to update orders.');
+    }
+    throw new Error(`Failed to disassociate orders: ${ordersError.message}`);
+  }
+
+  // Step 3: Delete user profile row
+  const { error: userError } = await supabase.from('users').delete().eq('id', userId);
+
+  if (userError) {
+    const isRLSError =
+      userError.message?.toLowerCase().includes('row-level security') ||
+      userError.code === 'PGRST301' ||
+      userError.message?.toLowerCase().includes('permission denied') ||
+      userError.code === '42501';
+
+    if (isRLSError) {
+      throw new Error('Access denied: You may not have permissions to delete user profiles.');
+    }
+    throw new Error(`Failed to delete user profile: ${userError.message}`);
+  }
+}
+
+/**
+ * Count orders for a user
+ */
+export async function countUserOrders(userId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('orders')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId);
+
+  if (error) {
+    throw new Error(`Failed to count orders: ${error.message}`);
+  }
+
+  return count || 0;
+}
+
 export default {
   listUsers,
   getUserById,
   createUser,
   updateUser,
   removeUser,
+  deleteUserProfileCascade,
+  countUserOrders,
 };

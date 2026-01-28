@@ -51,9 +51,7 @@ export default function AdminLayout() {
                 onClick={() => setSidebarOpen(false)}
                 className={({ isActive }) =>
                   `block px-4 py-2 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-neutral-900 text-white'
-                      : 'text-neutral-700 hover:bg-neutral-100'
+                    isActive ? 'bg-neutral-900 text-white' : 'text-neutral-700 hover:bg-neutral-100'
                   }`
                 }
               >

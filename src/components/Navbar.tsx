@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingCart, User } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, Settings } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { getSession } from '../api/auth';
+import { isAdmin } from '../api/admin';
 import { supabase } from '../api/supabaseClient';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [sessionLoading, setSessionLoading] = useState(true);
   const { cart, removeFromCart } = useCart();
   const { cartQuantity } = useCart();
@@ -20,8 +22,17 @@ const Navbar = () => {
       try {
         const session = await getSession();
         setIsLoggedIn(session !== null);
+
+        // Check if user is admin
+        if (session !== null) {
+          const adminStatus = await isAdmin();
+          setIsUserAdmin(adminStatus);
+        } else {
+          setIsUserAdmin(false);
+        }
       } catch {
         setIsLoggedIn(false);
+        setIsUserAdmin(false);
       } finally {
         setSessionLoading(false);
       }
@@ -34,8 +45,17 @@ const Navbar = () => {
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setIsLoggedIn(session !== null);
+
+      // Check admin status when auth state changes
+      if (session !== null) {
+        const adminStatus = await isAdmin();
+        setIsUserAdmin(adminStatus);
+      } else {
+        setIsUserAdmin(false);
+      }
+
       setSessionLoading(false);
     });
 
@@ -133,6 +153,49 @@ const Navbar = () => {
               Order
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
             </Link>
+
+            {/* Admin Dropdown */}
+            {!sessionLoading && isLoggedIn && isUserAdmin && (
+              <div className="relative group">
+                <button className="text-neutral-900 font-medium text-sm tracking-wide hover:text-neutral-700 transition-colors flex items-center gap-2">
+                  <Settings className="w-4 h-4" />
+                  Admin
+                </button>
+                {/* Dropdown Menu */}
+                <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg border border-neutral-200 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <Link
+                    to="/admin"
+                    className="block px-4 py-3 text-neutral-900 font-medium text-sm hover:bg-neutral-50 transition-colors border-b border-neutral-100 first:rounded-t-lg"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/admin/products"
+                    className="block px-4 py-3 text-neutral-900 font-medium text-sm hover:bg-neutral-50 transition-colors border-b border-neutral-100"
+                  >
+                    Products
+                  </Link>
+                  <Link
+                    to="/admin/bake-days"
+                    className="block px-4 py-3 text-neutral-900 font-medium text-sm hover:bg-neutral-50 transition-colors border-b border-neutral-100"
+                  >
+                    Bake Days
+                  </Link>
+                  <Link
+                    to="/admin/orders"
+                    className="block px-4 py-3 text-neutral-900 font-medium text-sm hover:bg-neutral-50 transition-colors border-b border-neutral-100"
+                  >
+                    Orders
+                  </Link>
+                  <Link
+                    to="/admin/accounts"
+                    className="block px-4 py-3 text-neutral-900 font-medium text-sm hover:bg-neutral-50 transition-colors last:rounded-b-lg"
+                  >
+                    Accounts
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {/* Auth Links */}
             {!sessionLoading && (
@@ -255,6 +318,51 @@ const Navbar = () => {
           >
             Order
           </Link>
+
+          {!sessionLoading && isLoggedIn && isUserAdmin && (
+            <>
+              <div className="border-t border-neutral-200 pt-4 mt-2">
+                <p className="text-neutral-600 text-xs font-semibold uppercase tracking-widest mb-3">
+                  Admin Menu
+                </p>
+                <Link
+                  to="/admin"
+                  className="block text-neutral-900 font-medium text-base hover:text-neutral-700 transition-colors hover:translate-x-1 transform mb-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/admin/products"
+                  className="block text-neutral-900 font-medium text-base hover:text-neutral-700 transition-colors hover:translate-x-1 transform mb-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Products
+                </Link>
+                <Link
+                  to="/admin/bake-days"
+                  className="block text-neutral-900 font-medium text-base hover:text-neutral-700 transition-colors hover:translate-x-1 transform mb-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Bake Days
+                </Link>
+                <Link
+                  to="/admin/orders"
+                  className="block text-neutral-900 font-medium text-base hover:text-neutral-700 transition-colors hover:translate-x-1 transform mb-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Orders
+                </Link>
+                <Link
+                  to="/admin/accounts"
+                  className="block text-neutral-900 font-medium text-base hover:text-neutral-700 transition-colors hover:translate-x-1 transform"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Accounts
+                </Link>
+              </div>
+            </>
+          )}
 
           {!sessionLoading && (
             <>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
 import { signOut } from '../../api/auth';
 
 export default function AdminLayout() {
@@ -27,15 +27,20 @@ export default function AdminLayout() {
     <div className="flex h-screen bg-neutral-50">
       {/* Sidebar - Hidden on mobile, visible on desktop */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-neutral-900 text-white transform transition-transform duration-300 lg:relative lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-neutral-200 text-neutral-900 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-6 border-b border-neutral-800">
-            <h1 className="text-xl font-bold">Admin Panel</h1>
-          </div>
+          <Link
+            to="/admin"
+            className="block p-6 border-b border-neutral-200 hover:bg-neutral-50 transition-colors"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <h1 className="text-xl font-serif font-bold text-neutral-900">Admin Panel</h1>
+            <p className="text-xs text-neutral-500 tracking-widest uppercase mt-1">Grane Bakery</p>
+          </Link>
 
           {/* Navigation Links */}
           <nav className="flex-1 p-4 space-y-2">
@@ -46,7 +51,9 @@ export default function AdminLayout() {
                 onClick={() => setSidebarOpen(false)}
                 className={({ isActive }) =>
                   `block px-4 py-2 rounded-lg transition-colors ${
-                    isActive ? 'bg-blue-600 text-white' : 'text-neutral-300 hover:bg-neutral-800'
+                    isActive
+                      ? 'bg-neutral-900 text-white'
+                      : 'text-neutral-700 hover:bg-neutral-100'
                   }`
                 }
               >
@@ -56,10 +63,10 @@ export default function AdminLayout() {
           </nav>
 
           {/* Sign Out Button */}
-          <div className="p-4 border-t border-neutral-800">
+          <div className="p-4 border-t border-neutral-200">
             <button
               onClick={handleSignOut}
-              className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="w-full bg-neutral-900 hover:bg-neutral-800 text-white px-4 py-2 rounded-lg transition-colors"
             >
               Sign Out
             </button>
@@ -71,7 +78,14 @@ export default function AdminLayout() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header - Mobile */}
         <header className="lg:hidden bg-white border-b border-neutral-200 px-4 py-3 flex items-center justify-between">
-          <h1 className="text-lg font-bold text-neutral-900">Admin</h1>
+          <Link
+            to="/admin"
+            className="hover:opacity-80 transition-opacity"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <h1 className="text-lg font-semibold text-neutral-900">Admin</h1>
+            <p className="text-xs text-neutral-500">Grane Bakery</p>
+          </Link>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"

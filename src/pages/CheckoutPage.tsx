@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { getSession } from '../api/auth';
+import { getSession, signOut } from '../api/auth';
 import { getMyProfile } from '../api/profile';
 
 export default function CheckoutPage() {
+  const navigate = useNavigate();
   const { cart, selectedBakeDay, updateQuantity, removeFromCart } = useCart();
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -11,6 +13,7 @@ export default function CheckoutPage() {
   const [orderNote, setOrderNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Validation errors
   const [errors, setErrors] = useState({
@@ -25,14 +28,18 @@ export default function CheckoutPage() {
       try {
         const session = await getSession();
         if (session) {
+          setIsLoggedIn(true);
           const profile = await getMyProfile();
           if (profile.name) setCustomerName(profile.name);
           if (profile.email) setCustomerEmail(profile.email);
           if (profile.phone) setCustomerPhone(profile.phone);
+        } else {
+          setIsLoggedIn(false);
         }
       } catch (err) {
         // User not logged in or error loading profile - just continue with empty form
         console.log('No profile loaded:', err);
+        setIsLoggedIn(false);
       } finally {
         setProfileLoaded(true);
       }
@@ -42,6 +49,15 @@ export default function CheckoutPage() {
   }, []);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/login');
+    } catch (err) {
+      console.error('Failed to sign out:', err);
+    }
+  };
 
   // Validate fields
   const validateName = (name: string) => {
@@ -153,7 +169,18 @@ export default function CheckoutPage() {
 
       {/* Customer Information */}
       <div className="mb-8 space-y-6">
-        <h2 className="text-xl font-semibold">Your Information</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Your Information</h2>
+          {isLoggedIn && (
+            <button
+              onClick={handleSignOut}
+              className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+              title="Sign out to use different information"
+            >
+              Not you? Sign out
+            </button>
+          )}
+        </div>
 
         {/* Name */}
         <div>
@@ -161,7 +188,7 @@ export default function CheckoutPage() {
             Name <span className="text-red-500">*</span>
           </label>
           <input
-            className={`border rounded p-2 w-full ${errors.name ? 'border-red-500' : ''}`}
+            className={`border rounded p-2 w-full ${errors.name ? 'border-red-500' : ''} ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             type="text"
             value={customerName}
             onChange={(e) => {
@@ -169,6 +196,7 @@ export default function CheckoutPage() {
               if (errors.name) setErrors({ ...errors, name: '' });
             }}
             placeholder="Enter your name"
+            disabled={isLoggedIn}
           />
           {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
         </div>
@@ -179,7 +207,7 @@ export default function CheckoutPage() {
             Email <span className="text-red-500">*</span>
           </label>
           <input
-            className={`border rounded p-2 w-full ${errors.email ? 'border-red-500' : ''}`}
+            className={`border rounded p-2 w-full ${errors.email ? 'border-red-500' : ''} ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             type="email"
             value={customerEmail}
             onChange={(e) => {
@@ -187,6 +215,7 @@ export default function CheckoutPage() {
               if (errors.email) setErrors({ ...errors, email: '' });
             }}
             placeholder="your@email.com"
+            disabled={isLoggedIn}
           />
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
         </div>
@@ -197,7 +226,7 @@ export default function CheckoutPage() {
             Phone <span className="text-red-500">*</span>
           </label>
           <input
-            className={`border rounded p-2 w-full ${errors.phone ? 'border-red-500' : ''}`}
+            className={`border rounded p-2 w-full ${errors.phone ? 'border-red-500' : ''} ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             type="tel"
             value={customerPhone}
             onChange={(e) => {
@@ -205,6 +234,7 @@ export default function CheckoutPage() {
               if (errors.phone) setErrors({ ...errors, phone: '' });
             }}
             placeholder="(123) 456-7890"
+            disabled={isLoggedIn}
           />
           {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
           <p className="text-xs text-gray-500 mt-1">

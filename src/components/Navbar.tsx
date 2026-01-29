@@ -211,7 +211,7 @@ const Navbar = () => {
 
               {/* Desktop Dropdown */}
               {cartOpen && (
-                <div className="absolute right-0 mt-4 w-72 bg-white shadow-2xl border border-neutral-200 rounded-xl p-5 z-50 backdrop-blur-sm">
+                <div className="absolute right-0 top-full mt-2 w-72 bg-white shadow-2xl border border-neutral-200 rounded-xl p-5 z-50 backdrop-blur-sm">
                   <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
                     <h3 className="text-lg font-serif font-bold text-neutral-900">Your Cart</h3>
                     {cart.length > 0 && (

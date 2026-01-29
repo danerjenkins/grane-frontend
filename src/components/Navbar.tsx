@@ -75,12 +75,6 @@ const Navbar = () => {
               alt="Grane Bakery Logo"
               className="h-20 w-20 object-contain transition-transform group-hover:scale-105"
             />
-            <div className="hidden lg:block">
-              <h1 className="text-2xl font-serif font-bold text-neutral-900 tracking-tight">
-                Grane
-              </h1>
-              <p className="text-xs text-neutral-600 tracking-widest uppercase">Artisan Bakery</p>
-            </div>
           </Link>
 
           {/* MOBILE ICONS */}

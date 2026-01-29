@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Edit2, Trash2 } from 'lucide-react';
 import {
   listProducts,
   createProduct,
@@ -200,7 +201,7 @@ export default function AdminProducts() {
           <h1 className="text-4xl font-bold text-neutral-900">Products</h1>
           <button
             onClick={openCreateModal}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors font-medium"
+            className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 rounded-lg transition-colors font-medium"
           >
             + New Product
           </button>
@@ -213,7 +214,7 @@ export default function AdminProducts() {
             placeholder="Search products by name or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
           />
         </div>
 
@@ -285,15 +286,17 @@ export default function AdminProducts() {
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => openEditModal(product)}
-                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-sm font-medium rounded-lg transition-colors border border-neutral-300"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-neutral-900 rounded-md transition-colors"
+                            title="Edit product"
                           >
-                            Edit
+                            <Edit2 size={16} />
                           </button>
                           <button
                             onClick={() => handleDelete(product)}
-                            className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-medium rounded-lg transition-colors border border-red-200"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-900 rounded-md transition-colors"
+                            title="Delete product"
                           >
-                            Delete
+                            <Trash2 size={16} />
                           </button>
                         </div>
                       </td>
@@ -342,7 +345,7 @@ export default function AdminProducts() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                     required
                   />
                 </div>
@@ -362,7 +365,7 @@ export default function AdminProducts() {
                     min="0"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                     required
                   />
                 </div>
@@ -382,7 +385,7 @@ export default function AdminProducts() {
                     min="0"
                     value={formData.cost_to_make}
                     onChange={(e) => setFormData({ ...formData, cost_to_make: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                   />
                 </div>
 
@@ -399,7 +402,7 @@ export default function AdminProducts() {
                     type="url"
                     value={formData.image_url}
                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                   />
                 </div>
 
@@ -416,7 +419,7 @@ export default function AdminProducts() {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                   />
                 </div>
 
@@ -427,7 +430,7 @@ export default function AdminProducts() {
                     type="checkbox"
                     checked={formData.available}
                     onChange={(e) => setFormData({ ...formData, available: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-neutral-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-amber-700 border-neutral-300 rounded focus:ring-amber-700"
                   />
                   <label htmlFor="available" className="ml-2 text-sm font-medium text-neutral-700">
                     Available for purchase
@@ -448,7 +451,7 @@ export default function AdminProducts() {
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {formLoading ? 'Saving...' : 'Save Product'}
                 </button>

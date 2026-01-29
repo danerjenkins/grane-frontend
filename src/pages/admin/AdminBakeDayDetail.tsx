@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save, Trash2 } from 'lucide-react';
 import { getBakeDayById } from '../../api/admin/bakeDaysAdmin';
 import {
   listBakeDayProductsByBakeDayId,
@@ -41,13 +42,10 @@ export default function AdminBakeDayDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [searchAssigned, setSearchAssigned] = useState('');
 
   const [formProductId, setFormProductId] = useState('');
   const [formQuantityLimit, setFormQuantityLimit] = useState('');
-  const [searchAdd, setSearchAdd] = useState('');
   const [saving, setSaving] = useState(false);
-  const [bulkAdding, setBulkAdding] = useState(false);
 
   const [rowEdits, setRowEdits] = useState<Record<string, RowEditState>>({});
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -117,30 +115,9 @@ export default function AdminBakeDayDetail() {
     return products.filter((p) => !existing.has(p.id));
   }, [products, dayProducts]);
 
-  const availableActiveProductsForBulkAdd = useMemo(() => {
-    return availableProductsForAdd.filter((p) => p.available);
-  }, [availableProductsForAdd]);
-
   const filteredAvailableProductsForAdd = useMemo(() => {
-    if (!searchAdd.trim()) return availableProductsForAdd;
-    const query = searchAdd.toLowerCase();
-    return availableProductsForAdd.filter((p) => p.name.toLowerCase().includes(query));
-  }, [availableProductsForAdd, searchAdd]);
-
-  const filteredDayProducts = useMemo(() => {
-    if (!searchAssigned.trim()) return dayProducts;
-    const query = searchAssigned.toLowerCase();
-    return dayProducts.filter((dp) => dp.product?.name?.toLowerCase().includes(query));
-  }, [dayProducts, searchAssigned]);
-
-  const summary = useMemo(() => {
-    const total = dayProducts.length;
-    const availableCount = dayProducts.filter(
-      (dp) => rowEdits[dp.id]?.available ?? dp.available ?? true
-    ).length;
-    const soldOut = total - availableCount;
-    return { total, availableCount, soldOut };
-  }, [dayProducts, rowEdits]);
+    return availableProductsForAdd;
+  }, [availableProductsForAdd]);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,54 +153,6 @@ export default function AdminBakeDayDetail() {
       setError(err instanceof Error ? err.message : 'Failed to add product');
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleBulkAddAvailable = async () => {
-    if (!bakeDayId) return;
-    const candidates = availableActiveProductsForBulkAdd;
-
-    if (candidates.length === 0) {
-      setSuccess('No available products to add');
-      setTimeout(() => setSuccess(null), 2000);
-      return;
-    }
-
-    const confirmMessage = `Add ${candidates.length} available product${
-      candidates.length === 1 ? '' : 's'
-    } to this bake day?`;
-
-    if (!window.confirm(confirmMessage)) return;
-
-    try {
-      setBulkAdding(true);
-      setError(null);
-      let addedCount = 0;
-
-      for (const product of candidates) {
-        try {
-          await createBakeDayProduct({
-            bake_day_id: bakeDayId,
-            product_id: product.id,
-            quantity_limit: null,
-            quantity_sold: 0,
-            available: true,
-          });
-          addedCount += 1;
-        } catch (innerErr) {
-          const message =
-            innerErr instanceof Error ? innerErr.message : 'Failed to add one of the products';
-          throw new Error(message);
-        }
-      }
-
-      await refreshDayProducts();
-      setSuccess(`Added ${addedCount} product${addedCount === 1 ? '' : 's'}`);
-      setTimeout(() => setSuccess(null), 2500);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Bulk add failed');
-    } finally {
-      setBulkAdding(false);
     }
   };
 
@@ -288,89 +217,6 @@ export default function AdminBakeDayDetail() {
     }
   };
 
-  const handleMarkSoldOut = async (rowId: string) => {
-    const draft = rowEdits[rowId];
-    if (!draft) return;
-
-    const parsedLimit = draft.quantity_limit.trim() === '' ? null : Number(draft.quantity_limit);
-    const parsedSold = draft.quantity_sold.trim() === '' ? 0 : Number(draft.quantity_sold);
-
-    if (parsedLimit !== null && (Number.isNaN(parsedLimit) || parsedLimit < 0)) {
-      setError('Quantity limit must be a non-negative number');
-      return;
-    }
-
-    if (Number.isNaN(parsedSold) || parsedSold < 0) {
-      setError('Sold must be a non-negative number');
-      return;
-    }
-
-    setRowEdits((prev) => ({
-      ...prev,
-      [rowId]: {
-        quantity_limit: prev[rowId]?.quantity_limit ?? '',
-        quantity_sold: prev[rowId]?.quantity_sold ?? '0',
-        available: false,
-      },
-    }));
-
-    try {
-      setUpdatingId(rowId);
-      setError(null);
-      await updateBakeDayProduct(rowId, {
-        quantity_limit: parsedLimit,
-        quantity_sold: parsedSold,
-        available: false,
-      });
-      setSuccess('Marked sold out');
-      await refreshDayProducts();
-      setTimeout(() => setSuccess(null), 2500);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to mark sold out');
-    } finally {
-      setUpdatingId(null);
-    }
-  };
-
-  const handleResetSold = async (rowId: string) => {
-    if (!window.confirm('Reset sold to 0?')) return;
-    const draft = rowEdits[rowId];
-    if (!draft) return;
-
-    const parsedLimit = draft.quantity_limit.trim() === '' ? null : Number(draft.quantity_limit);
-
-    if (parsedLimit !== null && (Number.isNaN(parsedLimit) || parsedLimit < 0)) {
-      setError('Quantity limit must be a non-negative number');
-      return;
-    }
-
-    setRowEdits((prev) => ({
-      ...prev,
-      [rowId]: {
-        quantity_limit: prev[rowId]?.quantity_limit ?? '',
-        quantity_sold: '0',
-        available: prev[rowId]?.available ?? true,
-      },
-    }));
-
-    try {
-      setUpdatingId(rowId);
-      setError(null);
-      await updateBakeDayProduct(rowId, {
-        quantity_limit: parsedLimit,
-        quantity_sold: 0,
-        available: draft.available,
-      });
-      setSuccess('Sold reset to 0');
-      await refreshDayProducts();
-      setTimeout(() => setSuccess(null), 2500);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to reset sold');
-    } finally {
-      setUpdatingId(null);
-    }
-  };
-
   if (loading) {
     return (
       <main className="min-h-screen bg-neutral-50 px-6 py-10">
@@ -392,12 +238,12 @@ export default function AdminBakeDayDetail() {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Banners */}
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-lg">
+          <div className="bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
         {success && (
-          <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg">
+          <div className="bg-green-50 border border-green-200 text-green-900 px-4 py-3 rounded-lg">
             {success}
           </div>
         )}
@@ -411,16 +257,17 @@ export default function AdminBakeDayDetail() {
           </div>
           <button
             onClick={() => navigate('/admin/bake-days')}
-            className="self-start md:self-auto bg-neutral-200 hover:bg-neutral-300 text-neutral-800 px-4 py-2 rounded-lg transition-colors"
+            className="self-start md:self-auto inline-flex items-center gap-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-4 py-2 rounded-lg transition-colors"
           >
-            ← Back to Bake Days
+            <ArrowLeft size={16} />
+            Back to Bake Days
           </button>
         </div>
 
         {/* Inventory management */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-neutral-200 space-y-3">
+            <div className="px-6 py-4 border-b border-neutral-200">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
                   <h2 className="text-lg font-semibold text-neutral-900">Assigned Products</h2>
@@ -428,30 +275,10 @@ export default function AdminBakeDayDetail() {
                     Adjust limits, sold counts, and availability for this bake day.
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-2 text-sm">
-                  <span className="px-3 py-1 bg-neutral-100 text-neutral-800 rounded-full">
-                    Total: {summary.total}
-                  </span>
-                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full">
-                    Available: {summary.availableCount}
-                  </span>
-                  <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
-                    Sold out: {summary.soldOut}
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <input
-                  type="text"
-                  placeholder="Search assigned products..."
-                  value={searchAssigned}
-                  onChange={(e) => setSearchAssigned(e.target.value)}
-                  className="w-full md:w-72 px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                />
               </div>
             </div>
 
-            {filteredDayProducts.length === 0 ? (
+            {dayProducts.length === 0 ? (
               <div className="p-6 text-neutral-600">No products assigned yet.</div>
             ) : (
               <div className="overflow-x-auto">
@@ -467,22 +294,18 @@ export default function AdminBakeDayDetail() {
                       <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                         Sold
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
-                        Available
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-center text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-200">
-                    {filteredDayProducts.map((dp) => (
+                    {dayProducts.map((dp) => (
                       <tr key={dp.id} className="hover:bg-neutral-50">
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-neutral-900">
                             {dp.product?.name || 'Unnamed product'}
                           </div>
-                          <div className="text-xs text-neutral-500">{shortId(dp.product_id)}</div>
                         </td>
                         <td className="px-6 py-4">
                           <input
@@ -492,7 +315,7 @@ export default function AdminBakeDayDetail() {
                             onChange={(e) =>
                               handleRowChange(dp.id, 'quantity_limit', e.target.value)
                             }
-                            className="w-24 px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                            className="w-24 px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 text-sm"
                           />
                         </td>
                         <td className="px-6 py-4 text-sm text-neutral-700">
@@ -503,53 +326,38 @@ export default function AdminBakeDayDetail() {
                             onChange={(e) =>
                               handleRowChange(dp.id, 'quantity_sold', e.target.value)
                             }
-                            className="w-24 px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                            className="w-24 px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 text-sm"
                           />
                         </td>
-                        <td className="px-6 py-4">
-                          <label className="inline-flex items-center space-x-2 text-sm text-neutral-800">
-                            <input
-                              type="checkbox"
-                              checked={rowEdits[dp.id]?.available ?? true}
-                              onChange={(e) =>
-                                handleRowChange(dp.id, 'available', e.target.checked)
-                              }
-                              className="h-4 w-4 text-blue-600"
-                            />
-                            <span>{rowEdits[dp.id]?.available ? 'Yes' : 'No'}</span>
-                          </label>
-                        </td>
-                        <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
-                          <div className="flex flex-wrap justify-end gap-2">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex flex-wrap justify-center gap-2">
                             <button
                               onClick={() => handleUpdateRow(dp.id)}
                               disabled={updatingId === dp.id}
-                              className={`text-blue-600 hover:text-blue-800 font-medium text-sm ${
-                                updatingId === dp.id ? 'opacity-60 cursor-not-allowed' : ''
+                              className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                                updatingId === dp.id
+                                  ? 'bg-amber-100 text-amber-400 cursor-not-allowed'
+                                  : 'bg-amber-700 hover:bg-amber-800 text-white'
                               }`}
+                              title={updatingId === dp.id ? 'Saving...' : 'Save changes'}
                             >
-                              {updatingId === dp.id ? 'Saving...' : 'Save'}
-                            </button>
-                            <button
-                              onClick={() => handleMarkSoldOut(dp.id)}
-                              className="text-amber-700 hover:text-amber-900 font-medium text-sm"
-                            >
-                              Mark sold out
-                            </button>
-                            <button
-                              onClick={() => handleResetSold(dp.id)}
-                              className="text-neutral-700 hover:text-neutral-900 font-medium text-sm"
-                            >
-                              Reset sold
+                              <Save size={14} />
+                              <span className="sr-only">
+                                {updatingId === dp.id ? 'Saving...' : 'Save'}
+                              </span>
                             </button>
                             <button
                               onClick={() => handleDeleteRow(dp.id)}
                               disabled={deletingId === dp.id}
-                              className={`text-red-600 hover:text-red-800 font-medium text-sm ${
-                                deletingId === dp.id ? 'opacity-60 cursor-not-allowed' : ''
+                              className={`inline-flex items-center justify-center px-2.5 py-1.5 rounded-md transition-colors ${
+                                deletingId === dp.id
+                                  ? 'bg-red-100 text-red-300 cursor-not-allowed'
+                                  : 'bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-900'
                               }`}
+                              title={deletingId === dp.id ? 'Removing...' : 'Remove product'}
                             >
-                              {deletingId === dp.id ? 'Removing...' : 'Delete'}
+                              <Trash2 size={14} />
+                              <span className="sr-only">Remove product</span>
                             </button>
                           </div>
                         </td>
@@ -570,29 +378,6 @@ export default function AdminBakeDayDetail() {
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={handleBulkAddAvailable}
-                disabled={bulkAdding || availableActiveProductsForBulkAdd.length === 0}
-                className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-colors border ${
-                  bulkAdding || availableActiveProductsForBulkAdd.length === 0
-                    ? 'bg-neutral-100 text-neutral-400 border-neutral-200 cursor-not-allowed'
-                    : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
-                }`}
-              >
-                {bulkAdding
-                  ? 'Adding available products...'
-                  : `Add all available products (${availableActiveProductsForBulkAdd.length})`}
-              </button>
-
-              <input
-                type="text"
-                placeholder="Search products to add..."
-                value={searchAdd}
-                onChange={(e) => setSearchAdd(e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              />
-
               <form onSubmit={handleAdd} className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-neutral-700 mb-1">
@@ -601,7 +386,7 @@ export default function AdminBakeDayDetail() {
                   <select
                     value={formProductId}
                     onChange={(e) => setFormProductId(e.target.value)}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                   >
                     <option value="">Select a product</option>
                     {filteredAvailableProductsForAdd.map((product) => (
@@ -622,7 +407,7 @@ export default function AdminBakeDayDetail() {
                     value={formQuantityLimit}
                     onChange={(e) => setFormQuantityLimit(e.target.value)}
                     placeholder="Leave blank for no limit"
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                   />
                   <p className="text-xs text-neutral-500 mt-1">
                     Enter a cap or keep empty for unlimited.
@@ -633,7 +418,7 @@ export default function AdminBakeDayDetail() {
                   type="submit"
                   disabled={saving}
                   className={`w-full py-2 rounded-lg text-white font-medium transition-colors ${
-                    saving ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                    saving ? 'bg-amber-400 cursor-not-allowed' : 'bg-amber-700 hover:bg-amber-800'
                   }`}
                 >
                   {saving ? 'Adding...' : 'Add to Bake Day'}

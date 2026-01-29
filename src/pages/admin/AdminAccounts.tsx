@@ -29,6 +29,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Edit2 } from 'lucide-react';
 import {
   listUsers,
   getUserById,
@@ -350,7 +351,7 @@ export default function AdminAccounts() {
       <div className="max-w-7xl mx-auto">
         {/* Error banner */}
         {error && (
-          <div className="mb-4 bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-lg">
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
@@ -363,7 +364,7 @@ export default function AdminAccounts() {
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+            className="px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 font-medium transition-colors"
           >
             + Create Account
           </button>
@@ -376,7 +377,7 @@ export default function AdminAccounts() {
             placeholder="Search by name, email, phone, or user ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
           />
         </div>
 
@@ -451,16 +452,19 @@ export default function AdminAccounts() {
                       <td className="px-6 py-4 text-sm text-neutral-700">
                         {formatDate(user.created_at)}
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedUserId(user.id);
-                          }}
-                          className="text-blue-600 hover:text-blue-800 font-medium text-sm"
-                        >
-                          View / Edit
-                        </button>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedUserId(user.id);
+                            }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-neutral-900 rounded-md transition-colors"
+                            title="View and edit user details"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -532,7 +536,7 @@ export default function AdminAccounts() {
                           type="text"
                           value={editName}
                           onChange={(e) => handleProfileChange('name', e.target.value)}
-                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 text-sm"
                         />
                       </div>
                       <div>
@@ -543,18 +547,7 @@ export default function AdminAccounts() {
                           type="email"
                           value={editEmail}
                           onChange={(e) => handleProfileChange('email', e.target.value)}
-                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-neutral-700 mb-1">
-                          Phone
-                        </label>
-                        <input
-                          type="tel"
-                          value={editPhone}
-                          onChange={(e) => handleProfileChange('phone', e.target.value)}
-                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 text-sm"
                         />
                       </div>
                       <div>
@@ -579,7 +572,7 @@ export default function AdminAccounts() {
                         className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
                           !profileDirty || profileSaving
                             ? 'bg-neutral-200 text-neutral-500 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                            : 'bg-amber-700 hover:bg-amber-800 text-white'
                         }`}
                       >
                         {profileSaving ? 'Saving...' : 'Save Changes'}
@@ -613,7 +606,7 @@ export default function AdminAccounts() {
                           disabled={adminToggling || (selectedUserId === currentUserId && isAdmin)}
                           className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-neutral-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
+                        <div className="w-11 h-6 bg-neutral-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-700" />
                       </label>
                     </div>
                     {adminToggling && (
@@ -748,7 +741,7 @@ export default function AdminAccounts() {
             </div>
             <div className="p-4 space-y-4">
               {createError && (
-                <div className="bg-red-100 border border-red-400 text-red-800 px-3 py-2 rounded-lg text-sm">
+                <div className="bg-red-50 border border-red-200 text-red-900 px-3 py-2 rounded-lg text-sm">
                   {createError}
                 </div>
               )}
@@ -763,7 +756,7 @@ export default function AdminAccounts() {
                   onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="user@example.com"
                   disabled={isCreating}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                 />
               </div>
 
@@ -775,7 +768,7 @@ export default function AdminAccounts() {
                   onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder="John Doe"
                   disabled={isCreating}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                 />
               </div>
 
@@ -787,11 +780,8 @@ export default function AdminAccounts() {
                   onChange={(e) => setCreateForm((f) => ({ ...f, phone: e.target.value }))}
                   placeholder="(555) 123-4567"
                   disabled={isCreating}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                 />
-              </div>
-
-              <div className="pt-2 flex justify-end gap-3">
                 <button
                   onClick={() => setShowCreateModal(false)}
                   disabled={isCreating}
@@ -802,7 +792,7 @@ export default function AdminAccounts() {
                 <button
                   onClick={handleCreateAccount}
                   disabled={isCreating || !createForm.email.trim()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isCreating ? 'Creating...' : 'Create Account'}
                 </button>

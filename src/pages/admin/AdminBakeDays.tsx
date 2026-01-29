@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Calendar, Trash2 } from 'lucide-react';
 import {
   listBakeDays,
   createBakeDay,
   updateBakeDay,
   removeBakeDay,
 } from '../../api/admin/bakeDaysAdmin';
-import type { BakeDay } from '../../api/admin/types';
+import { listBakeDayProductsByBakeDayId } from '../../api/admin/bakeDayProductsAdmin';
+import type { BakeDay, BakeDayProductWithProduct } from '../../api/admin/types';
 
 type ModalMode = 'create' | 'edit' | null;
 
@@ -36,6 +38,9 @@ export default function AdminBakeDays() {
   const [modalError, setModalError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleteLoadingId, setDeleteLoadingId] = useState<string | null>(null);
+  const [upcomingProducts, setUpcomingProducts] = useState<BakeDayProductWithProduct[]>([]);
+  const [upcomingLoading, setUpcomingLoading] = useState(false);
+  const [upcomingError, setUpcomingError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,6 +50,48 @@ export default function AdminBakeDays() {
   const sortedBakeDays = useMemo(() => {
     return [...bakeDays].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [bakeDays]);
+
+  const upcomingBakeDay = useMemo(() => {
+    if (bakeDays.length === 0) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const upcoming = [...bakeDays]
+      .filter((day) => new Date(day.date).getTime() >= today.getTime())
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return upcoming[0] ?? null;
+  }, [bakeDays]);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadUpcomingProducts = async () => {
+      if (!upcomingBakeDay) {
+        setUpcomingProducts([]);
+        setUpcomingError(null);
+        return;
+      }
+
+      try {
+        setUpcomingLoading(true);
+        setUpcomingError(null);
+        const data = await listBakeDayProductsByBakeDayId(upcomingBakeDay.id);
+        if (!active) return;
+        setUpcomingProducts(data);
+      } catch (err) {
+        if (!active) return;
+        setUpcomingError(
+          err instanceof Error ? err.message : 'Failed to load upcoming bake day products'
+        );
+      } finally {
+        if (active) setUpcomingLoading(false);
+      }
+    };
+
+    loadUpcomingProducts();
+    return () => {
+      active = false;
+    };
+  }, [upcomingBakeDay?.id]);
 
   const loadBakeDays = async () => {
     try {
@@ -131,12 +178,12 @@ export default function AdminBakeDays() {
       <div className="max-w-7xl mx-auto">
         {/* Banners */}
         {error && (
-          <div className="mb-4 bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-lg">
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
         {success && (
-          <div className="mb-4 bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg">
+          <div className="mb-4 bg-green-50 border border-green-200 text-green-900 px-4 py-3 rounded-lg">
             {success}
           </div>
         )}
@@ -146,10 +193,87 @@ export default function AdminBakeDays() {
           <h1 className="text-4xl font-bold text-neutral-900">Bake Days</h1>
           <button
             onClick={openCreateModal}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors font-medium"
+            className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 rounded-lg transition-colors font-medium"
           >
             New Bake Day
           </button>
+        </div>
+
+        {/* Upcoming Bake Day */}
+        <div className="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden mb-6">
+          <div className="px-6 py-4 border-b border-neutral-200 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-widest text-neutral-500">
+                Upcoming Bake Day
+              </p>
+              <h2 className="text-2xl font-bold text-neutral-900 mt-1">
+                {upcomingBakeDay ? formatDate(upcomingBakeDay.date) : 'No upcoming bake days'}
+              </h2>
+              {upcomingBakeDay && (
+                <p className="text-sm text-neutral-600 mt-1">ID: {shortId(upcomingBakeDay.id)}</p>
+              )}
+            </div>
+            {upcomingBakeDay && (
+              <button
+                onClick={() => navigate(`/admin/bake-days/${upcomingBakeDay.id}`)}
+                className="bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+              >
+                Manage Products
+              </button>
+            )}
+          </div>
+
+          <div className="p-6">
+            {upcomingError && (
+              <div className="mb-4 bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
+                {upcomingError}
+              </div>
+            )}
+
+            {!upcomingBakeDay ? (
+              <div className="text-sm text-neutral-600">
+                Add a bake day to start scheduling products.
+              </div>
+            ) : upcomingLoading ? (
+              <div className="text-sm text-neutral-600">Loading upcoming products...</div>
+            ) : upcomingProducts.length === 0 ? (
+              <div className="text-sm text-neutral-600">
+                No products assigned yet. Use “Manage Products” to add items for this bake day.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-neutral-600">
+                    <Calendar size={16} />
+                    <span>{upcomingProducts.length} product(s) to bake</span>
+                  </div>
+                  <p className="text-xs text-neutral-500">
+                    Quantities reflect the limits set for this bake day.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  {upcomingProducts.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2"
+                    >
+                      <div>
+                        <p className="text-sm font-medium text-neutral-900">
+                          {item.product?.name ?? 'Unnamed product'}
+                        </p>
+                        {item.available === false && (
+                          <p className="text-xs text-red-700">Unavailable</p>
+                        )}
+                      </div>
+                      <div className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">
+                        {item.quantity_limit ?? 'No limit'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Table */}
@@ -169,7 +293,7 @@ export default function AdminBakeDays() {
                     <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                       ID
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -184,30 +308,34 @@ export default function AdminBakeDays() {
                         <div className="text-xs text-neutral-500">{day.date}</div>
                       </td>
                       <td className="px-6 py-4 text-sm text-neutral-700">{shortId(day.id)}</td>
-                      <td className="px-6 py-4 text-right space-x-3 whitespace-nowrap">
-                        <button
-                          onClick={() => navigate(`/admin/bake-days/${day.id}`)}
-                          className="text-blue-600 hover:text-blue-800 font-medium text-sm"
-                        >
-                          Manage Products
-                        </button>
-                        <button
-                          onClick={() => openEditModal(day)}
-                          className="text-neutral-700 hover:text-neutral-900 font-medium text-sm"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(day.id)}
-                          disabled={deleteLoadingId === day.id}
-                          className={`font-medium text-sm ${
-                            deleteLoadingId === day.id
-                              ? 'text-red-400 cursor-not-allowed'
-                              : 'text-red-600 hover:text-red-800'
-                          }`}
-                        >
-                          {deleteLoadingId === day.id ? 'Deleting...' : 'Delete'}
-                        </button>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => navigate(`/admin/bake-days/${day.id}`)}
+                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-neutral-900 rounded-md transition-colors text-sm font-medium"
+                          >
+                            Manage Products
+                          </button>
+                          <button
+                            onClick={() => openEditModal(day)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-neutral-900 rounded-md transition-colors"
+                            title="Edit bake day date"
+                          >
+                            <Calendar size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(day.id)}
+                            disabled={deleteLoadingId === day.id}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md transition-colors ${
+                              deleteLoadingId === day.id
+                                ? 'bg-red-100 text-red-300 cursor-not-allowed'
+                                : 'bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-900'
+                            }`}
+                            title={deleteLoadingId === day.id ? 'Deleting...' : 'Delete bake day'}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -238,7 +366,7 @@ export default function AdminBakeDays() {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {modalError && (
-                <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-lg">
+                <div className="bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
                   {modalError}
                 </div>
               )}
@@ -255,7 +383,7 @@ export default function AdminBakeDays() {
                   type="date"
                   value={formDate}
                   onChange={(e) => setFormDate(e.target.value)}
-                  className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
                   required
                 />
               </div>
@@ -272,7 +400,9 @@ export default function AdminBakeDays() {
                   type="submit"
                   disabled={saving}
                   className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${
-                    saving ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                    saving
+                      ? 'bg-neutral-400 cursor-not-allowed'
+                      : 'bg-neutral-900 hover:bg-neutral-800'
                   }`}
                 >
                   {saving ? 'Saving...' : modalMode === 'create' ? 'Create' : 'Save Changes'}

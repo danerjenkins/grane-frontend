@@ -83,6 +83,18 @@ export default function AdminOrders() {
   const [deleteAck, setDeleteAck] = useState(false);
   const [deleteInput, setDeleteInput] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [editingStatusOrderId, setEditingStatusOrderId] = useState<string | null>(null);
+  const [statusUpdateLoading, setStatusUpdateLoading] = useState(false);
+
+  const statusOptions = ['pending', 'confirmed', 'completed', 'cancelled'];
+  const stripeStatusOptions = [
+    'pending',
+    'paid',
+    'unpaid',
+    'failed',
+    'succeeded',
+    'no_payment_required',
+  ];
 
   useEffect(() => {
     let active = true;
@@ -446,6 +458,22 @@ export default function AdminOrders() {
     }
   };
 
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    setStatusUpdateLoading(true);
+    try {
+      await updateOrder(orderId, { status: newStatus });
+      // Update orders list
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)));
+      setEditingStatusOrderId(null);
+      setPageSuccess('Status updated successfully!');
+      setTimeout(() => setPageSuccess(null), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update status');
+    } finally {
+      setStatusUpdateLoading(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-neutral-50 px-6 py-10">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -563,6 +591,9 @@ export default function AdminOrders() {
                       Bake Day
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      User
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
@@ -571,10 +602,7 @@ export default function AdminOrders() {
                     <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                       Total
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
-                      Note
-                    </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -598,44 +626,79 @@ export default function AdminOrders() {
                             shortId(order.bake_day_id))
                           : '—'}
                       </td>
+                      <td className="px-4 py-3 text-sm text-neutral-800">
+                        {order.user?.name || '—'}
+                      </td>
+                      <td className="px-4 py-3">
+                        {editingStatusOrderId === order.id ? (
+                          <select
+                            value={order.status ?? ''}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              handleStatusChange(order.id, e.target.value);
+                            }}
+                            onBlur={() => setEditingStatusOrderId(null)}
+                            disabled={statusUpdateLoading}
+                            autoFocus
+                            className="text-sm px-2 py-1 border border-neutral-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {statusOptions.map((status) => (
+                              <option key={status} value={status}>
+                                {status}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingStatusOrderId(order.id);
+                            }}
+                            className="cursor-pointer hover:opacity-80 transition"
+                          >
+                            <Badge
+                              tone={
+                                order.status === 'completed'
+                                  ? 'green'
+                                  : order.status === 'pending'
+                                    ? 'amber'
+                                    : 'gray'
+                              }
+                            >
+                              {order.status ?? '—'}
+                            </Badge>
+                          </button>
+                        )}
+                      </td>
                       <td className="px-4 py-3">
                         <Badge
                           tone={
-                            order.status === 'completed'
+                            order.stripe_status === 'paid'
                               ? 'green'
-                              : order.status === 'pending'
+                              : order.stripe_status === 'pending'
                                 ? 'amber'
-                                : 'gray'
+                                : 'blue'
                           }
                         >
-                          {order.status ?? '—'}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3">
-                        <Badge tone={order.stripe_status === 'paid' ? 'green' : 'blue'}>
                           {order.stripe_status ?? '—'}
                         </Badge>
                       </td>
                       <td className="px-4 py-3 text-sm text-neutral-900">
                         {formatMoney(order.price_with_tax ?? order.total_price)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-neutral-700">
-                        {order.customer_note ? (
-                          <span className="text-blue-600 font-medium">Has note</span>
-                        ) : (
-                          '—'
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <button
-                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openDetails(order.id);
-                          }}
-                        >
-                          View / Edit
-                        </button>
+                      <td className="px-4 py-3">
+                        <div className="flex justify-center">
+                          <button
+                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-sm font-medium rounded-lg transition-colors border border-neutral-300"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDetails(order.id);
+                            }}
+                          >
+                            View / Edit
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -686,29 +749,24 @@ export default function AdminOrders() {
                       {formatDate(selectedOrder.created_at)}
                     </p>
                   </div>
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                    <p className="text-sm text-neutral-500">User</p>
-                    <Link
-                      to={`/admin/accounts?userId=${selectedOrder.user?.id ?? selectedOrder.user_id}`}
-                      className="text-sm text-blue-600 hover:text-blue-800 hover:underline break-all inline-block"
-                    >
-                      {selectedOrder.user?.id ?? selectedOrder.user_id}
-                    </Link>
-                    {selectedOrder.user?.name && (
-                      <p className="text-xs text-neutral-600">{selectedOrder.user.name}</p>
-                    )}
-                  </div>
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                    <p className="text-sm text-neutral-500">Stripe</p>
-                    <Badge tone={selectedOrder.stripe_status === 'paid' ? 'green' : 'blue'}>
-                      {selectedOrder.stripe_status ?? '—'}
-                    </Badge>
-                  </div>
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                    <p className="text-sm text-neutral-500">Status</p>
-                    <Badge tone={selectedOrder.status === 'completed' ? 'green' : 'amber'}>
-                      {selectedOrder.status ?? '—'}
-                    </Badge>
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 col-span-2">
+                    <p className="text-sm text-neutral-500 mb-1">Customer</p>
+                    <div className="space-y-1">
+                      {selectedOrder.user?.name && (
+                        <p className="text-base font-semibold text-neutral-900">
+                          {selectedOrder.user.name}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-neutral-500">User ID:</span>
+                        <Link
+                          to={`/admin/accounts?userId=${selectedOrder.user?.id ?? selectedOrder.user_id}`}
+                          className="text-xs text-blue-600 hover:text-blue-800 hover:underline break-all"
+                        >
+                          {selectedOrder.user?.id ?? selectedOrder.user_id}
+                        </Link>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -740,21 +798,35 @@ export default function AdminOrders() {
                   <div className="grid grid-cols-1 gap-3">
                     <div className="space-y-1">
                       <label className="text-sm text-neutral-700">Status</label>
-                      <input
+                      <select
                         value={orderForm.status}
                         onChange={(e) => setOrderForm((f) => ({ ...f, status: e.target.value }))}
                         className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                      />
+                      >
+                        <option value="">Select status...</option>
+                        {statusOptions.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="space-y-1">
                       <label className="text-sm text-neutral-700">Stripe status</label>
-                      <input
+                      <select
                         value={orderForm.stripe_status}
                         onChange={(e) =>
                           setOrderForm((f) => ({ ...f, stripe_status: e.target.value }))
                         }
                         className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                      />
+                      >
+                        <option value="">Select stripe status...</option>
+                        {stripeStatusOptions.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </section>

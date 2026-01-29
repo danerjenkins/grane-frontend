@@ -10,7 +10,7 @@ const CART_EXPIRY_DAYS = 7; // Cart items expire after 7 days
 export interface CartItem {
   product_id: string;
   name: string;
-  price: number; // price in cents
+  price: number; // price in dollars
   quantity: number;
   addedAt?: string; // ISO timestamp when item was added
 }

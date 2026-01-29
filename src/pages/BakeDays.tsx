@@ -352,7 +352,7 @@ export default function BakeDaysPage() {
                                     addToCart({
                                       product_id: product.id,
                                       name: product.name,
-                                      price: Math.round(product.price * 100),
+                                      price: product.price,
                                       quantity: 1,
                                     });
 

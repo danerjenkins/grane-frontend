@@ -325,9 +325,9 @@ export default function Account() {
                 </thead>
                 <tbody className="divide-y">
                   {orders.map((order) => {
-                    const totalCents = order.price_with_tax ?? order.total_price ?? null;
+                    const totalPrice = order.price_with_tax ?? order.total_price ?? null;
                     const totalDisplay =
-                      totalCents === null ? '—' : `$${(totalCents / 100).toFixed(2)}`;
+                      totalPrice === null ? '—' : `$${(totalPrice).toFixed(2)}`;
                     const statusDisplay = order.status || order.stripe_status || '—';
 
                     return (

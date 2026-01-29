@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
 import { signOut } from '../../api/auth';
+import { useCart } from '../../context/CartContext';
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const { clearCart } = useCart();
 
   const handleSignOut = async () => {
     try {
       await signOut();
+      clearCart();
       navigate('/');
     } catch (err) {
       console.error('Sign out failed:', err);

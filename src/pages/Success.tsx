@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { getOrderBySessionId, type Order } from '../api/orders';
+import { useCart } from '../context/CartContext';
 
 interface ConfirmResponse {
   success: boolean;
@@ -12,6 +13,7 @@ interface ConfirmResponse {
 
 export default function Success() {
   const [searchParams] = useSearchParams();
+  const { clearCart } = useCart();
   const [order, setOrder] = useState<Order | null>(null);
   const [confirmResponse, setConfirmResponse] = useState<ConfirmResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,6 +37,8 @@ export default function Success() {
       .then((data: ConfirmResponse) => {
         console.log('Payment confirmed:', data);
         setConfirmResponse(data);
+        // Clear the cart after successful payment confirmation
+        clearCart();
       })
       .catch((err) => {
         console.error('Error confirming payment:', err);

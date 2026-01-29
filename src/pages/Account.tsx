@@ -3,9 +3,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { signOut } from '../api/auth';
 import { getMyProfile, updateMyProfile, type UserProfile } from '../api/profile';
 import { getMyOrders, type MyOrderRow } from '../api/myOrders';
+import { useCart } from '../context/CartContext';
 
 export default function Account() {
   const navigate = useNavigate();
+  const { clearCart } = useCart();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -107,6 +109,7 @@ export default function Account() {
   const handleSignOut = async () => {
     try {
       await signOut();
+      clearCart();
       navigate('/');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to sign out';

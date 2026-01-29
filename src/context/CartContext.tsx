@@ -4,13 +4,15 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 // Storage Constants
 // ============================================================================
 const CART_STORAGE_KEY = 'grane_cart_v1';
-const CART_VERSION = 1;
+const CART_VERSION = 2;
+const CART_EXPIRY_DAYS = 7; // Cart items expire after 7 days
 
 export interface CartItem {
   product_id: string;
   name: string;
   price: number; // price in cents
   quantity: number;
+    addedAt?: string; // ISO timestamp when item was added
 }
 
 export interface SelectedBakeDay {
@@ -34,6 +36,9 @@ interface CartContextType {
   removeFromCart: (product_id: string) => void;
   updateQuantity: (product_id: string, qty: number) => void;
   clearCart: () => void;
+    clearExpiredItems: () => void;
+    validateBakeDay: (availableBakeDays: { id: string; date: string }[]) => void;
+    removeUnavailableProducts: (availableProductIds: string[]) => void;
 
   selectedBakeDay: SelectedBakeDay | null;
   setSelectedBakeDay: (day: SelectedBakeDay | null) => void;
@@ -68,7 +73,15 @@ function loadPersistedCart(): { cart: CartItem[]; selectedBakeDay: SelectedBakeD
     const persisted = parsed as PersistedCart;
 
     // Check version
-    if (persisted.version !== CART_VERSION) {
+    if (persisted.version < 1 || persisted.version > CART_VERSION) {
+      return { cart: [], selectedBakeDay: null };
+    }
+
+    // Check for expired cart
+    const now = new Date();
+    const updatedAt = new Date(persisted.updatedAt);
+    const daysSinceUpdate = (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24);
+    if (daysSinceUpdate > CART_EXPIRY_DAYS) {
       return { cart: [], selectedBakeDay: null };
     }
 
@@ -91,6 +104,7 @@ function loadPersistedCart(): { cart: CartItem[]; selectedBakeDay: SelectedBakeD
               name: item.name,
               price: item.price,
               quantity: qty,
+              addedAt: item.addedAt || new Date().toISOString(),
             });
           }
         }
@@ -225,11 +239,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (existing) {
         return prev.map((p) =>
-          p.product_id === item.product_id ? { ...p, quantity: p.quantity + item.quantity } : p
+            p.product_id === item.product_id 
+              ? { ...p, quantity: p.quantity + item.quantity, addedAt: p.addedAt || new Date().toISOString() } 
+              : p
         );
       }
 
-      return [...prev, item];
+        return [...prev, { ...item, addedAt: item.addedAt || new Date().toISOString() }];
     });
   };
 
@@ -266,6 +282,72 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     clearPersistedCart();
   };
 
+    /**
+     * Clears items that were added more than CART_EXPIRY_DAYS ago
+     */
+    const clearExpiredItems = () => {
+      const now = new Date();
+      setCart((prev) => {
+        const filtered = prev.filter((item) => {
+          if (!item.addedAt) return true; // Keep items without timestamp
+          const addedDate = new Date(item.addedAt);
+          const daysSinceAdded = (now.getTime() - addedDate.getTime()) / (1000 * 60 * 60 * 24);
+          return daysSinceAdded <= CART_EXPIRY_DAYS;
+        });
+      
+        if (filtered.length < prev.length) {
+          console.log('Cleared expired cart items');
+        }
+      
+        return filtered;
+      });
+    };
+
+    /**
+     * Validates that the selected bake day still exists in available bake days
+     * Clears cart if the selected bake day is no longer available
+     */
+    const validateBakeDay = (availableBakeDays: { id: string; date: string }[]) => {
+      if (!selectedBakeDay) return;
+    
+      const isStillAvailable = availableBakeDays.some(
+        (bd) => bd.id === selectedBakeDay.id
+      );
+    
+      if (!isStillAvailable) {
+        console.log('Selected bake day is no longer available, clearing cart');
+        clearCart();
+      }
+    };
+
+    /**
+     * Removes items from cart if their products are no longer available
+     */
+    const removeUnavailableProducts = (availableProductIds: string[]) => {
+      setCart((prev) => {
+        const filtered = prev.filter((item) => 
+          availableProductIds.includes(item.product_id)
+        );
+      
+        if (filtered.length < prev.length) {
+          console.log('Removed unavailable products from cart');
+        }
+      
+        return filtered;
+      });
+    };
+
+    // Clear expired items on mount and periodically
+    useEffect(() => {
+      clearExpiredItems();
+    
+      // Check for expired items every hour
+      const interval = setInterval(() => {
+        clearExpiredItems();
+      }, 1000 * 60 * 60);
+    
+      return () => clearInterval(interval);
+    }, []);
   const cartQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -276,6 +358,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         removeFromCart,
         updateQuantity,
         clearCart,
+          clearExpiredItems,
+          validateBakeDay,
+          removeUnavailableProducts,
         selectedBakeDay,
         setSelectedBakeDay,
         cartQuantity,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingCart, User } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart, type CartItem } from '../context/CartContext';
 import { getSession } from '../api/auth';
 import { isAdmin } from '../api/admin';
 import { supabase } from '../api/supabaseClient';
@@ -13,6 +13,7 @@ const Navbar = () => {
   const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [sessionLoading, setSessionLoading] = useState(true);
   const { cart, removeFromCart } = useCart();
+    const { clearCart } = useCart();
   const { cartQuantity } = useCart();
   const location = useLocation();
 
@@ -211,14 +212,28 @@ const Navbar = () => {
               {/* Desktop Dropdown */}
               {cartOpen && (
                 <div className="absolute right-0 mt-4 w-72 bg-white shadow-2xl border border-neutral-200 rounded-xl p-5 z-50 backdrop-blur-sm">
-                  <h3 className="text-lg font-serif font-bold text-neutral-900 mb-4 border-b border-neutral-200 pb-2">
-                    Your Cart
-                  </h3>
+                    <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
+                      <h3 className="text-lg font-serif font-bold text-neutral-900">
+                        Your Cart
+                      </h3>
+                      {cart.length > 0 && (
+                        <button
+                          onClick={() => {
+                            if (confirm('Clear your entire cart?')) {
+                              clearCart();
+                            }
+                          }}
+                          className="text-xs text-red-600 hover:text-red-800 hover:underline"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
                   {cart.length === 0 ? (
                     <p className="text-sm text-neutral-600 italic">Your cart is empty.</p>
                   ) : (
                     <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
-                      {cart.map((item) => (
+                      {cart.map((item: CartItem) => (
                         <div
                           key={item.product_id}
                           className="flex justify-between items-start gap-3 pb-3 border-b border-neutral-100 last:border-0"
@@ -329,15 +344,29 @@ const Navbar = () => {
 
       {cartOpen && (
         <div className="md:hidden mt-6 w-full bg-white shadow-xl border border-neutral-200 rounded-xl p-5 z-50">
-          <h3 className="text-lg font-serif font-bold text-neutral-900 mb-4 border-b border-neutral-200 pb-2">
-            Your Cart
-          </h3>
+            <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
+              <h3 className="text-lg font-serif font-bold text-neutral-900">
+                Your Cart
+              </h3>
+              {cart.length > 0 && (
+                <button
+                  onClick={() => {
+                    if (confirm('Clear your entire cart?')) {
+                      clearCart();
+                    }
+                  }}
+                  className="text-xs text-red-600 hover:text-red-800 hover:underline"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
 
           {cart.length === 0 ? (
             <p className="text-sm text-neutral-600 italic">Your cart is empty.</p>
           ) : (
             <div className="space-y-4 max-h-64 overflow-y-auto">
-              {cart.map((item) => (
+              {cart.map((item: CartItem) => (
                 <div
                   key={item.product_id}
                   className="flex justify-between items-start gap-3 pb-3 border-b border-neutral-100 last:border-0"

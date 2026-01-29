@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { useCart, type CartItem } from '../context/CartContext';
 import { getSession, signOut } from '../api/auth';
 import { getMyProfile } from '../api/profile';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const { cart, selectedBakeDay, updateQuantity, removeFromCart } = useCart();
+  const { cart, selectedBakeDay, updateQuantity, removeFromCart, clearCart } = useCart();
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [orderNote, setOrderNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [profileLoaded, setProfileLoaded] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Validation errors
@@ -40,19 +39,18 @@ export default function CheckoutPage() {
         // User not logged in or error loading profile - just continue with empty form
         console.log('No profile loaded:', err);
         setIsLoggedIn(false);
-      } finally {
-        setProfileLoaded(true);
       }
     };
 
     loadUserProfile();
   }, []);
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = cart.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0);
 
   const handleSignOut = async () => {
     try {
       await signOut();
+      clearCart();
       navigate('/login');
     } catch (err) {
       console.error('Failed to sign out:', err);
@@ -121,7 +119,7 @@ export default function CheckoutPage() {
         customer_email: customerEmail.trim(),
         customer_phone: customerPhone.trim(),
         customer_note: orderNote.trim() || undefined,
-        items: cart.map((item) => ({
+        items: cart.map((item: CartItem) => ({
           product_id: item.product_id,
           quantity: item.quantity,
         })),
@@ -256,13 +254,27 @@ export default function CheckoutPage() {
       </div>
       {/* Cart Items */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Your Items</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-semibold">Your Items</h2>
+            {cart.length > 0 && (
+              <button
+                onClick={() => {
+                  if (confirm('Are you sure you want to clear your entire cart?')) {
+                    clearCart();
+                  }
+                }}
+                className="text-sm text-red-600 hover:text-red-800 hover:underline"
+              >
+                Clear Cart
+              </button>
+            )}
+          </div>
 
         {cart.length === 0 ? (
           <p>Your cart is empty.</p>
         ) : (
           <div className="space-y-4">
-            {cart.map((item) => (
+            {cart.map((item: CartItem) => (
               <div
                 key={item.product_id}
                 className="flex justify-between items-center border-b pb-3"

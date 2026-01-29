@@ -111,7 +111,7 @@ export default function AdminAccounts() {
     const userIdFromUrl = searchParams.get('userId');
     if (userIdFromUrl && users.length > 0) {
       // Check if this user exists in the loaded users
-      const userExists = users.some(u => u.id === userIdFromUrl);
+      const userExists = users.some((u) => u.id === userIdFromUrl);
       if (userExists) {
         setSelectedUserId(userIdFromUrl);
         // Clear the query parameter after opening

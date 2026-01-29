@@ -11,30 +11,30 @@ export default function BakeDaysPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-    const { 
-      cart, 
-      addToCart, 
-      selectedBakeDay, 
-      setSelectedBakeDay, 
-      updateQuantity, 
-      removeFromCart,
-      validateBakeDay,
-      removeUnavailableProducts
-    } = useCart();
+  const {
+    cart,
+    addToCart,
+    selectedBakeDay,
+    setSelectedBakeDay,
+    updateQuantity,
+    removeFromCart,
+    validateBakeDay,
+    removeUnavailableProducts,
+  } = useCart();
   const [addedMessage, setAddedMessage] = useState('');
 
   // Load bake days
   useEffect(() => {
     setIsLoading(true);
     getBakeDays()
-        .then((days) => {
-          setBakeDays(days);
-          // Validate selected bake day is still available
-          validateBakeDay(days.map(d => ({ id: d.id, date: d.date })));
-        })
+      .then((days) => {
+        setBakeDays(days);
+        // Validate selected bake day is still available
+        validateBakeDay(days.map((d) => ({ id: d.id, date: d.date })));
+      })
       .catch(console.error)
       .finally(() => setIsLoading(false));
-    }, [validateBakeDay]);
+  }, [validateBakeDay]);
 
   // Highlight dates that have bake days
   const getTileClassName = ({ date }: { date: Date }) => {

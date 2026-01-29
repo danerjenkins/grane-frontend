@@ -254,21 +254,21 @@ export default function CheckoutPage() {
       </div>
       {/* Cart Items */}
       <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl font-semibold">Your Items</h2>
-            {cart.length > 0 && (
-              <button
-                onClick={() => {
-                  if (confirm('Are you sure you want to clear your entire cart?')) {
-                    clearCart();
-                  }
-                }}
-                className="text-sm text-red-600 hover:text-red-800 hover:underline"
-              >
-                Clear Cart
-              </button>
-            )}
-          </div>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-xl font-semibold">Your Items</h2>
+          {cart.length > 0 && (
+            <button
+              onClick={() => {
+                if (confirm('Are you sure you want to clear your entire cart?')) {
+                  clearCart();
+                }
+              }}
+              className="text-sm text-red-600 hover:text-red-800 hover:underline"
+            >
+              Clear Cart
+            </button>
+          )}
+        </div>
 
         {cart.length === 0 ? (
           <p>Your cart is empty.</p>

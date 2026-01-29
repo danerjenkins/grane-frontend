@@ -13,7 +13,7 @@ const Navbar = () => {
   const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [sessionLoading, setSessionLoading] = useState(true);
   const { cart, removeFromCart } = useCart();
-    const { clearCart } = useCart();
+  const { clearCart } = useCart();
   const { cartQuantity } = useCart();
   const location = useLocation();
 
@@ -212,23 +212,21 @@ const Navbar = () => {
               {/* Desktop Dropdown */}
               {cartOpen && (
                 <div className="absolute right-0 mt-4 w-72 bg-white shadow-2xl border border-neutral-200 rounded-xl p-5 z-50 backdrop-blur-sm">
-                    <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
-                      <h3 className="text-lg font-serif font-bold text-neutral-900">
-                        Your Cart
-                      </h3>
-                      {cart.length > 0 && (
-                        <button
-                          onClick={() => {
-                            if (confirm('Clear your entire cart?')) {
-                              clearCart();
-                            }
-                          }}
-                          className="text-xs text-red-600 hover:text-red-800 hover:underline"
-                        >
-                          Clear
-                        </button>
-                      )}
-                    </div>
+                  <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
+                    <h3 className="text-lg font-serif font-bold text-neutral-900">Your Cart</h3>
+                    {cart.length > 0 && (
+                      <button
+                        onClick={() => {
+                          if (confirm('Clear your entire cart?')) {
+                            clearCart();
+                          }
+                        }}
+                        className="text-xs text-red-600 hover:text-red-800 hover:underline"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
                   {cart.length === 0 ? (
                     <p className="text-sm text-neutral-600 italic">Your cart is empty.</p>
                   ) : (
@@ -344,23 +342,21 @@ const Navbar = () => {
 
       {cartOpen && (
         <div className="md:hidden mt-6 w-full bg-white shadow-xl border border-neutral-200 rounded-xl p-5 z-50">
-            <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
-              <h3 className="text-lg font-serif font-bold text-neutral-900">
-                Your Cart
-              </h3>
-              {cart.length > 0 && (
-                <button
-                  onClick={() => {
-                    if (confirm('Clear your entire cart?')) {
-                      clearCart();
-                    }
-                  }}
-                  className="text-xs text-red-600 hover:text-red-800 hover:underline"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
+          <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
+            <h3 className="text-lg font-serif font-bold text-neutral-900">Your Cart</h3>
+            {cart.length > 0 && (
+              <button
+                onClick={() => {
+                  if (confirm('Clear your entire cart?')) {
+                    clearCart();
+                  }
+                }}
+                className="text-xs text-red-600 hover:text-red-800 hover:underline"
+              >
+                Clear
+              </button>
+            )}
+          </div>
 
           {cart.length === 0 ? (
             <p className="text-sm text-neutral-600 italic">Your cart is empty.</p>

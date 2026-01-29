@@ -239,7 +239,7 @@ const Navbar = () => {
                           <div className="flex-1">
                             <p className="font-medium text-neutral-900">{item.name}</p>
                             <p className="text-sm text-neutral-600 mt-1">
-                              ${(item.price).toFixed(2)} × {item.quantity}
+                              ${item.price.toFixed(2)} × {item.quantity}
                             </p>
                           </div>
                           <button
@@ -370,7 +370,7 @@ const Navbar = () => {
                   <div className="flex-1">
                     <p className="font-medium text-neutral-900">{item.name}</p>
                     <p className="text-sm text-neutral-600 mt-1">
-                      ${(item.price).toFixed(2)} × {item.quantity}
+                      ${item.price.toFixed(2)} × {item.quantity}
                     </p>
                   </div>
                   <button

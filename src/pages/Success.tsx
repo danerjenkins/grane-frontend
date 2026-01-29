@@ -135,7 +135,7 @@ export default function Success() {
                   <span className="font-medium">{item.quantity}×</span>
                   <span className="flex-1">{item.product?.name}</span>
                   <span className="text-gray-600">
-                    ${(((item.item_price ?? 0) * item.quantity) / 100).toFixed(2)}
+                    ${((item.item_price ?? 0) * item.quantity).toFixed(2)}
                   </span>
                 </div>
               ))}
@@ -143,8 +143,7 @@ export default function Success() {
 
             <div className="border-t pt-4">
               <p className="text-lg">
-                <span className="font-semibold">Total:</span> $
-                {((order.total_price ?? 0) / 100).toFixed(2)}
+                <span className="font-semibold">Total:</span> ${(order.total_price ?? 0).toFixed(2)}
               </p>
             </div>
 

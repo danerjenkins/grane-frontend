@@ -13,6 +13,15 @@ export default function CheckoutPage() {
   const [orderNote, setOrderNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [globalError, setGlobalError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Track which fields have been touched for validation
+  const [touched, setTouched] = useState({
+    name: false,
+    email: false,
+    phone: false,
+  });
 
   // Validation errors
   const [errors, setErrors] = useState({
@@ -69,12 +78,25 @@ export default function CheckoutPage() {
   };
 
   const validatePhone = (phone: string) => {
-    return phone.trim().length > 0;
+    if (!phone.trim()) return false; // required
+    // Must have at least 7 digits
+    const phoneDigits = phone.replace(/\D/g, '');
+    return phoneDigits.length >= 7;
   };
 
-  const validateContact = () => {
-    return customerEmail.trim().length > 0 && customerPhone.trim().length > 0;
-  };
+  // Real-time validation for touched fields
+  useEffect(() => {
+    const newErrors = {
+      name: touched.name && !validateName(customerName) ? 'Name is required' : '',
+      email:
+        touched.email && !validateEmail(customerEmail)
+          ? 'Please enter a valid email address (example@domain.com)'
+          : '',
+      phone:
+        touched.phone && !validatePhone(customerPhone) ? 'Phone must have at least 7 digits' : '',
+    };
+    setErrors(newErrors);
+  }, [customerName, customerEmail, customerPhone, touched]);
 
   // Check if form is valid
   const isFormValid = () => {
@@ -83,30 +105,36 @@ export default function CheckoutPage() {
       selectedBakeDay &&
       validateName(customerName) &&
       validateEmail(customerEmail) &&
-      validateContact()
+      validatePhone(customerPhone)
     );
   };
 
   const handleCheckout = async () => {
-    // Clear previous errors
-    setErrors({ name: '', email: '', phone: '' });
+    // Mark all fields as touched to show any validation errors
+    setTouched({ name: true, email: true, phone: true });
 
-    // Validate
-    const newErrors = {
-      name: !validateName(customerName) ? 'Name is required' : '',
-      email: !validateEmail(customerEmail) ? 'Email is required and must be valid' : '',
-      phone: !validatePhone(customerPhone) ? 'Phone is required' : '',
-    };
+    // Clear previous messages
+    setGlobalError('');
+    setSuccessMessage('');
 
-    setErrors(newErrors);
+    // Validate required fields
+    if (!validateName(customerName)) {
+      setGlobalError('Please enter your name.');
+      return;
+    }
 
-    // If any errors, don't submit
-    if (newErrors.name || newErrors.email || newErrors.phone) {
+    if (!validateEmail(customerEmail)) {
+      setGlobalError('Please enter a valid email address.');
+      return;
+    }
+
+    if (!validatePhone(customerPhone)) {
+      setGlobalError('Please enter a valid phone number with at least 7 digits.');
       return;
     }
 
     if (!selectedBakeDay) {
-      alert('Please choose a bake day.');
+      setGlobalError('Please choose a bake day.');
       return;
     }
 
@@ -147,16 +175,23 @@ export default function CheckoutPage() {
 
       const data = await res.json();
 
+      if (!res.ok) {
+        // Handle specific backend error messages
+        const errorMessage = data.error || 'Checkout failed. Please try again.';
+        setGlobalError(errorMessage);
+        setIsSubmitting(false);
+        return;
+      }
+
       if (data.url) {
         window.location.href = data.url; // redirect to Stripe Checkout
       } else {
-        console.error('Checkout Error', data);
-        alert('Checkout failed. Please try again.');
+        setGlobalError('Checkout failed. Please try again.');
         setIsSubmitting(false);
       }
     } catch (error) {
       console.error('Checkout Error', error);
-      alert('Checkout failed. Please try again.');
+      setGlobalError('An error occurred. Please check your information and try again.');
       setIsSubmitting(false);
     }
   };
@@ -164,6 +199,20 @@ export default function CheckoutPage() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
+
+      {/* Global Error Message */}
+      {globalError && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-800 font-semibold">⚠️ {globalError}</p>
+        </div>
+      )}
+
+      {/* Global Success Message */}
+      {successMessage && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-green-800 font-semibold">✓ {successMessage}</p>
+        </div>
+      )}
 
       {/* Customer Information */}
       <div className="mb-8 space-y-6">
@@ -182,61 +231,108 @@ export default function CheckoutPage() {
 
         {/* Name */}
         <div>
-          <label className="block font-semibold mb-1">
-            Name <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center gap-2 mb-1">
+            <label className="block font-semibold">
+              Name <span className="text-red-500">*</span>
+            </label>
+            {touched.name && validateName(customerName) && (
+              <span className="text-green-600 text-lg" title="Valid">
+                ✓
+              </span>
+            )}
+          </div>
           <input
-            className={`border rounded p-2 w-full ${errors.name ? 'border-red-500' : ''} ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+            className={`border rounded p-3 w-full transition ${
+              touched.name
+                ? validateName(customerName)
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-red-500 bg-red-50'
+                : 'border-gray-300'
+            } ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             type="text"
             value={customerName}
-            onChange={(e) => {
-              setCustomerName(e.target.value);
-              if (errors.name) setErrors({ ...errors, name: '' });
-            }}
-            placeholder="Enter your name"
+            onChange={(e) => setCustomerName(e.target.value)}
+            onBlur={() => setTouched({ ...touched, name: true })}
+            placeholder="Enter your full name"
             disabled={isLoggedIn}
           />
-          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+          {errors.name && (
+            <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+              <span>✕</span> {errors.name}
+            </p>
+          )}
+          <p className="text-xs text-gray-500 mt-1">We'll use this for your order confirmation</p>
         </div>
 
         {/* Email */}
         <div>
-          <label className="block font-semibold mb-1">
-            Email <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center gap-2 mb-1">
+            <label className="block font-semibold">
+              Email <span className="text-red-500">*</span>
+            </label>
+            {touched.email && validateEmail(customerEmail) && (
+              <span className="text-green-600 text-lg" title="Valid">
+                ✓
+              </span>
+            )}
+          </div>
           <input
-            className={`border rounded p-2 w-full ${errors.email ? 'border-red-500' : ''} ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+            className={`border rounded p-3 w-full transition ${
+              touched.email
+                ? validateEmail(customerEmail)
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-red-500 bg-red-50'
+                : 'border-gray-300'
+            } ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             type="email"
             value={customerEmail}
-            onChange={(e) => {
-              setCustomerEmail(e.target.value);
-              if (errors.email) setErrors({ ...errors, email: '' });
-            }}
-            placeholder="your@email.com"
+            onChange={(e) => setCustomerEmail(e.target.value)}
+            onBlur={() => setTouched({ ...touched, email: true })}
+            placeholder="example@domain.com"
             disabled={isLoggedIn}
           />
-          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+          {errors.email && (
+            <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+              <span>✕</span> {errors.email}
+            </p>
+          )}
+          <p className="text-xs text-gray-500 mt-1">We'll send your pickup details to this email</p>
         </div>
 
         {/* Phone */}
         <div>
-          <label className="block font-semibold mb-1">
-            Phone <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center gap-2 mb-1">
+            <label className="block font-semibold">
+              Phone <span className="text-red-500">*</span>
+            </label>
+            {touched.phone && validatePhone(customerPhone) && (
+              <span className="text-green-600 text-lg" title="Valid">
+                ✓
+              </span>
+            )}
+          </div>
           <input
-            className={`border rounded p-2 w-full ${errors.phone ? 'border-red-500' : ''} ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+            className={`border rounded p-3 w-full transition ${
+              touched.phone
+                ? validatePhone(customerPhone)
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-red-500 bg-red-50'
+                : 'border-gray-300'
+            } ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             type="tel"
             value={customerPhone}
-            onChange={(e) => {
-              setCustomerPhone(e.target.value);
-              if (errors.phone) setErrors({ ...errors, phone: '' });
-            }}
-            placeholder="(123) 456-7890"
+            onChange={(e) => setCustomerPhone(e.target.value)}
+            onBlur={() => setTouched({ ...touched, phone: true })}
+            placeholder="(123) 456-7890 or 123-456-7890"
             disabled={isLoggedIn}
           />
-          {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+          {errors.phone && (
+            <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+              <span>✕</span> {errors.phone}
+            </p>
+          )}
           <p className="text-xs text-gray-500 mt-1">
-            We'll text or email you the pickup address after payment
+            We'll text you the pickup address and any updates (must be 7+ digits)
           </p>
         </div>
 
@@ -244,12 +340,15 @@ export default function CheckoutPage() {
         <div>
           <label className="block font-semibold mb-1">Order note (optional)</label>
           <textarea
-            className="border rounded p-2 w-full"
+            className="border border-gray-300 rounded p-3 w-full"
             rows={3}
             value={orderNote}
             onChange={(e) => setOrderNote(e.target.value)}
             placeholder="Any special requests or notes about your order..."
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Tell us about allergies, preferences, or special instructions
+          </p>
         </div>
       </div>
       {/* Cart Items */}
@@ -282,7 +381,7 @@ export default function CheckoutPage() {
                 {/* Left side: item name + price */}
                 <div>
                   <p className="font-medium">{item.name}</p>
-                  <p className="text-sm text-gray-600">${(item.price / 100).toFixed(2)} each</p>
+                  <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
                 </div>
 
                 {/* Right side: quantity controls + total */}
@@ -314,7 +413,7 @@ export default function CheckoutPage() {
 
                   {/* Item total */}
                   <p className="font-medium w-16 text-right">
-                    ${((item.price * item.quantity) / 100).toFixed(2)}
+                    ${(item.price * item.quantity).toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -340,7 +439,7 @@ export default function CheckoutPage() {
 
       {/* Total + Checkout Button */}
       <div className="flex justify-between items-center">
-        <p className="text-xl font-bold">Total: ${(total / 100).toFixed(2)}</p>
+        <p className="text-xl font-bold">Total: ${total.toFixed(2)}</p>
 
         <button
           onClick={handleCheckout}
@@ -351,7 +450,7 @@ export default function CheckoutPage() {
               : 'bg-black text-white hover:bg-gray-800'
           }`}
         >
-          {isSubmitting ? 'Redirecting...' : 'Continue to Payment'}
+          {isSubmitting ? 'Processing...' : 'Continue to Payment'}
         </button>
       </div>
     </div>

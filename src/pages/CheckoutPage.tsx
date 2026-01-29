@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { getSession } from '../api/auth';
+import { getMyProfile } from '../api/profile';
 
 export default function CheckoutPage() {
   const { cart, selectedBakeDay, updateQuantity, removeFromCart } = useCart();
@@ -9,6 +10,7 @@ export default function CheckoutPage() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [orderNote, setOrderNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   // Validation errors
   const [errors, setErrors] = useState({
@@ -16,6 +18,28 @@ export default function CheckoutPage() {
     email: '',
     phone: '',
   });
+
+  // Auto-fill user information if logged in
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      try {
+        const session = await getSession();
+        if (session) {
+          const profile = await getMyProfile();
+          if (profile.name) setCustomerName(profile.name);
+          if (profile.email) setCustomerEmail(profile.email);
+          if (profile.phone) setCustomerPhone(profile.phone);
+        }
+      } catch (err) {
+        // User not logged in or error loading profile - just continue with empty form
+        console.log('No profile loaded:', err);
+      } finally {
+        setProfileLoaded(true);
+      }
+    };
+
+    loadUserProfile();
+  }, []);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 

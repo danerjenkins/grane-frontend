@@ -24,7 +24,7 @@ const Navbar = () => {
         const loggedIn = session !== null;
         setIsLoggedIn(loggedIn);
         setSessionLoading(false);
-        
+
         // Defer admin check to not block UI rendering
         if (loggedIn) {
           // Run admin check after a small delay to ensure session is fully established
@@ -58,7 +58,7 @@ const Navbar = () => {
       const loggedIn = session !== null;
       setIsLoggedIn(loggedIn);
       setSessionLoading(false);
-      
+
       // Defer admin check to not block the auth state change
       if (loggedIn) {
         // Run admin check after a small delay
@@ -164,7 +164,7 @@ const Navbar = () => {
               Order
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
             </Link>
-            
+
             {/* Admin Link */}
             {isUserAdmin && !sessionLoading && (
               <Link
@@ -297,7 +297,7 @@ const Navbar = () => {
           >
             Order
           </Link>
-          
+
           {/* Admin Link */}
           {isUserAdmin && !sessionLoading && (
             <Link

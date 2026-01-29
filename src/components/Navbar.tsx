@@ -3,12 +3,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingCart, User } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { getSession } from '../api/auth';
+import { isAdmin } from '../api/admin';
 import { supabase } from '../api/supabaseClient';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [sessionLoading, setSessionLoading] = useState(true);
   const { cart, removeFromCart } = useCart();
   const { cartQuantity } = useCart();
@@ -19,9 +21,19 @@ const Navbar = () => {
     const checkSession = async () => {
       try {
         const session = await getSession();
-        setIsLoggedIn(session !== null);
+        const loggedIn = session !== null;
+        setIsLoggedIn(loggedIn);
+        
+        // Check admin status if logged in
+        if (loggedIn) {
+          const adminStatus = await isAdmin();
+          setIsUserAdmin(adminStatus);
+        } else {
+          setIsUserAdmin(false);
+        }
       } catch {
         setIsLoggedIn(false);
+        setIsUserAdmin(false);
       } finally {
         setSessionLoading(false);
       }
@@ -34,8 +46,18 @@ const Navbar = () => {
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(session !== null);
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const loggedIn = session !== null;
+      setIsLoggedIn(loggedIn);
+      
+      // Check admin status if logged in
+      if (loggedIn) {
+        const adminStatus = await isAdmin();
+        setIsUserAdmin(adminStatus);
+      } else {
+        setIsUserAdmin(false);
+      }
+      
       setSessionLoading(false);
     });
 
@@ -133,6 +155,17 @@ const Navbar = () => {
               Order
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
             </Link>
+            
+            {/* Admin Link */}
+            {isUserAdmin && !sessionLoading && (
+              <Link
+                to="/admin"
+                className="text-amber-900 font-semibold text-sm tracking-wide hover:text-amber-800 transition-colors relative group"
+              >
+                Admin
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-900 transition-all group-hover:w-full"></span>
+              </Link>
+            )}
 
             {/* Auth Links */}
             {!sessionLoading && (
@@ -255,6 +288,17 @@ const Navbar = () => {
           >
             Order
           </Link>
+          
+          {/* Admin Link */}
+          {isUserAdmin && !sessionLoading && (
+            <Link
+              to="/admin"
+              className="text-amber-900 font-semibold text-base hover:text-amber-800 transition-colors hover:translate-x-1 transform"
+              onClick={() => setIsOpen(false)}
+            >
+              Admin
+            </Link>
+          )}
 
           {!sessionLoading && (
             <>

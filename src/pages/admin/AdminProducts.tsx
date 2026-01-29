@@ -244,10 +244,7 @@ export default function AdminProducts() {
                     <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                       Cost
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
-                      Available
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -285,29 +282,20 @@ export default function AdminProducts() {
                           : '—'}
                       </td>
                       <td className="px-6 py-4">
-                        <span
-                          className={`px-2 py-1 text-xs font-semibold rounded ${
-                            product.available
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}
-                        >
-                          {product.available ? 'Yes' : 'No'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right space-x-2">
-                        <button
-                          onClick={() => openEditModal(product)}
-                          className="text-blue-600 hover:text-blue-800 font-medium text-sm"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(product)}
-                          className="text-red-600 hover:text-red-800 font-medium text-sm"
-                        >
-                          Delete
-                        </button>
+                        <div className="flex justify-center gap-2">
+                          <button
+                            onClick={() => openEditModal(product)}
+                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-sm font-medium rounded-lg transition-colors border border-neutral-300"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(product)}
+                            className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-medium rounded-lg transition-colors border border-red-200"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

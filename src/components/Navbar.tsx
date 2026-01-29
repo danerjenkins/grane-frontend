@@ -23,18 +23,26 @@ const Navbar = () => {
         const session = await getSession();
         const loggedIn = session !== null;
         setIsLoggedIn(loggedIn);
+        setSessionLoading(false);
         
-        // Check admin status if logged in
+        // Defer admin check to not block UI rendering
         if (loggedIn) {
-          const adminStatus = await isAdmin();
-          setIsUserAdmin(adminStatus);
+          // Run admin check after a small delay to ensure session is fully established
+          setTimeout(async () => {
+            try {
+              const adminStatus = await isAdmin();
+              setIsUserAdmin(adminStatus);
+            } catch (err) {
+              console.error('Failed to check admin status:', err);
+              setIsUserAdmin(false);
+            }
+          }, 100);
         } else {
           setIsUserAdmin(false);
         }
       } catch {
         setIsLoggedIn(false);
         setIsUserAdmin(false);
-      } finally {
         setSessionLoading(false);
       }
     };
@@ -49,16 +57,23 @@ const Navbar = () => {
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       const loggedIn = session !== null;
       setIsLoggedIn(loggedIn);
+      setSessionLoading(false);
       
-      // Check admin status if logged in
+      // Defer admin check to not block the auth state change
       if (loggedIn) {
-        const adminStatus = await isAdmin();
-        setIsUserAdmin(adminStatus);
+        // Run admin check after a small delay
+        setTimeout(async () => {
+          try {
+            const adminStatus = await isAdmin();
+            setIsUserAdmin(adminStatus);
+          } catch (err) {
+            console.error('Failed to check admin status:', err);
+            setIsUserAdmin(false);
+          }
+        }, 100);
       } else {
         setIsUserAdmin(false);
       }
-      
-      setSessionLoading(false);
     });
 
     return () => subscription.unsubscribe();

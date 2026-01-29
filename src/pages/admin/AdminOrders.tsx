@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import {
   listOrdersWithItems,
   getOrderWithItems,
@@ -687,9 +688,12 @@ export default function AdminOrders() {
                   </div>
                   <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
                     <p className="text-sm text-neutral-500">User</p>
-                    <p className="text-sm text-neutral-800 break-all">
+                    <Link
+                      to={`/admin/accounts?userId=${selectedOrder.user?.id ?? selectedOrder.user_id}`}
+                      className="text-sm text-blue-600 hover:text-blue-800 hover:underline break-all inline-block"
+                    >
                       {selectedOrder.user?.id ?? selectedOrder.user_id}
-                    </p>
+                    </Link>
                     {selectedOrder.user?.name && (
                       <p className="text-xs text-neutral-600">{selectedOrder.user.name}</p>
                     )}

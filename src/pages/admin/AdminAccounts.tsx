@@ -28,6 +28,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   listUsers,
   getUserById,
@@ -61,6 +62,7 @@ function formatDate(dateString: string) {
 }
 
 export default function AdminAccounts() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -104,7 +106,19 @@ export default function AdminAccounts() {
     loadUsers();
     getCurrentUser();
   }, []);
-
+  // Handle userId from URL query parameter
+  useEffect(() => {
+    const userIdFromUrl = searchParams.get('userId');
+    if (userIdFromUrl && users.length > 0) {
+      // Check if this user exists in the loaded users
+      const userExists = users.some(u => u.id === userIdFromUrl);
+      if (userExists) {
+        setSelectedUserId(userIdFromUrl);
+        // Clear the query parameter after opening
+        setSearchParams({});
+      }
+    }
+  }, [searchParams, users, setSearchParams]);
   const getCurrentUser = async () => {
     try {
       const session = await getSession();

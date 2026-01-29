@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signInWithEmail, ensureUserProfile } from '../api/auth';
 import { isAdmin } from '../api/admin';
@@ -10,9 +10,65 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Track which fields have been touched
+  const [touched, setTouched] = useState({
+    email: false,
+    password: false,
+  });
+
+  // Field-level errors
+  const [fieldErrors, setFieldErrors] = useState({
+    email: '',
+    password: '',
+  });
+
+  // Validation functions
+  const validateEmail = (email: string) => {
+    if (!email.trim()) return false;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 6;
+  };
+
+  // Real-time validation for touched fields
+  useEffect(() => {
+    const newErrors = {
+      email: touched.email && !validateEmail(email) ? 'Please enter a valid email address' : '',
+      password:
+        touched.password && !validatePassword(password)
+          ? 'Password must be at least 6 characters'
+          : '',
+    };
+    setFieldErrors(newErrors);
+  }, [email, password, touched]);
+
+  const isFormValid = () => {
+    return validateEmail(email) && validatePassword(password);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Mark all fields as touched
+    setTouched({ email: true, password: true });
+
+    // Clear previous errors
     setError(null);
+
+    // Validate fields
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -57,40 +113,77 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
+              <div className="flex items-center gap-2 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                {touched.email && validateEmail(email) && (
+                  <span className="text-green-600 text-lg" title="Valid">
+                    ✓
+                  </span>
+                )}
+              </div>
               <input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => setTouched({ ...touched, email: true })}
                 placeholder="your@email.com"
-                required
-                className="w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className={`w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
+                  touched.email
+                    ? validateEmail(email)
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-red-500 bg-red-50'
+                    : ''
+                }`}
               />
+              {fieldErrors.email && (
+                <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+                  <span>✕</span> {fieldErrors.email}
+                </p>
+              )}
             </div>
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
+              <div className="flex items-center gap-2 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Password <span className="text-red-500">*</span>
+                </label>
+                {touched.password && validatePassword(password) && (
+                  <span className="text-green-600 text-lg" title="Valid">
+                    ✓
+                  </span>
+                )}
+              </div>
               <input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onBlur={() => setTouched({ ...touched, password: true })}
                 placeholder="••••••••"
-                required
-                className="w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className={`w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
+                  touched.password
+                    ? validatePassword(password)
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-red-500 bg-red-50'
+                    : ''
+                }`}
               />
+              {fieldErrors.password && (
+                <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+                  <span>✕</span> {fieldErrors.password}
+                </p>
+              )}
+              <p className="text-xs text-gray-500 mt-1">Minimum 6 characters required</p>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !isFormValid()}
               className="w-full bg-neutral-900 text-white py-2 rounded-lg font-medium hover:bg-neutral-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing in...' : 'Sign In'}

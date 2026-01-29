@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 // ============================================================================
 // Storage Constants
@@ -280,16 +280,16 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Clears cart and selected bake day, and removes persisted data.
    */
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCart([]);
     setSelectedBakeDay(null);
     clearPersistedCart();
-  };
+  }, []);
 
   /**
    * Clears items that were added more than CART_EXPIRY_DAYS ago
    */
-  const clearExpiredItems = () => {
+  const clearExpiredItems = useCallback(() => {
     const now = new Date();
     setCart((prev) => {
       const filtered = prev.filter((item) => {
@@ -305,27 +305,30 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
       return filtered;
     });
-  };
+  }, []);
 
   /**
    * Validates that the selected bake day still exists in available bake days
    * Clears cart if the selected bake day is no longer available
    */
-  const validateBakeDay = (availableBakeDays: { id: string; date: string }[]) => {
-    if (!selectedBakeDay) return;
+  const validateBakeDay = useCallback(
+    (availableBakeDays: { id: string; date: string }[]) => {
+      if (!selectedBakeDay) return;
 
-    const isStillAvailable = availableBakeDays.some((bd) => bd.id === selectedBakeDay.id);
+      const isStillAvailable = availableBakeDays.some((bd) => bd.id === selectedBakeDay.id);
 
-    if (!isStillAvailable) {
-      console.log('Selected bake day is no longer available, clearing cart');
-      clearCart();
-    }
-  };
+      if (!isStillAvailable) {
+        console.log('Selected bake day is no longer available, clearing cart');
+        clearCart();
+      }
+    },
+    [clearCart, selectedBakeDay]
+  );
 
   /**
    * Removes items from cart if their products are no longer available
    */
-  const removeUnavailableProducts = (availableProductIds: string[]) => {
+  const removeUnavailableProducts = useCallback((availableProductIds: string[]) => {
     setCart((prev) => {
       const filtered = prev.filter((item) => availableProductIds.includes(item.product_id));
 
@@ -335,7 +338,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
       return filtered;
     });
-  };
+  }, []);
 
   // Clear expired items on mount and periodically
   useEffect(() => {
@@ -350,7 +353,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     return () => clearInterval(interval);
-  }, []);
+  }, [clearExpiredItems]);
   const cartQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (

@@ -80,11 +80,11 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-white border-b border-neutral-200 px-6 py-4 relative">
-      <div className="max-w-7xl mx-auto">
+    <nav className="bg-white border-b border-neutral-200 px-3 md:px-8 py-4 relative">
+      <div className="w-full">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
+          <Link to="/" className="flex items-center group">
             <img
               src="/granelogo3draft.png"
               alt="Grane Bakery Logo"
@@ -138,28 +138,28 @@ const Navbar = () => {
             {/* <Link to="/menu" className="nav-link">Menu</Link>*/}
             <Link
               to="/about"
-              className="text-neutral-900 font-medium text-sm tracking-wide hover:text-neutral-700 transition-colors relative group"
+              className="text-neutral-900 font-medium text-base tracking-wide hover:text-neutral-700 transition-colors relative group"
             >
               About
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
             </Link>
             <Link
               to="/why-bake-days"
-              className="text-neutral-900 font-medium text-sm tracking-wide hover:text-neutral-700 transition-colors relative group"
+              className="text-neutral-900 font-medium text-base tracking-wide hover:text-neutral-700 transition-colors relative group"
             >
               Why Bake Days
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
             </Link>
             <Link
               to="/contact"
-              className="text-neutral-900 font-medium text-sm tracking-wide hover:text-neutral-700 transition-colors relative group"
+              className="text-neutral-900 font-medium text-base tracking-wide hover:text-neutral-700 transition-colors relative group"
             >
               Contact
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
             </Link>
             <Link
               to="/bake-days"
-              className="text-neutral-900 font-semibold text-sm tracking-wide hover:text-neutral-700 transition-colors relative group"
+              className="text-neutral-900 font-semibold text-base tracking-wide hover:text-neutral-700 transition-colors relative group"
             >
               Order
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
@@ -169,7 +169,7 @@ const Navbar = () => {
             {isUserAdmin && !sessionLoading && (
               <Link
                 to="/admin"
-                className="text-amber-900 font-semibold text-sm tracking-wide hover:text-amber-800 transition-colors relative group"
+                className="text-amber-900 font-semibold text-base tracking-wide hover:text-amber-800 transition-colors relative group"
               >
                 Admin
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-900 transition-all group-hover:w-full"></span>
@@ -184,7 +184,7 @@ const Navbar = () => {
                 ) : (
                   <Link
                     to="/login"
-                    className="bg-amber-900 text-white px-5 py-2 rounded-full font-medium text-sm tracking-wide hover:bg-amber-800 transition-all shadow-sm hover:shadow-md"
+                    className="bg-amber-900 text-white px-5 py-2 rounded-full font-medium text-base tracking-wide hover:bg-amber-800 transition-all shadow-sm hover:shadow-md"
                   >
                     Log In
                   </Link>

@@ -172,7 +172,7 @@ export default function AdminHome() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-secondary">User ID</p>
-                  <p className="text-lg font-semibold text font-mono">{currentUser.id}</p>
+                  <p className="text-lg font-semibold text">{currentUser.id}</p>
                 </div>
                 <div>
                   <p className="text-sm text-secondary">Name</p>

@@ -100,7 +100,7 @@ export default function Success() {
               shortly.
             </p>
             <p className="text-sm text-secondary">
-              Order ID: <span className="font-mono font-semibold">{order.id.slice(0, 8)}</span>
+              Order ID: <span className="font-semibold">{order.id.slice(0, 8)}</span>
             </p>
           </div>
 

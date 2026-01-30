@@ -213,7 +213,7 @@ const Navbar = () => {
               {cartOpen && (
                 <div className="absolute right-0 top-full mt-2 w-72 bg-surface shadow-2xl border border-neutral-200 rounded-xl p-5 z-50 backdrop-blur-sm">
                   <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
-                    <h3 className="text-lg font-serif font-bold text-text">Your Cart</h3>
+                    <h3 className="text-lg font-bold text-text">Your Cart</h3>
                     {cart.length > 0 && (
                       <button
                         onClick={() => {
@@ -343,7 +343,7 @@ const Navbar = () => {
       {cartOpen && (
         <div className="md:hidden mt-6 w-full bg-surface shadow-xl border border-neutral-200 rounded-xl p-5 z-50">
           <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
-            <h3 className="text-lg font-serif font-bold text-text">Your Cart</h3>
+            <h3 className="text-lg font-bold text-text">Your Cart</h3>
             {cart.length > 0 && (
               <button
                 onClick={() => {

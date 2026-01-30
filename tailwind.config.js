@@ -3,6 +3,9 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'],
+      },
       colors: {
         brand: 'hsl(var(--brand) / <alpha-value>)',
         'brand-soft': 'hsl(var(--brand-soft) / <alpha-value>)',

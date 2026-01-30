@@ -552,7 +552,7 @@ export default function AdminAccounts() {
                         <label className="block text-sm font-semibold text-secondary mb-1">
                           User ID
                         </label>
-                        <div className="text-sm text font-mono">{selectedUser.id}</div>
+                        <div className="text-sm text">{selectedUser.id}</div>
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-secondary mb-1">
@@ -686,7 +686,7 @@ export default function AdminAccounts() {
                               value={deleteToken}
                               onChange={(e) => setDeleteToken(e.target.value)}
                               disabled={isDeleting}
-                              className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm font-mono"
+                              className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
                             />
                             <p className="text-xs text-secondary mt-1">
                               Enter the user ID or email address to confirm

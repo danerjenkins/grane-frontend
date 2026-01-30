@@ -17,7 +17,7 @@ export default function Home() {
                 Small-batch sourdough • Provo pickup
               </p>
 
-              <h1 className="text-5xl font-bold tracking-tight text-neutral-900 font-serif">
+              <h1 className="text-5xl font-bold tracking-tight text-neutral-900">
                 Grane Bakery
               </h1>
 

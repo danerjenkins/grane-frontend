@@ -223,7 +223,7 @@ export default function Account() {
                 type="text"
                 value={user.id}
                 disabled
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-muted text-secondary font-mono text-sm"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-muted text-secondary text-sm"
               />
             </div>
 

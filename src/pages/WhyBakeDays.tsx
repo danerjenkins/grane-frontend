@@ -21,7 +21,7 @@ export default function WhyBakeDays() {
       {/* Hero Section */}
       <section className="px-4 py-16 md:py-24">
         <div className="mx-auto max-w-3xl text-center">
-          <h1 className="text-5xl md:text-6xl font-bold font-serif tracking-tight mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6">
             Why Bake Days
           </h1>
           <p className="text-xl md:text-2xl text-secondary leading-relaxed mb-4">
@@ -54,7 +54,7 @@ export default function WhyBakeDays() {
       <section id="how-it-works" className="px-4 py-16 bg-surface">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold font-serif mb-3">How it works</h2>
+            <h2 className="text-4xl font-bold mb-3">How it works</h2>
             <p className="text-lg text-secondary">Three simple steps to fresh, artisanal bread</p>
           </div>
 
@@ -100,7 +100,7 @@ export default function WhyBakeDays() {
       <section className="px-4 py-16">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold font-serif mb-3">Why bake days are better</h2>
+            <h2 className="text-4xl font-bold mb-3">Why bake days are better</h2>
             <p className="text-lg text-secondary">
               The benefits of small-batch, intentional baking
             </p>
@@ -167,7 +167,7 @@ export default function WhyBakeDays() {
       <section className="px-4 py-16 bg-surface">
         <div className="mx-auto max-w-3xl">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold font-serif mb-3">What this means for you</h2>
+            <h2 className="text-4xl font-bold mb-3">What this means for you</h2>
             <p className="text-lg text-secondary">A few things to know before you order</p>
           </div>
 
@@ -221,7 +221,7 @@ export default function WhyBakeDays() {
       <section id="faq" className="px-4 py-16">
         <div className="mx-auto max-w-3xl">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold font-serif mb-3">Frequently asked questions</h2>
+            <h2 className="text-4xl font-bold mb-3">Frequently asked questions</h2>
           </div>
 
           <div className="space-y-4">
@@ -362,7 +362,7 @@ export default function WhyBakeDays() {
       {/* Final CTA Section */}
       <section className="px-4 py-16 bg-surface">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-4xl font-bold font-serif mb-6">Ready to order?</h2>
+          <h2 className="text-4xl font-bold mb-6">Ready to order?</h2>
           <p className="text-xl text-secondary leading-relaxed mb-10">
             Check the schedule, choose your bake day, and reserve your spot.
           </p>

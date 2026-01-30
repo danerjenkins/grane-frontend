@@ -41,7 +41,7 @@ export default function AdminLayout() {
             className="block p-6 border-b border-neutral-200 hover:bg-neutral-50 transition-colors"
             onClick={() => setSidebarOpen(false)}
           >
-            <h1 className="text-xl font-serif font-bold text">Admin Panel</h1>
+            <h1 className="text-xl font-bold text">Admin Panel</h1>
             <p className="text-xs text-secondary tracking-widest uppercase mt-1">Grane Bakery</p>
           </Link>
 

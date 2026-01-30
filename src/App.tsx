@@ -49,7 +49,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-800 font-sans">
+    <div className="min-h-screen bg-neutral-50 text-neutral-800">
       <Navbar />
 
       <Routes>

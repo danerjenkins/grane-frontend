@@ -31,8 +31,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   // Still loading
   if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <p className="text-gray-600">Loading...</p>
+      <div className="min-h-screen bg-muted flex items-center justify-center">
+        <p className="text-secondary">Loading...</p>
       </div>
     );
   }

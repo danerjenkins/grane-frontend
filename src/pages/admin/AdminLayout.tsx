@@ -27,10 +27,10 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="flex h-screen bg-neutral-50">
+    <div className="flex h-screen bg-muted">
       {/* Sidebar - Hidden on mobile, visible on desktop */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-neutral-200 text-neutral-900 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-neutral-200 text transform transition-transform duration-300 lg:relative lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -41,8 +41,8 @@ export default function AdminLayout() {
             className="block p-6 border-b border-neutral-200 hover:bg-neutral-50 transition-colors"
             onClick={() => setSidebarOpen(false)}
           >
-            <h1 className="text-xl font-serif font-bold text-neutral-900">Admin Panel</h1>
-            <p className="text-xs text-neutral-500 tracking-widest uppercase mt-1">Grane Bakery</p>
+            <h1 className="text-xl font-serif font-bold text">Admin Panel</h1>
+            <p className="text-xs text-secondary tracking-widest uppercase mt-1">Grane Bakery</p>
           </Link>
 
           {/* Navigation Links */}
@@ -78,14 +78,14 @@ export default function AdminLayout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header - Mobile */}
-        <header className="lg:hidden bg-white border-b border-neutral-200 px-4 py-3 flex items-center justify-between">
+        <header className="lg:hidden bg-surface border-b border-neutral-200 px-4 py-3 flex items-center justify-between">
           <Link
             to="/admin"
             className="hover:opacity-80 transition-opacity"
             onClick={() => setSidebarOpen(false)}
           >
-            <h1 className="text-lg font-semibold text-neutral-900">Admin</h1>
-            <p className="text-xs text-neutral-500">Grane Bakery</p>
+            <h1 className="text-lg font-semibold text">Admin</h1>
+            <p className="text-xs text-secondary">Grane Bakery</p>
           </Link>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}

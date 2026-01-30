@@ -475,7 +475,7 @@ export default function AdminOrders() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-6 py-10">
+    <main className="min-h-screen bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto space-y-6">
         {pageSuccess && (
           <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg">
@@ -493,13 +493,13 @@ export default function AdminOrders() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <h1 className="text-4xl font-bold text-neutral-900">Orders</h1>
-            <p className="text-neutral-600">Operational dashboard</p>
+            <h1 className="text-4xl font-bold text">Orders</h1>
+            <p className="text-secondary">Operational dashboard</p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white border border-neutral-200 rounded-lg p-4 space-y-3 shadow-sm">
+        <div className="bg-surface border border-neutral-200 rounded-lg p-4 space-y-3 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             <input
               type="text"
@@ -568,41 +568,41 @@ export default function AdminOrders() {
         </div>
 
         {/* Table */}
-        <div className="bg-white border border-neutral-200 rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-surface border border-neutral-200 rounded-lg shadow-sm overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-neutral-600">Loading orders...</div>
+            <div className="p-8 text-center text-secondary">Loading orders...</div>
           ) : filtered.length === 0 ? (
-            <div className="p-8 text-center text-neutral-600">No orders match the filters.</div>
+            <div className="p-8 text-center text-secondary">No orders match the filters.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-neutral-100 border-b border-neutral-200">
+                <thead className="bg-muted border-b border-neutral-200">
                   <tr>
                     <th
-                      className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider cursor-pointer"
+                      className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider cursor-pointer"
                       onClick={toggleSort}
                     >
                       Created {sortDir === 'desc' ? '↓' : '↑'}
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Order ID
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Bake Day
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       User
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Stripe
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Total
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-secondary uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -611,22 +611,20 @@ export default function AdminOrders() {
                   {filtered.map((order) => (
                     <tr
                       key={order.id}
-                      className="hover:bg-neutral-50 cursor-pointer"
+                      className="hover:bg-muted cursor-pointer"
                       onClick={() => openDetails(order.id)}
                     >
-                      <td className="px-4 py-3 text-sm text-neutral-900">
-                        {formatDate(order.created_at)}
-                      </td>
-                      <td className="px-4 py-3 text-sm font-mono text-neutral-800">
+                      <td className="px-4 py-3 text-sm text">{formatDate(order.created_at)}</td>
+                      <td className="px-4 py-3 text-sm font-mono text-secondary">
                         {shortId(order.id)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-neutral-800">
+                      <td className="px-4 py-3 text-sm text-secondary">
                         {order.bake_day_id
                           ? (bakeDays.find((b) => b.id === order.bake_day_id)?.date ??
                             shortId(order.bake_day_id))
                           : '—'}
                       </td>
-                      <td className="px-4 py-3 text-sm text-neutral-800">
+                      <td className="px-4 py-3 text-sm text-text">
                         {order.user?.name || '—'}
                       </td>
                       <td className="px-4 py-3">
@@ -684,13 +682,13 @@ export default function AdminOrders() {
                           {order.stripe_status ?? '—'}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3 text-sm text-neutral-900">
+                      <td className="px-4 py-3 text-sm text-text">
                         {formatMoney(order.price_with_tax ?? order.total_price)}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex justify-center">
                           <button
-                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-sm font-medium rounded-lg transition-colors border border-neutral-300"
+                            className="px-3 py-1.5 bg-muted hover:bg-muted text-secondary text-sm font-medium rounded-lg transition-colors border border-neutral-300"
                             onClick={(e) => {
                               e.stopPropagation();
                               openDetails(order.id);
@@ -717,22 +715,22 @@ export default function AdminOrders() {
             if (e.target === e.currentTarget) closeDetails();
           }}
         >
-          <div className="w-full max-w-xl h-full bg-white shadow-2xl border-l border-neutral-200 overflow-y-auto">
+          <div className="w-full max-w-xl h-full bg-surface shadow-2xl border-l border-neutral-200 overflow-y-auto">
             <div className="p-4 border-b border-neutral-200 flex items-center justify-between">
               <div>
-                <p className="text-sm text-neutral-500">Order</p>
-                <h2 className="text-2xl font-bold text-neutral-900">{selectedOrderId}</h2>
+                <p className="text-sm text-secondary">Order</p>
+                <h2 className="text-2xl font-bold text">{selectedOrderId}</h2>
               </div>
               <button
                 onClick={closeDetails}
-                className="text-neutral-600 hover:text-neutral-900 px-3 py-1 rounded-lg hover:bg-neutral-100"
+                className="text-secondary hover:text-text px-3 py-1 rounded-lg hover:bg-muted"
               >
                 Close
               </button>
             </div>
 
             {detailsLoading ? (
-              <div className="p-6 text-neutral-600">Loading details...</div>
+              <div className="p-6 text-secondary">Loading details...</div>
             ) : selectedOrder ? (
               <div className="p-6 space-y-5">
                 {orderSuccess && (
@@ -743,22 +741,20 @@ export default function AdminOrders() {
 
                 {/* Summary */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                    <p className="text-sm text-neutral-500">Created</p>
-                    <p className="text-lg font-semibold text-neutral-900">
+                  <div className="bg-muted border border-neutral-200 rounded-lg p-4">
+                    <p className="text-sm text-secondary">Created</p>
+                    <p className="text-lg font-semibold text">
                       {formatDate(selectedOrder.created_at)}
                     </p>
                   </div>
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 col-span-2">
-                    <p className="text-sm text-neutral-500 mb-1">Customer</p>
+                  <div className="bg-muted border border-neutral-200 rounded-lg p-4 col-span-2">
+                    <p className="text-sm text-secondary mb-1">Customer</p>
                     <div className="space-y-1">
                       {selectedOrder.user?.name && (
-                        <p className="text-base font-semibold text-neutral-900">
-                          {selectedOrder.user.name}
-                        </p>
+                        <p className="text-base font-semibold text">{selectedOrder.user.name}</p>
                       )}
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-neutral-500">User ID:</span>
+                        <span className="text-xs text-secondary">User ID:</span>
                         <Link
                           to={`/admin/accounts?userId=${selectedOrder.user?.id ?? selectedOrder.user_id}`}
                           className="text-xs text-blue-600 hover:text-blue-800 hover:underline break-all"
@@ -773,10 +769,10 @@ export default function AdminOrders() {
                 {/* Scheduling */}
                 <section className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-neutral-900">Scheduling</h3>
+                    <h3 className="text-lg font-semibold text">Scheduling</h3>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm text-neutral-700">Bake day</label>
+                    <label className="text-sm text-secondary">Bake day</label>
                     <select
                       value={orderForm.bake_day_id}
                       onChange={(e) => setOrderForm((f) => ({ ...f, bake_day_id: e.target.value }))}
@@ -794,10 +790,10 @@ export default function AdminOrders() {
 
                 {/* Statuses */}
                 <section className="space-y-2">
-                  <h3 className="text-lg font-semibold text-neutral-900">Statuses</h3>
+                  <h3 className="text-lg font-semibold text">Statuses</h3>
                   <div className="grid grid-cols-1 gap-3">
                     <div className="space-y-1">
-                      <label className="text-sm text-neutral-700">Status</label>
+                      <label className="text-sm text-secondary">Status</label>
                       <select
                         value={orderForm.status}
                         onChange={(e) => setOrderForm((f) => ({ ...f, status: e.target.value }))}
@@ -812,7 +808,7 @@ export default function AdminOrders() {
                       </select>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-sm text-neutral-700">Stripe status</label>
+                      <label className="text-sm text-secondary">Stripe status</label>
                       <select
                         value={orderForm.stripe_status}
                         onChange={(e) =>
@@ -833,10 +829,10 @@ export default function AdminOrders() {
 
                 {/* Pricing */}
                 <section className="space-y-2">
-                  <h3 className="text-lg font-semibold text-neutral-900">Pricing</h3>
+                  <h3 className="text-lg font-semibold text">Pricing</h3>
                   <div className="grid grid-cols-1 gap-3">
                     <div className="space-y-1">
-                      <label className="text-sm text-neutral-700">Total price</label>
+                      <label className="text-sm text-secondary">Total price</label>
                       <input
                         type="number"
                         step="0.01"
@@ -848,7 +844,7 @@ export default function AdminOrders() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-sm text-neutral-700">Price with tax</label>
+                      <label className="text-sm text-secondary">Price with tax</label>
                       <input
                         type="number"
                         step="0.01"
@@ -861,8 +857,8 @@ export default function AdminOrders() {
                     </div>
                     <div className="space-y-1">
                       <div className="flex items-center justify-between">
-                        <label className="text-sm text-neutral-700">Stripe session ID</label>
-                        <label className="flex items-center gap-2 text-xs text-neutral-600">
+                        <label className="text-sm text-secondary">Stripe session ID</label>
+                        <label className="flex items-center gap-2 text-xs text-secondary">
                           <input
                             type="checkbox"
                             checked={orderForm.stripeUnlocked}
@@ -881,7 +877,7 @@ export default function AdminOrders() {
                           setOrderForm((f) => ({ ...f, stripe_session_id: e.target.value }))
                         }
                         disabled={!orderForm.stripeUnlocked}
-                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-neutral-100"
+                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-muted"
                       />
                     </div>
                   </div>
@@ -889,7 +885,7 @@ export default function AdminOrders() {
 
                 {/* Notes */}
                 <section className="space-y-2">
-                  <h3 className="text-lg font-semibold text-neutral-900">Notes</h3>
+                  <h3 className="text-lg font-semibold text">Notes</h3>
                   <textarea
                     value={orderForm.customer_note}
                     onChange={(e) => setOrderForm((f) => ({ ...f, customer_note: e.target.value }))}
@@ -901,7 +897,7 @@ export default function AdminOrders() {
                 {/* Items */}
                 <section className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-neutral-900">Items</h3>
+                    <h3 className="text-lg font-semibold text">Items</h3>
                     <button
                       onClick={openAddItem}
                       className="text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -916,23 +912,23 @@ export default function AdminOrders() {
                     </div>
                   )}
 
-                  <div className="bg-white border border-neutral-200 rounded-lg overflow-hidden">
+                  <div className="bg-surface border border-neutral-200 rounded-lg overflow-hidden">
                     <table className="w-full text-sm">
-                      <thead className="bg-neutral-100 border-b border-neutral-200">
+                      <thead className="bg-muted border-b border-neutral-200">
                         <tr>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                             Product
                           </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                             Qty
                           </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                             Item price
                           </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                             Line total
                           </th>
-                          <th className="px-3 py-2 text-right text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                          <th className="px-3 py-2 text-right text-xs font-semibold text-secondary uppercase tracking-wider">
                             Actions
                           </th>
                         </tr>
@@ -947,14 +943,12 @@ export default function AdminOrders() {
                               : '—';
                           return (
                             <tr key={item.id}>
-                              <td className="px-3 py-2 text-neutral-900">
-                                {product?.name ?? 'Unknown'}
-                              </td>
-                              <td className="px-3 py-2 text-neutral-900">{item.quantity}</td>
-                              <td className="px-3 py-2 text-neutral-900">
+                              <td className="px-3 py-2 text">{product?.name ?? 'Unknown'}</td>
+                              <td className="px-3 py-2 text">{item.quantity}</td>
+                              <td className="px-3 py-2 text">
                                 {item.item_price != null ? `$${item.item_price.toFixed(2)}` : '—'}
                               </td>
-                              <td className="px-3 py-2 text-neutral-900">
+                              <td className="px-3 py-2 text">
                                 {lineTotal === '—' ? '—' : `$${lineTotal}`}
                               </td>
                               <td className="px-3 py-2 text-right space-x-2">
@@ -976,7 +970,7 @@ export default function AdminOrders() {
                         })}
                         {(selectedOrder.order_items ?? []).length === 0 && (
                           <tr>
-                            <td className="px-3 py-3 text-neutral-600" colSpan={5}>
+                            <td className="px-3 py-3 text-secondary" colSpan={5}>
                               No items yet.
                             </td>
                           </tr>
@@ -1052,7 +1046,7 @@ export default function AdminOrders() {
                 </section>
               </div>
             ) : (
-              <div className="p-6 text-neutral-600">Details coming next step.</div>
+              <div className="p-6 text-secondary">Details coming next step.</div>
             )}
           </div>
         </div>
@@ -1066,21 +1060,21 @@ export default function AdminOrders() {
             if (e.target === e.currentTarget) closeItemModal();
           }}
         >
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-lg">
+          <div className="bg-surface rounded-lg shadow-2xl w-full max-w-lg">
             <div className="p-4 border-b border-neutral-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-neutral-900">
+              <h3 className="text-lg font-semibold text">
                 {itemModalMode === 'add' ? 'Add item' : 'Edit item'}
               </h3>
               <button
                 onClick={closeItemModal}
-                className="text-neutral-600 hover:text-neutral-900 px-3 py-1 rounded-lg hover:bg-neutral-100"
+                className="text-secondary hover:text-text px-3 py-1 rounded-lg hover:bg-muted"
               >
                 Close
               </button>
             </div>
             <div className="p-4 space-y-4">
               <div className="space-y-1">
-                <label className="text-sm text-neutral-700">Product</label>
+                <label className="text-sm text-secondary">Product</label>
                 <select
                   value={itemForm.product_id}
                   onChange={(e) => setItemForm((f) => ({ ...f, product_id: e.target.value }))}
@@ -1097,7 +1091,7 @@ export default function AdminOrders() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-sm text-neutral-700">Quantity</label>
+                  <label className="text-sm text-secondary">Quantity</label>
                   <input
                     type="number"
                     min="1"
@@ -1107,7 +1101,7 @@ export default function AdminOrders() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm text-neutral-700">Item price</label>
+                  <label className="text-sm text-secondary">Item price</label>
                   <input
                     type="number"
                     step="0.01"
@@ -1127,7 +1121,7 @@ export default function AdminOrders() {
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   onClick={closeItemModal}
-                  className="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-100"
+                  className="px-4 py-2 border border-neutral-300 rounded-lg text-secondary hover:bg-muted"
                   disabled={itemSaving}
                 >
                   Cancel
@@ -1150,9 +1144,9 @@ export default function AdminOrders() {
 
 function SummaryCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-white border border-neutral-200 rounded-lg p-4 shadow-sm">
-      <p className="text-sm text-neutral-500">{label}</p>
-      <p className="text-2xl font-bold text-neutral-900">{value}</p>
+    <div className="bg-surface border border-neutral-200 rounded-lg p-4 shadow-sm">
+      <p className="text-sm text-secondary">{label}</p>
+      <p className="text-2xl font-bold text">{value}</p>
     </div>
   );
 }
@@ -1167,7 +1161,7 @@ function Badge({
   const toneClasses = {
     green: 'bg-green-100 text-green-800',
     amber: 'bg-amber-100 text-amber-800',
-    gray: 'bg-neutral-200 text-neutral-800',
+    gray: 'bg-muted text-text',
     blue: 'bg-blue-100 text-blue-800',
   };
 

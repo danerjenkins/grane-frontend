@@ -248,7 +248,7 @@ export default function CheckoutPage() {
                   ? 'border-green-500 bg-green-50'
                   : 'border-red-500 bg-red-50'
                 : 'border-gray-300'
-            } ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+            } ${isLoggedIn ? 'bg-muted cursor-not-allowed' : ''}`}
             type="text"
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
@@ -261,7 +261,7 @@ export default function CheckoutPage() {
               <span>✕</span> {errors.name}
             </p>
           )}
-          <p className="text-xs text-gray-500 mt-1">We'll use this for your order confirmation</p>
+          <p className="text-xs text-secondary mt-1">We'll use this for your order confirmation</p>
         </div>
 
         {/* Email */}
@@ -283,7 +283,7 @@ export default function CheckoutPage() {
                   ? 'border-green-500 bg-green-50'
                   : 'border-red-500 bg-red-50'
                 : 'border-gray-300'
-            } ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+            } ${isLoggedIn ? 'bg-muted cursor-not-allowed' : ''}`}
             type="email"
             value={customerEmail}
             onChange={(e) => setCustomerEmail(e.target.value)}
@@ -296,7 +296,7 @@ export default function CheckoutPage() {
               <span>✕</span> {errors.email}
             </p>
           )}
-          <p className="text-xs text-gray-500 mt-1">We'll send your pickup details to this email</p>
+          <p className="text-xs text-secondary mt-1">We'll send your pickup details to this email</p>
         </div>
 
         {/* Phone */}
@@ -318,7 +318,7 @@ export default function CheckoutPage() {
                   ? 'border-green-500 bg-green-50'
                   : 'border-red-500 bg-red-50'
                 : 'border-gray-300'
-            } ${isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+            } ${isLoggedIn ? 'bg-muted cursor-not-allowed' : ''}`}
             type="tel"
             value={customerPhone}
             onChange={(e) => setCustomerPhone(e.target.value)}
@@ -331,7 +331,7 @@ export default function CheckoutPage() {
               <span>✕</span> {errors.phone}
             </p>
           )}
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-secondary mt-1">
             We'll text you the pickup address and any updates (must be 7+ digits)
           </p>
         </div>
@@ -346,7 +346,7 @@ export default function CheckoutPage() {
             onChange={(e) => setOrderNote(e.target.value)}
             placeholder="Any special requests or notes about your order..."
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-secondary mt-1">
             Tell us about allergies, preferences, or special instructions
           </p>
         </div>
@@ -381,7 +381,7 @@ export default function CheckoutPage() {
                 {/* Left side: item name + price */}
                 <div>
                   <p className="font-medium">{item.name}</p>
-                  <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
+                  <p className="text-sm text-secondary">${item.price.toFixed(2)} each</p>
                 </div>
 
                 {/* Right side: quantity controls + total */}
@@ -428,10 +428,10 @@ export default function CheckoutPage() {
           Bake Day:{' '}
           {selectedBakeDay ? new Date(selectedBakeDay.date).toLocaleDateString() : 'None selected'}
         </p>
-        <div className="text-sm text-gray-700 space-y-1">
+        <div className="text-sm text-text space-y-1">
           <p>📍 Pickup in Provo (near Center & University)</p>
           <p>🕕 Pickup window: 6pm - 9pm on bake day</p>
-          <p className="text-xs text-gray-600 mt-2">
+          <p className="text-xs text-secondary mt-2">
             Exact address will be sent after payment. Questions? Text (702) 767-3350
           </p>
         </div>
@@ -446,8 +446,8 @@ export default function CheckoutPage() {
           disabled={!isFormValid() || isSubmitting}
           className={`px-6 py-3 rounded font-semibold transition ${
             !isFormValid() || isSubmitting
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-black text-white hover:bg-gray-800'
+              ? 'bg-muted text-secondary cursor-not-allowed'
+              : 'bg-black text-white hover:bg-secondary'
           }`}
         >
           {isSubmitting ? 'Processing...' : 'Continue to Payment'}

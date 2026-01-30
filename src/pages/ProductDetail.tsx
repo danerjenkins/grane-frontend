@@ -28,7 +28,7 @@ export default function ProductDetail() {
   if (loading)
     return (
       <main className="px-6 py-10 text-center">
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-secondary">Loading...</p>
       </main>
     );
 
@@ -40,12 +40,12 @@ export default function ProductDetail() {
     );
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-4 py-10">
-      <div className="mx-auto max-w-4xl bg-white rounded-2xl shadow p-6 md:p-10">
+    <main className="min-h-screen bg-muted px-4 py-10">
+      <div className="mx-auto max-w-4xl bg-surface rounded-2xl shadow p-6 md:p-10">
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="text-sm text-gray-600 hover:text-gray-800 mb-6"
+          className="text-sm text-secondary hover:text-text mb-6"
         >
           ← Back
         </button>
@@ -64,21 +64,21 @@ export default function ProductDetail() {
           <div>
             <h1 className="text-3xl font-bold mb-3">{product.name}</h1>
 
-            <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
+            <p className="text-secondary mb-6 leading-relaxed">{product.description}</p>
 
-            <p className="text-2xl font-semibold text-neutral-900 mb-8">
+            <p className="text-2xl font-semibold text-text mb-8">
               ${product.price.toFixed(2)}
             </p>
 
             {/* CTA */}
             <a
               href="/bake-days"
-              className="inline-block bg-black text-white px-6 py-3 rounded-xl text-center font-medium hover:bg-neutral-800 transition w-full"
+              className="inline-block bg-black text-white px-6 py-3 rounded-xl text-center font-medium hover:bg-muted transition w-full"
             >
               Order on Bake Days Page
             </a>
 
-            <p className="text-xs text-gray-500 mt-3 text-center">
+            <p className="text-xs text-secondary mt-3 text-center">
               {selectedBakeDay
                 ? `Your selected bake day: ${selectedBakeDay}`
                 : 'Choose a bake day to order.'}

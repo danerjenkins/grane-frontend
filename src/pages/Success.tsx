@@ -58,9 +58,9 @@ export default function Success() {
 
   if (!session_id) {
     return (
-      <main className="min-h-screen bg-neutral-50 px-6 py-10">
+      <main className="min-h-screen bg-muted px-6 py-10">
         <div className="max-w-xl mx-auto text-center">
-          <p className="text-gray-600">Session ID missing.</p>
+          <p className="text-secondary">Session ID missing.</p>
           <Link to="/" className="mt-4 inline-block text-blue-600 hover:underline">
             Return Home
           </Link>
@@ -70,16 +70,16 @@ export default function Success() {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-6 py-10">
+    <main className="min-h-screen bg-muted px-6 py-10">
       {loading ? (
         <div className="max-w-xl mx-auto text-center">
-          <p className="text-gray-600">Confirming your order...</p>
+          <p className="text-secondary">Confirming your order...</p>
         </div>
       ) : error ? (
         <div className="max-w-xl mx-auto bg-red-50 border border-red-200 rounded-lg p-6 text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-2">Something went wrong</h1>
-          <p className="text-gray-700">{error}</p>
-          <p className="text-sm text-gray-600 mt-4">
+          <p className="text-text">{error}</p>
+          <p className="text-sm text-secondary mt-4">
             Please contact us at (702) 767-3350 or check your email for more information.
           </p>
           <Link
@@ -95,27 +95,27 @@ export default function Success() {
           <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8 text-center">
             <div className="text-5xl mb-3">✓</div>
             <h1 className="text-3xl font-bold text-green-700 mb-2">Order Confirmed!</h1>
-            <p className="text-gray-700 mb-3">
+            <p className="text-text mb-3">
               Thank you for your order. We'll send you the pickup address and time via text or email
               shortly.
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-secondary">
               Order ID: <span className="font-mono font-semibold">{order.id.slice(0, 8)}</span>
             </p>
           </div>
 
           {/* Order Details */}
-          <div className="bg-white shadow-sm rounded-lg p-6 mb-6">
+          <div className="bg-surface shadow-sm rounded-lg p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
             {order.user?.name && (
-              <p className="text-gray-700 mb-3">
+              <p className="text-text mb-3">
                 <span className="font-semibold">Name:</span> {order.user.name}
               </p>
             )}
 
             {order.bake_days?.[0]?.date && (
-              <p className="text-gray-700 mb-3">
+              <p className="text-text mb-3">
                 <span className="font-semibold">Bake Day:</span>{' '}
                 {new Date(order.bake_days[0].date).toLocaleDateString('en-US', {
                   weekday: 'long',
@@ -134,7 +134,7 @@ export default function Success() {
                 <div key={item.id} className="flex items-center gap-3 text-sm">
                   <span className="font-medium">{item.quantity}×</span>
                   <span className="flex-1">{item.product?.name}</span>
-                  <span className="text-gray-600">
+                  <span className="text-secondary">
                     ${((item.item_price ?? 0) * item.quantity).toFixed(2)}
                   </span>
                 </div>
@@ -149,8 +149,8 @@ export default function Success() {
 
             {order.customer_note && (
               <div className="mt-4 p-3 bg-gray-50 rounded text-sm">
-                <p className="font-semibold text-gray-700 mb-1">Order Note:</p>
-                <p className="text-gray-600">{order.customer_note}</p>
+                <p className="font-semibold text-text mb-1">Order Note:</p>
+                <p className="text-secondary">{order.customer_note}</p>
               </div>
             )}
           </div>
@@ -178,7 +178,7 @@ export default function Success() {
           <div className="flex flex-col gap-3">
             <Link
               to="/why-bake-days#faq"
-              className="bg-gray-100 text-gray-900 py-3 text-center rounded-lg hover:bg-gray-200 transition font-medium"
+              className="bg-gray-100 text-text py-3 text-center rounded-lg hover:bg-muted transition font-medium"
             >
               Questions? Check our FAQ
             </Link>
@@ -192,7 +192,7 @@ export default function Success() {
         </div>
       ) : (
         <div className="max-w-xl mx-auto text-center">
-          <p className="text-gray-600">Order not found.</p>
+          <p className="text-secondary">Order not found.</p>
           <Link to="/" className="mt-4 inline-block text-blue-600 hover:underline">
             Return Home
           </Link>

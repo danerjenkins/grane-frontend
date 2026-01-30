@@ -114,7 +114,7 @@ export default function BakeDaysPage() {
         <div
           className="
           pointer-events-none absolute left-1/2 top-full z-20 w-40 -translate-x-1/2 
-          rounded-md bg-neutral-900 px-3 py-2 text-xs text-white opacity-0 
+          rounded-md bg-text px-3 py-2 text-xs text-white opacity-0 
           shadow-lg transition-opacity duration-200 group-hover:opacity-100 
         "
         >
@@ -125,14 +125,14 @@ export default function BakeDaysPage() {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-4 py-10">
+    <main className="min-h-screen bg-muted px-4 py-10">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <header className="mb-10 text-center">
-          <h1 className="mb-3 text-4xl font-bold tracking-tight text-neutral-900">
+          <h1 className="mb-3 text-4xl font-bold tracking-tight text-text">
             Choose Your Pickup Day
           </h1>
-          <p className="mx-auto max-w-xl text-sm text-neutral-600">
+          <p className="mx-auto max-w-xl text-sm text-secondary">
             Select a highlighted day to see which fresh loaves and treats are coming out of the oven
             on that day.
           </p>
@@ -141,7 +141,7 @@ export default function BakeDaysPage() {
         <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-start lg:justify-center">
           {/* Calendar Card */}
           <section className="w-full max-w-sm">
-            <div className="rounded-2xl border bg-white p-4 shadow-sm">
+            <div className="rounded-2xl border bg-surface p-4 shadow-sm">
               <Calendar
                 onClickDay={(value) => {
                   const dateStr = toLocalYMD(value);
@@ -164,7 +164,7 @@ export default function BakeDaysPage() {
                 next2Label={null}
               />
 
-              <p className="mt-3 text-xs text-neutral-500">
+              <p className="mt-3 text-xs text-secondary">
                 Dates with a golden highlight are active bake days with available products.
               </p>
 
@@ -198,10 +198,10 @@ export default function BakeDaysPage() {
                 <div className="animate-bounce text-6xl mb-4">🥖</div>
 
                 {/* Cute message */}
-                <p className="text-lg font-medium text-neutral-700">Good things are baking...</p>
+                <p className="text-lg font-medium text-secondary">Good things are baking...</p>
 
                 {/* Progress bar animation */}
-                <div className="mt-6 w-48 h-2 bg-neutral-200 rounded-full overflow-hidden">
+                <div className="mt-6 w-48 h-2 bg-muted rounded-full overflow-hidden">
                   <div className="h-full bg-amber-500 animate-loading-bar" />
                 </div>
 
@@ -221,7 +221,7 @@ export default function BakeDaysPage() {
               </div>
             ) : selectedBakeDayRecord ? (
               <div className="space-y-6">
-                <h2 className="text-center text-2xl font-semibold text-neutral-900">
+                <h2 className="text-center text-2xl font-semibold text-text">
                   Products for {friendlySelectedDate}
                 </h2>
                 {/* Toast */}
@@ -241,7 +241,7 @@ export default function BakeDaysPage() {
                     return (
                       <article
                         key={id}
-                        className="overflow-visible rounded-2xl border bg-white shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md"
+                        className="overflow-visible rounded-2xl border bg-surface shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md"
                       >
                         <div className="h-52 w-full overflow-hidden">
                           <Link to={`/product/${product.id}`}>
@@ -257,18 +257,18 @@ export default function BakeDaysPage() {
                         <div className="space-y-2 p-4">
                           <div className="flex items-start justify-between gap-4">
                             <div>
-                              <h3 className="text-lg font-semibold text-neutral-900">
+                              <h3 className="text-lg font-semibold text-text">
                                 {product.name}
                               </h3>
-                              <p className="text-sm text-neutral-600">{product.description}</p>
+                              <p className="text-sm text-secondary">{product.description}</p>
                             </div>
                           </div>
 
                           <div className="flex items-center justify-between text-sm">
-                            <p className="text-base font-semibold text-neutral-900">
+                            <p className="text-base font-semibold text-text">
                               ${product.price.toFixed(2)}
                             </p>
-                            <p className="text-xs text-neutral-500">
+                            <p className="text-xs text-secondary">
                               {quantity_sold}/{quantity_limit} sold
                             </p>
                           </div>
@@ -276,7 +276,7 @@ export default function BakeDaysPage() {
                           {/* Controls */}
                           {soldOut && !cartItem ? (
                             <button
-                              className="mt-2 w-full cursor-not-allowed rounded-lg bg-neutral-200 py-2 text-sm font-medium text-neutral-500"
+                              className="mt-2 w-full cursor-not-allowed rounded-lg bg-muted py-2 text-sm font-medium text-secondary"
                               disabled
                             >
                               Sold Out
@@ -313,7 +313,7 @@ export default function BakeDaysPage() {
                                 </button>
                               </div>
 
-                              <p className="text-xs text-neutral-600">
+                              <p className="text-xs text-secondary">
                                 {remaining > 0 ? `${remaining} left` : 'No more available'}
                               </p>
                             </div>
@@ -336,8 +336,8 @@ export default function BakeDaysPage() {
           mt-3 w-full rounded-lg px-4 py-3 text-base font-medium transition-colors
           ${
             deadlineStatus === 'too-close'
-              ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
-              : 'bg-neutral-900 text-white hover:bg-neutral-800'
+              ? 'bg-muted text-secondary cursor-not-allowed'
+              : 'bg-text text-white hover:bg-secondary'
           }
         `}
                                   disabled={deadlineStatus === 'too-close'}
@@ -380,13 +380,13 @@ export default function BakeDaysPage() {
                   })}
               </div>
             ) : selectedDate ? (
-              <p className="mt-4 text-center text-sm text-neutral-600">
+              <p className="mt-4 text-center text-sm text-secondary">
                 No products are available for{' '}
                 <span className="font-medium">{friendlySelectedDate}</span>. Please choose a
                 highlighted date on the calendar.
               </p>
             ) : (
-              <p className="mt-4 text-center text-sm text-neutral-600">
+              <p className="mt-4 text-center text-sm text-secondary">
                 Select a highlighted bake day on the calendar to view available products.
               </p>
             )}
@@ -396,10 +396,10 @@ export default function BakeDaysPage() {
 
       {/* FAQ Link */}
       <div className="mt-12 text-center">
-        <p className="text-neutral-600">
+        <p className="text-secondary">
           <a
             href="/why-bake-days#faq"
-            className="font-semibold text-neutral-900 underline hover:text-neutral-700 transition"
+            className="font-semibold text-text underline hover:text-secondary transition"
           >
             Have questions? Check our FAQ →
           </a>

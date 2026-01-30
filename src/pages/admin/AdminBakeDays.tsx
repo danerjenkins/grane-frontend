@@ -174,7 +174,7 @@ export default function AdminBakeDays() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-6 py-10">
+    <main className="min-h-screen bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto">
         {/* Banners */}
         {error && (
@@ -190,7 +190,7 @@ export default function AdminBakeDays() {
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <h1 className="text-4xl font-bold text-neutral-900">Bake Days</h1>
+          <h1 className="text-4xl font-bold text-text">Bake Days</h1>
           <button
             onClick={openCreateModal}
             className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 rounded-lg transition-colors font-medium"
@@ -200,23 +200,21 @@ export default function AdminBakeDays() {
         </div>
 
         {/* Upcoming Bake Day */}
-        <div className="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden mb-6">
+        <div className="bg-surface rounded-lg shadow-sm border border-neutral-200 overflow-hidden mb-6">
           <div className="px-6 py-4 border-b border-neutral-200 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs uppercase tracking-widest text-neutral-500">
-                Upcoming Bake Day
-              </p>
-              <h2 className="text-2xl font-bold text-neutral-900 mt-1">
+              <p className="text-xs uppercase tracking-widest text-secondary">Upcoming Bake Day</p>
+              <h2 className="text-2xl font-bold text mt-1">
                 {upcomingBakeDay ? formatDate(upcomingBakeDay.date) : 'No upcoming bake days'}
               </h2>
               {upcomingBakeDay && (
-                <p className="text-sm text-neutral-600 mt-1">ID: {shortId(upcomingBakeDay.id)}</p>
+                <p className="text-sm text-secondary mt-1">ID: {shortId(upcomingBakeDay.id)}</p>
               )}
             </div>
             {upcomingBakeDay && (
               <button
                 onClick={() => navigate(`/admin/bake-days/${upcomingBakeDay.id}`)}
-                className="bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+                className="bg-brand-strong hover:bg-brand text-white px-4 py-2 rounded-lg transition-colors font-medium"
               >
                 Manage Products
               </button>
@@ -231,23 +229,23 @@ export default function AdminBakeDays() {
             )}
 
             {!upcomingBakeDay ? (
-              <div className="text-sm text-neutral-600">
+              <div className="text-sm text-secondary">
                 Add a bake day to start scheduling products.
               </div>
             ) : upcomingLoading ? (
-              <div className="text-sm text-neutral-600">Loading upcoming products...</div>
+              <div className="text-sm text-secondary">Loading upcoming products...</div>
             ) : upcomingProducts.length === 0 ? (
-              <div className="text-sm text-neutral-600">
+              <div className="text-sm text-secondary">
                 No products assigned yet. Use “Manage Products” to add items for this bake day.
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-neutral-600">
+                  <div className="flex items-center gap-2 text-sm text-secondary">
                     <Calendar size={16} />
                     <span>{upcomingProducts.length} product(s) to bake</span>
                   </div>
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-xs text-secondary">
                     Quantities reflect the limits set for this bake day.
                   </p>
                 </div>
@@ -255,17 +253,17 @@ export default function AdminBakeDays() {
                   {upcomingProducts.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2"
+                      className="flex items-center justify-between rounded-lg border border-neutral-200 bg-muted px-3 py-2"
                     >
                       <div>
-                        <p className="text-sm font-medium text-neutral-900">
+                        <p className="text-sm font-medium text">
                           {item.product?.name ?? 'Unnamed product'}
                         </p>
                         {item.available === false && (
                           <p className="text-xs text-red-700">Unavailable</p>
                         )}
                       </div>
-                      <div className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">
+                      <div className="inline-flex items-center rounded-full bg-brand-soft px-3 py-1 text-sm font-bold text-brand-strong">
                         {item.quantity_limit ?? 'No limit'}
                       </div>
                     </div>
@@ -277,48 +275,46 @@ export default function AdminBakeDays() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
+        <div className="bg-surface rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-neutral-600">Loading bake days...</div>
+            <div className="p-8 text-center text-secondary">Loading bake days...</div>
           ) : sortedBakeDays.length === 0 ? (
-            <div className="p-8 text-center text-neutral-600">No bake days yet.</div>
+            <div className="p-8 text-center text-secondary">No bake days yet.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-neutral-100 border-b border-neutral-200">
+                <thead className="bg-muted border-b border-neutral-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       ID
                     </th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-secondary uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-200">
                   {sortedBakeDays.map((day) => (
-                    <tr key={day.id} className="hover:bg-neutral-50">
+                    <tr key={day.id} className="hover:bg-muted">
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-neutral-900">
-                          {formatDate(day.date)}
-                        </div>
-                        <div className="text-xs text-neutral-500">{day.date}</div>
+                        <div className="text-sm font-medium text">{formatDate(day.date)}</div>
+                        <div className="text-xs text-secondary">{day.date}</div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-neutral-700">{shortId(day.id)}</td>
+                      <td className="px-6 py-4 text-sm text-secondary">{shortId(day.id)}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={() => navigate(`/admin/bake-days/${day.id}`)}
-                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-neutral-900 rounded-md transition-colors text-sm font-medium"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted hover:bg-muted text-secondary hover:text-text rounded-md transition-colors text-sm font-medium"
                           >
                             Manage Products
                           </button>
                           <button
                             onClick={() => openEditModal(day)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-neutral-900 rounded-md transition-colors"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-muted hover:bg-muted text-secondary hover:text-text rounded-md transition-colors"
                             title="Edit bake day date"
                           >
                             <Calendar size={16} />
@@ -354,12 +350,12 @@ export default function AdminBakeDays() {
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+          <div className="bg-surface rounded-lg shadow-xl w-full max-w-md">
             <div className="p-6 border-b border-neutral-200">
-              <h2 className="text-2xl font-bold text-neutral-900">
+              <h2 className="text-2xl font-bold text">
                 {modalMode === 'create' ? 'New Bake Day' : 'Edit Bake Day'}
               </h2>
-              <p className="text-sm text-neutral-600 mt-1">
+              <p className="text-sm text-secondary mt-1">
                 Bake days drive inventory availability for orders.
               </p>
             </div>
@@ -374,7 +370,7 @@ export default function AdminBakeDays() {
               <div>
                 <label
                   htmlFor="bake-date"
-                  className="block text-sm font-semibold text-neutral-700 mb-1"
+                  className="block text-sm font-semibold text-secondary mb-1"
                 >
                   Date
                 </label>
@@ -383,7 +379,7 @@ export default function AdminBakeDays() {
                   type="date"
                   value={formDate}
                   onChange={(e) => setFormDate(e.target.value)}
-                  className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+                  className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
                   required
                 />
               </div>
@@ -392,7 +388,7 @@ export default function AdminBakeDays() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-100"
+                  className="px-4 py-2 rounded-lg border border-neutral-300 text-secondary hover:bg-muted"
                 >
                   Cancel
                 </button>
@@ -402,7 +398,7 @@ export default function AdminBakeDays() {
                   className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${
                     saving
                       ? 'bg-neutral-400 cursor-not-allowed'
-                      : 'bg-neutral-900 hover:bg-neutral-800'
+                      : 'bg-text hover:bg-secondary'
                   }`}
                 >
                   {saving ? 'Saving...' : modalMode === 'create' ? 'Create' : 'Save Changes'}

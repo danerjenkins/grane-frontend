@@ -15,15 +15,15 @@ export default function Menu() {
   }, []);
 
   return (
-    <main className="min-h-screen flex flex-col items-center bg-neutral-50 px-4 py-10 text-center">
+    <main className="min-h-screen flex flex-col items-center bg-muted px-4 py-10 text-center">
       <h1 className="text-4xl font-bold mb-8">Our Menu</h1>
 
       {loading ? (
-        <p className="text-lg text-gray-600">Loading products...</p>
+        <p className="text-lg text-secondary">Loading products...</p>
       ) : (
         <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-lg shadow-md p-4 max-w-xs">
+            <div key={product.id} className="bg-surface rounded-lg shadow-md p-4 max-w-xs">
               <ProductImage
                 imageUrl={product.image_url}
                 alt={product.name}
@@ -31,7 +31,7 @@ export default function Menu() {
                 placeholderSize="medium"
               />
               <h2 className="text-xl font-semibold">{product.name}</h2>
-              <p className="text-gray-600 mb-2">{product.description}</p>
+              <p className="text-secondary mb-2">{product.description}</p>
               <p className="text-lg font-bold">${product.price.toFixed(2)}</p>
             </div>
           ))}

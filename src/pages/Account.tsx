@@ -119,9 +119,9 @@ export default function Account() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-neutral-50 px-6 py-10">
+      <main className="min-h-screen bg-muted px-6 py-10">
         <div className="max-w-2xl mx-auto text-center">
-          <p className="text-gray-600">Loading your account...</p>
+          <p className="text-secondary">Loading your account...</p>
         </div>
       </main>
     );
@@ -129,9 +129,9 @@ export default function Account() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-neutral-50 px-6 py-10">
+      <main className="min-h-screen bg-muted px-6 py-10">
         <div className="max-w-2xl mx-auto">
-          <Link to="/" className="text-sm text-gray-600 hover:text-gray-800 mb-6 inline-block">
+          <Link to="/" className="text-sm text-secondary hover:text-text mb-6 inline-block">
             ← Back to Home
           </Link>
           <div className="bg-red-50 border border-red-200 rounded-lg p-6">
@@ -145,9 +145,9 @@ export default function Account() {
 
   if (!user) {
     return (
-      <main className="min-h-screen bg-neutral-50 px-6 py-10">
+      <main className="min-h-screen bg-muted px-6 py-10">
         <div className="max-w-2xl mx-auto">
-          <Link to="/" className="text-sm text-gray-600 hover:text-gray-800 mb-6 inline-block">
+          <Link to="/" className="text-sm text-secondary hover:text-text mb-6 inline-block">
             ← Back to Home
           </Link>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
@@ -160,11 +160,11 @@ export default function Account() {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-6 py-10">
+    <main className="min-h-screen bg-muted px-6 py-10">
       <div className="max-w-2xl mx-auto">
         {/* Top Bar */}
         <div className="flex items-center justify-between mb-6">
-          <Link to="/" className="text-sm text-gray-600 hover:text-gray-800">
+          <Link to="/" className="text-sm text-secondary hover:text-text">
             ← Back to Home
           </Link>
           <button
@@ -177,8 +177,8 @@ export default function Account() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-neutral-900 mb-2">My Account</h1>
-          <p className="text-neutral-600">View and manage your account information</p>
+          <h1 className="text-4xl font-bold text-text mb-2">My Account</h1>
+          <p className="text-secondary">View and manage your account information</p>
         </div>
 
         {/* Error Banner */}
@@ -196,40 +196,40 @@ export default function Account() {
         )}
 
         {/* Account Card */}
-        <div className="bg-white rounded-lg shadow-sm border p-8 mb-6">
+        <div className="bg-surface rounded-lg shadow-sm border p-8 mb-6">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-neutral-900 mb-6">Account Information</h2>
+            <h2 className="text-2xl font-bold text-text mb-6">Account Information</h2>
 
             {/* Email (Read-only) */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <label className="block text-sm font-medium text-text mb-2">
                 Email Address
               </label>
               <input
                 type="email"
                 value={user.email || ''}
                 disabled
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-neutral-50 text-neutral-600"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-muted text-secondary"
               />
-              <p className="text-xs text-neutral-500 mt-1">
+              <p className="text-xs text-secondary mt-1">
                 This email is associated with your account
               </p>
             </div>
 
             {/* User ID (Read-only) */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">Account ID</label>
+              <label className="block text-sm font-medium text-text mb-2">Account ID</label>
               <input
                 type="text"
                 value={user.id}
                 disabled
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-neutral-50 text-neutral-600 font-mono text-sm"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-muted text-secondary font-mono text-sm"
               />
             </div>
 
             {/* Name (Editable) */}
             <div className="mb-6">
-              <label htmlFor="name" className="block text-sm font-medium text-neutral-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-text mb-2">
                 Full Name
               </label>
               <input
@@ -238,13 +238,13 @@ export default function Account() {
                 value={name}
                 onChange={handleNameChange}
                 placeholder="John Doe"
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg text-text placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
               />
             </div>
 
             {/* Phone (Editable) */}
             <div className="mb-6">
-              <label htmlFor="phone" className="block text-sm font-medium text-neutral-700 mb-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-text mb-2">
                 Phone Number
               </label>
               <input
@@ -253,13 +253,13 @@ export default function Account() {
                 value={phone}
                 onChange={handlePhoneChange}
                 placeholder="(555) 123-4567"
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg text-text placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
               />
             </div>
 
             {/* Account Created */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <label className="block text-sm font-medium text-text mb-2">
                 Account Created
               </label>
               <input
@@ -272,7 +272,7 @@ export default function Account() {
                   minute: '2-digit',
                 })}
                 disabled
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-neutral-50 text-neutral-600"
+                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-muted text-secondary"
               />
             </div>
           </div>
@@ -282,7 +282,7 @@ export default function Account() {
             <button
               onClick={handleSave}
               disabled={!isDirty || isSaving}
-              className="px-6 py-2 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-text text-white rounded-lg font-medium hover:bg-secondary transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
@@ -293,7 +293,7 @@ export default function Account() {
                   setPhone(user.phone || '');
                   setIsDirty(false);
                 }}
-                className="px-6 py-2 border border-neutral-200 text-neutral-700 rounded-lg font-medium hover:bg-neutral-50 transition"
+                className="px-6 py-2 border border-neutral-200 text-text rounded-lg font-medium hover:bg-muted transition"
               >
                 Cancel
               </button>
@@ -302,21 +302,21 @@ export default function Account() {
         </div>
 
         {/* My Orders */}
-        <div className="bg-white rounded-lg shadow-sm border p-8">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-4">My Orders</h2>
+        <div className="bg-surface rounded-lg shadow-sm border p-8">
+          <h2 className="text-2xl font-bold text-text mb-4">My Orders</h2>
 
-          {ordersLoading && <p className="text-sm text-neutral-600">Loading your orders...</p>}
+          {ordersLoading && <p className="text-sm text-secondary">Loading your orders...</p>}
 
           {!ordersLoading && ordersError && <p className="text-sm text-red-700">{ordersError}</p>}
 
           {!ordersLoading && !ordersError && orders.length === 0 && (
-            <p className="text-sm text-neutral-600">You haven’t placed any orders yet.</p>
+            <p className="text-sm text-secondary">You haven’t placed any orders yet.</p>
           )}
 
           {!ordersLoading && !ordersError && orders.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs uppercase text-neutral-500 border-b">
+                <thead className="text-xs uppercase text-secondary border-b">
                   <tr>
                     <th className="py-3 pr-4">Order Date</th>
                     <th className="py-3 pr-4">Status</th>
@@ -331,15 +331,15 @@ export default function Account() {
 
                     return (
                       <tr key={order.id}>
-                        <td className="py-3 pr-4 text-neutral-900">
+                        <td className="py-3 pr-4 text-text">
                           {new Date(order.created_at).toLocaleDateString(undefined, {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric',
                           })}
                         </td>
-                        <td className="py-3 pr-4 text-neutral-700 capitalize">{statusDisplay}</td>
-                        <td className="py-3 text-neutral-900 font-medium">{totalDisplay}</td>
+                        <td className="py-3 pr-4 text-text capitalize">{statusDisplay}</td>
+                        <td className="py-3 text-text font-medium">{totalDisplay}</td>
                       </tr>
                     );
                   })}

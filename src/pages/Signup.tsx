@@ -113,15 +113,15 @@ export default function Signup() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-50 flex items-center justify-center px-4 py-10">
+    <main className="min-h-screen bg-muted flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         {/* Back Link */}
-        <Link to="/" className="text-sm text-gray-600 hover:text-gray-800 mb-6 inline-block">
+        <Link to="/" className="text-sm text-secondary hover:text-text mb-6 inline-block">
           ← Back to Home
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-lg shadow-sm border p-8">
+        <div className="bg-surface rounded-lg shadow-sm border p-8">
           {needsConfirmation ? (
             // Email Confirmation Required
             <>
@@ -142,15 +142,15 @@ export default function Signup() {
                   </svg>
                 </div>
                 <h1 className="text-2xl font-bold mb-2">Check Your Email</h1>
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-secondary text-sm mb-4">
                   We've sent a confirmation email to <strong>{email}</strong>
                 </p>
-                <p className="text-gray-600 text-sm">
+                <p className="text-secondary text-sm">
                   Click the link in the email to verify your account and complete signup.
                 </p>
               </div>
               <div className="mt-6 text-center">
-                <Link to="/login" className="text-neutral-900 font-medium hover:underline text-sm">
+                <Link to="/login" className="text-text font-medium hover:underline text-sm">
                   Back to Login
                 </Link>
               </div>
@@ -159,7 +159,7 @@ export default function Signup() {
             // Signup Form
             <>
               <h1 className="text-2xl font-bold mb-2 text-center">Create Account</h1>
-              <p className="text-gray-600 text-sm text-center mb-6">
+              <p className="text-secondary text-sm text-center mb-6">
                 Sign up to save your information and track orders
               </p>
 
@@ -175,7 +175,7 @@ export default function Signup() {
                 {/* Email */}
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="email" className="block text-sm font-medium text-text">
                       Email <span className="text-red-500">*</span>
                     </label>
                     {touched.email && validateEmail(email) && (
@@ -191,7 +191,7 @@ export default function Signup() {
                     onChange={(e) => setEmail(e.target.value)}
                     onBlur={() => setTouched({ ...touched, email: true })}
                     placeholder="your@email.com"
-                    className={`w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
+                    className={`w-full px-3 py-2 border rounded-lg text-text placeholder-secondary focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
                       touched.email
                         ? validateEmail(email)
                           ? 'border-green-500 bg-green-50'
@@ -209,7 +209,7 @@ export default function Signup() {
                 {/* Password */}
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="password" className="block text-sm font-medium text-text">
                       Password <span className="text-red-500">*</span>
                     </label>
                     {touched.password && validatePassword(password) && (
@@ -225,7 +225,7 @@ export default function Signup() {
                     onChange={(e) => setPassword(e.target.value)}
                     onBlur={() => setTouched({ ...touched, password: true })}
                     placeholder="••••••••"
-                    className={`w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
+                    className={`w-full px-3 py-2 border rounded-lg text-text placeholder-secondary focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
                       touched.password
                         ? validatePassword(password)
                           ? 'border-green-500 bg-green-50'
@@ -238,13 +238,13 @@ export default function Signup() {
                       <span>✕</span> {fieldErrors.password}
                     </p>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">Minimum 6 characters required</p>
+                  <p className="text-xs text-secondary mt-1">Minimum 6 characters required</p>
                 </div>
 
                 {/* Name (Optional) */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name <span className="text-gray-400 text-xs">(optional)</span>
+                  <label htmlFor="name" className="block text-sm font-medium text-text mb-1">
+                    Full Name <span className="text-secondary text-xs">(optional)</span>
                   </label>
                   <input
                     id="name"
@@ -252,9 +252,9 @@ export default function Signup() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                    className="w-full px-3 py-2 border rounded-lg text-text placeholder-secondary focus:outline-none focus:ring-2 focus:ring-neutral-900"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-secondary mt-1">
                     We'll use this for your order confirmations
                   </p>
                 </div>
@@ -262,8 +262,8 @@ export default function Signup() {
                 {/* Phone (Optional) */}
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                      Phone <span className="text-gray-400 text-xs">(optional)</span>
+                    <label htmlFor="phone" className="block text-sm font-medium text-text">
+                      Phone <span className="text-secondary text-xs">(optional)</span>
                     </label>
                     {touched.phone && phone.trim() && validatePhone(phone) && (
                       <span className="text-green-600 text-lg" title="Valid">
@@ -278,7 +278,7 @@ export default function Signup() {
                     onChange={(e) => setPhone(e.target.value)}
                     onBlur={() => setTouched({ ...touched, phone: true })}
                     placeholder="(123) 456-7890 or 123-456-7890"
-                    className={`w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
+                    className={`w-full px-3 py-2 border rounded-lg text-text placeholder-secondary focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
                       touched.phone && phone.trim()
                         ? validatePhone(phone)
                           ? 'border-green-500 bg-green-50'
@@ -291,7 +291,7 @@ export default function Signup() {
                       <span>✕</span> {fieldErrors.phone}
                     </p>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-secondary mt-1">
                     We'll text you pickup details and updates (7+ digits required)
                   </p>
                 </div>
@@ -300,7 +300,7 @@ export default function Signup() {
                 <button
                   type="submit"
                   disabled={loading || !isFormValid()}
-                  className="w-full bg-neutral-900 text-white py-2 rounded-lg font-medium hover:bg-neutral-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-neutral-900 text-white py-2 rounded-lg font-medium hover:bg-muted transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Creating Account...' : 'Sign Up'}
                 </button>
@@ -308,9 +308,9 @@ export default function Signup() {
 
               {/* Login Link */}
               <div className="mt-6 text-center">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-secondary">
                   Already have an account?{' '}
-                  <Link to="/login" className="text-neutral-900 font-medium hover:underline">
+                  <Link to="/login" className="text-text font-medium hover:underline">
                     Log In
                   </Link>
                 </p>

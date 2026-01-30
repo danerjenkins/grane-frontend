@@ -8,7 +8,7 @@ export default function Home() {
         {/* Hero */}
         <section className="relative overflow-hidden rounded-3xl border bg-white shadow-sm">
           {/* subtle top accent */}
-          <div className="h-1 w-full bg-amber-200" />
+          <div className="h-1 w-full bg-brand-soft" />
 
           <div className="grid grid-cols-1 gap-10 px-6 py-12 md:grid-cols-2 md:px-12">
             {/* Copy */}
@@ -85,9 +85,7 @@ export default function Home() {
                 🥖
               </div>
               <h3 className="text-base font-semibold text-neutral-900">2) Reserve Your Loaves</h3>
-              <p className="mt-2 text-sm text-neutral-600">
-                Add items while quantities last!
-              </p>
+              <p className="mt-2 text-sm text-neutral-600">Add items while quantities last!</p>
             </div>
 
             <div className="rounded-2xl border bg-white p-6 shadow-sm">

@@ -81,7 +81,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-white border-b border-neutral-200 px-3 md:px-8 py-4 relative">
+    <nav className="bg-surface border-b border-neutral-200 px-3 md:px-8 py-4 relative">
       <div className="w-full">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -103,9 +103,9 @@ const Navbar = () => {
                 setIsOpen(false);
               }}
             >
-              <ShoppingCart className="w-6 h-6 text-neutral-900 transition-colors group-hover:text-neutral-700" />
+              <ShoppingCart className="w-6 h-6 text-text transition-colors group-hover:text-secondary" />
               {cart.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-neutral-900 text-white text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">
+                <span className="absolute -top-2 -right-2 bg-text text-white text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">
                   {cartQuantity}
                 </span>
               )}
@@ -118,13 +118,13 @@ const Navbar = () => {
                 className="relative group"
                 onClick={() => setIsOpen(false)}
               >
-                <User className="w-6 h-6 text-neutral-900 transition-colors group-hover:text-neutral-700" />
+                <User className="w-6 h-6 text-text transition-colors group-hover:text-secondary" />
               </Link>
             )}
 
             {/* Mobile Menu Toggle */}
             <button
-              className="text-neutral-900 hover:text-neutral-700 focus:outline-none transition-colors"
+              className="text-text hover:text-secondary focus:outline-none transition-colors"
               onClick={() => {
                 setIsOpen(!isOpen);
                 setCartOpen(false);
@@ -139,31 +139,31 @@ const Navbar = () => {
             {/* <Link to="/menu" className="nav-link">Menu</Link>*/}
             <Link
               to="/about"
-              className="text-neutral-900 font-medium text-base tracking-wide hover:text-neutral-700 transition-colors relative group"
+              className="text-text font-medium text-base tracking-wide hover:text-secondary transition-colors relative group"
             >
               About
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
             </Link>
             <Link
               to="/why-bake-days"
-              className="text-neutral-900 font-medium text-base tracking-wide hover:text-neutral-700 transition-colors relative group"
+              className="text-text font-medium text-base tracking-wide hover:text-secondary transition-colors relative group"
             >
               Why Bake Days
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
             </Link>
             <Link
               to="/contact"
-              className="text-neutral-900 font-medium text-base tracking-wide hover:text-neutral-700 transition-colors relative group"
+              className="text-text font-medium text-base tracking-wide hover:text-secondary transition-colors relative group"
             >
               Contact
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
             </Link>
             <Link
               to="/bake-days"
-              className="text-neutral-900 font-semibold text-base tracking-wide hover:text-neutral-700 transition-colors relative group"
+              className="text-text font-semibold text-base tracking-wide hover:text-secondary transition-colors relative group"
             >
               Order
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all group-hover:w-full"></span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
             </Link>
 
             {/* Admin Link */}
@@ -197,13 +197,13 @@ const Navbar = () => {
             <div className="relative ml-2 flex items-center gap-3">
               {isLoggedIn && !sessionLoading && (
                 <Link to="/account" aria-label="Account" className="relative group">
-                  <User className="w-6 h-6 text-neutral-900 transition-colors group-hover:text-neutral-700" />
+                  <User className="w-6 h-6 text-text transition-colors group-hover:text-secondary" />
                 </Link>
               )}
               <button className="relative group" onClick={() => setCartOpen(!cartOpen)}>
-                <ShoppingCart className="w-6 h-6 text-neutral-900 transition-colors group-hover:text-neutral-700" />
+                <ShoppingCart className="w-6 h-6 text-text transition-colors group-hover:text-secondary" />
                 {cart.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-neutral-900 text-white text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">
+                  <span className="absolute -top-2 -right-2 bg-text text-white text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">
                     {cartQuantity}
                   </span>
                 )}
@@ -211,9 +211,9 @@ const Navbar = () => {
 
               {/* Desktop Dropdown */}
               {cartOpen && (
-                <div className="absolute right-0 top-full mt-2 w-72 bg-white shadow-2xl border border-neutral-200 rounded-xl p-5 z-50 backdrop-blur-sm">
+                <div className="absolute right-0 top-full mt-2 w-72 bg-surface shadow-2xl border border-neutral-200 rounded-xl p-5 z-50 backdrop-blur-sm">
                   <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
-                    <h3 className="text-lg font-serif font-bold text-neutral-900">Your Cart</h3>
+                    <h3 className="text-lg font-serif font-bold text-text">Your Cart</h3>
                     {cart.length > 0 && (
                       <button
                         onClick={() => {
@@ -228,7 +228,7 @@ const Navbar = () => {
                     )}
                   </div>
                   {cart.length === 0 ? (
-                    <p className="text-sm text-neutral-600 italic">Your cart is empty.</p>
+                    <p className="text-sm text-secondary italic">Your cart is empty.</p>
                   ) : (
                     <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
                       {cart.map((item: CartItem) => (
@@ -237,8 +237,8 @@ const Navbar = () => {
                           className="flex justify-between items-start gap-3 pb-3 border-b border-neutral-100 last:border-0"
                         >
                           <div className="flex-1">
-                            <p className="font-medium text-neutral-900">{item.name}</p>
-                            <p className="text-sm text-neutral-600 mt-1">
+                            <p className="font-medium text-text">{item.name}</p>
+                            <p className="text-sm text-secondary mt-1">
                               ${item.price.toFixed(2)} × {item.quantity}
                             </p>
                           </div>
@@ -258,7 +258,7 @@ const Navbar = () => {
                       <Link
                         to="/bake-days"
                         onClick={() => setCartOpen(false)}
-                        className="block bg-neutral-900 text-white text-center py-2.5 rounded-lg font-medium hover:bg-neutral-800 transition-all shadow-sm hover:shadow-md"
+                        className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-muted transition-all shadow-sm hover:shadow-md"
                       >
                         Order Now
                       </Link>
@@ -266,7 +266,7 @@ const Navbar = () => {
                       <Link
                         to="/checkout"
                         onClick={() => setCartOpen(false)}
-                        className="block bg-neutral-900 text-white text-center py-2.5 rounded-lg font-medium hover:bg-neutral-800 transition-all shadow-sm hover:shadow-md"
+                        className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-muted transition-all shadow-sm hover:shadow-md"
                       >
                         Proceed to Checkout
                       </Link>
@@ -284,28 +284,28 @@ const Navbar = () => {
         <div className="mt-6 flex flex-col space-y-4 md:hidden pb-4 border-t border-neutral-200 pt-4">
           <Link
             to="/about"
-            className="text-neutral-900 font-medium text-base hover:text-neutral-700 transition-colors hover:translate-x-1 transform"
+            className="text-text font-medium text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
             onClick={() => setIsOpen(false)}
           >
             About
           </Link>
           <Link
             to="/why-bake-days"
-            className="text-neutral-900 font-medium text-base hover:text-neutral-700 transition-colors hover:translate-x-1 transform"
+            className="text-text font-medium text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
             onClick={() => setIsOpen(false)}
           >
             Why Bake Days
           </Link>
           <Link
             to="/contact"
-            className="text-neutral-900 font-medium text-base hover:text-neutral-700 transition-colors hover:translate-x-1 transform"
+            className="text-text font-medium text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
             onClick={() => setIsOpen(false)}
           >
             Contact
           </Link>
           <Link
             to="/bake-days"
-            className="text-neutral-900 font-semibold text-base hover:text-neutral-700 transition-colors hover:translate-x-1 transform"
+            className="text-text font-semibold text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
             onClick={() => setIsOpen(false)}
           >
             Order
@@ -341,9 +341,9 @@ const Navbar = () => {
       )}
 
       {cartOpen && (
-        <div className="md:hidden mt-6 w-full bg-white shadow-xl border border-neutral-200 rounded-xl p-5 z-50">
+        <div className="md:hidden mt-6 w-full bg-surface shadow-xl border border-neutral-200 rounded-xl p-5 z-50">
           <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
-            <h3 className="text-lg font-serif font-bold text-neutral-900">Your Cart</h3>
+            <h3 className="text-lg font-serif font-bold text-text">Your Cart</h3>
             {cart.length > 0 && (
               <button
                 onClick={() => {
@@ -359,7 +359,7 @@ const Navbar = () => {
           </div>
 
           {cart.length === 0 ? (
-            <p className="text-sm text-neutral-600 italic">Your cart is empty.</p>
+            <p className="text-sm text-secondary italic">Your cart is empty.</p>
           ) : (
             <div className="space-y-4 max-h-64 overflow-y-auto">
               {cart.map((item: CartItem) => (
@@ -368,8 +368,8 @@ const Navbar = () => {
                   className="flex justify-between items-start gap-3 pb-3 border-b border-neutral-100 last:border-0"
                 >
                   <div className="flex-1">
-                    <p className="font-medium text-neutral-900">{item.name}</p>
-                    <p className="text-sm text-neutral-600 mt-1">
+                    <p className="font-medium text-text">{item.name}</p>
+                    <p className="text-sm text-secondary mt-1">
                       ${item.price.toFixed(2)} × {item.quantity}
                     </p>
                   </div>
@@ -389,7 +389,7 @@ const Navbar = () => {
               <Link
                 to="/bake-days"
                 onClick={() => setCartOpen(false)}
-                className="block bg-neutral-900 text-white text-center py-2.5 rounded-lg font-medium hover:bg-neutral-800 transition-all shadow-sm"
+                className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-muted transition-all shadow-sm"
               >
                 Order Now
               </Link>
@@ -397,7 +397,7 @@ const Navbar = () => {
               <Link
                 to="/checkout"
                 onClick={() => setCartOpen(false)}
-                className="block bg-neutral-900 text-white text-center py-2.5 rounded-lg font-medium hover:bg-neutral-800 transition-all shadow-sm"
+                className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-muted transition-all shadow-sm"
               >
                 Proceed to Checkout
               </Link>

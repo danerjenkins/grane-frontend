@@ -1,9 +1,9 @@
 export default function About() {
   return (
-    <main className="min-h-screen flex flex-col items-center bg-neutral-50 px-4 py-14 text-center">
+    <main className="min-h-screen flex flex-col items-center bg-muted px-4 py-14 text-center">
       <h1 className="text-4xl font-bold mb-6">About Me</h1>
 
-      <div className="max-w-2xl space-y-6 text-lg text-gray-700 leading-relaxed">
+      <div className="max-w-2xl space-y-6 text-lg text-secondary leading-relaxed">
         <p>
           Hi! I'm Dane: BYU student, runner, Catan enthusiast, and the baker behind{' '}
           <span className="font-semibold">Grane</span>. I bake naturally fermented sourdough here in
@@ -29,7 +29,7 @@ export default function About() {
         <p className="pt-4">
           <a
             href="/why-bake-days#faq"
-            className="text-neutral-900 font-semibold underline hover:text-neutral-700 transition"
+            className="text-text font-semibold underline hover:text-secondary transition"
           >
             Have questions? Check out our FAQ →
           </a>

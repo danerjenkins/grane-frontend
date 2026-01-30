@@ -88,17 +88,17 @@ export default function Login() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-50 flex items-center justify-center px-4 py-10">
+    <main className="min-h-screen bg-muted flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         {/* Back Link */}
-        <Link to="/" className="text-sm text-gray-600 hover:text-gray-800 mb-6 inline-block">
+        <Link to="/" className="text-sm text-secondary hover:text-text mb-6 inline-block">
           ← Back to Home
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-lg shadow-sm border p-8">
+        <div className="bg-surface rounded-lg shadow-sm border p-8">
           <h1 className="text-2xl font-bold mb-2 text-center">Log In</h1>
-          <p className="text-gray-600 text-sm text-center mb-6">
+          <p className="text-secondary text-sm text-center mb-6">
             Enter your credentials to continue
           </p>
 
@@ -114,7 +114,7 @@ export default function Login() {
             {/* Email */}
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium text-text">
                   Email <span className="text-red-500">*</span>
                 </label>
                 {touched.email && validateEmail(email) && (
@@ -130,7 +130,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={() => setTouched({ ...touched, email: true })}
                 placeholder="your@email.com"
-                className={`w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
+                className={`w-full px-3 py-2 border rounded-lg text-text placeholder-secondary focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
                   touched.email
                     ? validateEmail(email)
                       ? 'border-green-500 bg-green-50'
@@ -148,7 +148,7 @@ export default function Login() {
             {/* Password */}
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-text">
                   Password <span className="text-red-500">*</span>
                 </label>
                 {touched.password && validatePassword(password) && (
@@ -164,7 +164,7 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={() => setTouched({ ...touched, password: true })}
                 placeholder="••••••••"
-                className={`w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
+                className={`w-full px-3 py-2 border rounded-lg text-text placeholder-secondary focus:outline-none focus:ring-2 focus:ring-neutral-900 transition ${
                   touched.password
                     ? validatePassword(password)
                       ? 'border-green-500 bg-green-50'
@@ -177,14 +177,14 @@ export default function Login() {
                   <span>✕</span> {fieldErrors.password}
                 </p>
               )}
-              <p className="text-xs text-gray-500 mt-1">Minimum 6 characters required</p>
+              <p className="text-xs text-secondary mt-1">Minimum 6 characters required</p>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               disabled={loading || !isFormValid()}
-              className="w-full bg-neutral-900 text-white py-2 rounded-lg font-medium hover:bg-neutral-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-neutral-900 text-white py-2 rounded-lg font-medium hover:bg-muted transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -192,9 +192,9 @@ export default function Login() {
 
           {/* Signup Link */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-secondary">
               Don't have an account?{' '}
-              <Link to="/signup" className="text-neutral-900 font-medium hover:underline">
+              <Link to="/signup" className="text-text font-medium hover:underline">
                 Sign Up
               </Link>
             </p>

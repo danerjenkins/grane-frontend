@@ -347,7 +347,7 @@ export default function AdminAccounts() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-6 py-10">
+    <main className="min-h-screen bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto">
         {/* Error banner */}
         {error && (
@@ -359,12 +359,12 @@ export default function AdminAccounts() {
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-neutral-900">Accounts</h1>
-            <p className="text-neutral-600 mt-1">Manage customers and admins</p>
+            <h1 className="text-4xl font-bold text">Accounts</h1>
+            <p className="text-secondary mt-1">Manage customers and admins</p>
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 font-medium transition-colors"
+            className="px-4 py-2 bg-brand-strong text-white rounded-lg hover:bg-brand font-medium transition-colors"
           >
             + Create Account
           </button>
@@ -377,16 +377,16 @@ export default function AdminAccounts() {
             placeholder="Search by name, email, phone, or user ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+            className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
           />
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
+        <div className="bg-surface rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-neutral-600">Loading users...</div>
+            <div className="p-8 text-center text-secondary">Loading users...</div>
           ) : filteredUsers.length === 0 ? (
-            <div className="p-8 text-center text-neutral-600">
+            <div className="p-8 text-center text-secondary">
               {searchQuery ? 'No users match your search.' : 'No users yet.'}
             </div>
           ) : (
@@ -422,13 +422,11 @@ export default function AdminAccounts() {
                       onClick={() => setSelectedUserId(user.id)}
                     >
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-neutral-900">
-                          {user.name || '—'}
-                        </div>
-                        <div className="text-xs text-neutral-500">{shortId(user.id)}</div>
+                        <div className="text-sm font-medium text">{user.name || '—'}</div>
+                        <div className="text-xs text-secondary">{shortId(user.id)}</div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-neutral-700">{user.email || '—'}</td>
-                      <td className="px-6 py-4 text-sm text-neutral-700">{user.phone || '—'}</td>
+                      <td className="px-6 py-4 text-sm text-secondary">{user.email || '—'}</td>
+                      <td className="px-6 py-4 text-sm text-secondary">{user.phone || '—'}</td>
                       <td className="px-6 py-4">
                         {(userRolesMap[user.id] || []).length > 0 ? (
                           <div className="flex flex-wrap gap-1">
@@ -449,7 +447,7 @@ export default function AdminAccounts() {
                           <span className="text-sm text-neutral-500">—</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-neutral-700">
+                      <td className="px-6 py-4 text-sm text-secondary">
                         {formatDate(user.created_at)}
                       </td>
                       <td className="px-6 py-4">
@@ -483,12 +481,12 @@ export default function AdminAccounts() {
             if (e.target === e.currentTarget) closeDrawer();
           }}
         >
-          <div className="bg-white h-full w-full max-w-2xl overflow-y-auto shadow-xl">
+          <div className="bg-surface h-full w-full max-w-2xl overflow-y-auto shadow-xl">
             {/* Drawer Header */}
-            <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex items-center justify-between z-10">
+            <div className="sticky top-0 bg-surface border-b border-neutral-200 px-6 py-4 flex items-center justify-between z-10">
               <div>
-                <h2 className="text-2xl font-bold text-neutral-900">User Details</h2>
-                <p className="text-sm text-neutral-600">
+                <h2 className="text-2xl font-bold text">User Details</h2>
+                <p className="text-sm text-secondary">
                   {selectedUser ? shortId(selectedUser.id) : selectedUserId}
                 </p>
               </div>
@@ -521,48 +519,46 @@ export default function AdminAccounts() {
               )}
 
               {drawerLoading ? (
-                <div className="text-neutral-600">Loading user details...</div>
+                <div className="text-secondary">Loading user details...</div>
               ) : selectedUser ? (
                 <>
                   {/* Basic Info Section - Editable */}
                   <div className="bg-neutral-50 rounded-lg p-4 space-y-3">
-                    <h3 className="text-lg font-semibold text-neutral-900">Basic Information</h3>
+                    <h3 className="text-lg font-semibold text">Basic Information</h3>
                     <div className="grid grid-cols-1 gap-3">
                       <div>
-                        <label className="block text-sm font-semibold text-neutral-700 mb-1">
+                        <label className="block text-sm font-semibold text-secondary mb-1">
                           Name
                         </label>
                         <input
                           type="text"
                           value={editName}
                           onChange={(e) => handleProfileChange('name', e.target.value)}
-                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 text-sm"
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong text-sm"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-neutral-700 mb-1">
+                        <label className="block text-sm font-semibold text-secondary mb-1">
                           Email
                         </label>
                         <input
                           type="email"
                           value={editEmail}
                           onChange={(e) => handleProfileChange('email', e.target.value)}
-                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 text-sm"
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong text-sm"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-neutral-700 mb-1">
+                        <label className="block text-sm font-semibold text-secondary mb-1">
                           User ID
                         </label>
-                        <div className="text-sm text-neutral-700 font-mono">{selectedUser.id}</div>
+                        <div className="text-sm text font-mono">{selectedUser.id}</div>
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-neutral-700 mb-1">
+                        <label className="block text-sm font-semibold text-secondary mb-1">
                           Created
                         </label>
-                        <div className="text-sm text-neutral-900">
-                          {formatDate(selectedUser.created_at)}
-                        </div>
+                        <div className="text-sm text">{formatDate(selectedUser.created_at)}</div>
                       </div>
                     </div>
                     <div className="flex justify-end pt-2">
@@ -572,7 +568,7 @@ export default function AdminAccounts() {
                         className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
                           !profileDirty || profileSaving
                             ? 'bg-neutral-200 text-neutral-500 cursor-not-allowed'
-                            : 'bg-amber-700 hover:bg-amber-800 text-white'
+                            : 'bg-brand-strong hover:bg-brand text-white'
                         }`}
                       >
                         {profileSaving ? 'Saving...' : 'Save Changes'}
@@ -582,13 +578,13 @@ export default function AdminAccounts() {
 
                   {/* Admin Access Section */}
                   <div className="bg-neutral-50 rounded-lg p-4 space-y-3">
-                    <h3 className="text-lg font-semibold text-neutral-900">Admin Access</h3>
+                    <h3 className="text-lg font-semibold text">Admin Access</h3>
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <label className="block text-sm font-semibold text-neutral-700 mb-1">
+                        <label className="block text-sm font-semibold text-secondary mb-1">
                           Admin access
                         </label>
-                        <p className="text-xs text-neutral-600">
+                        <p className="text-xs text-secondary">
                           {selectedUserId === currentUserId
                             ? isAdmin
                               ? 'You are an admin. You cannot remove your own access.'
@@ -616,7 +612,7 @@ export default function AdminAccounts() {
 
                   {/* Roles Section */}
                   <div className="bg-neutral-50 rounded-lg p-4 space-y-3">
-                    <h3 className="text-lg font-semibold text-neutral-900">Roles</h3>
+                    <h3 className="text-lg font-semibold text">Roles</h3>
                     <div className="space-y-2">
                       {userRoles.length > 0 ? (
                         <div className="flex flex-wrap gap-2">
@@ -630,7 +626,7 @@ export default function AdminAccounts() {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-neutral-600">No roles assigned</p>
+                        <p className="text-sm text-secondary">No roles assigned</p>
                       )}
                     </div>
                   </div>
@@ -640,7 +636,7 @@ export default function AdminAccounts() {
                     <h3 className="text-lg font-semibold text-red-900">Danger Zone</h3>
 
                     {selectedUserId === currentUserId ? (
-                      <div className="bg-white rounded p-3 border border-red-200">
+                      <div className="bg-surface rounded p-3 border border-red-200">
                         <p className="text-sm text-red-700">
                           <strong>You can't delete your own profile row.</strong> Contact another
                           admin to remove your profile if needed.
@@ -656,7 +652,7 @@ export default function AdminAccounts() {
                         </p>
 
                         {linkedOrderCount !== null && (
-                          <div className="bg-white rounded p-3 border border-orange-200">
+                          <div className="bg-surface rounded p-3 border border-orange-200">
                             <p className="text-sm text-orange-800">
                               <strong>Linked orders: {linkedOrderCount}</strong>
                               <br />
@@ -675,13 +671,13 @@ export default function AdminAccounts() {
                               disabled={isDeleting}
                               className="w-4 h-4 accent-red-600 cursor-pointer"
                             />
-                            <span className="text-sm text-neutral-700">
+                            <span className="text-sm text-secondary">
                               I understand this is permanent and cannot be undone
                             </span>
                           </label>
 
                           <div>
-                            <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                            <label className="block text-sm font-semibold text-secondary mb-2">
                               Confirm by entering:
                             </label>
                             <input
@@ -692,7 +688,7 @@ export default function AdminAccounts() {
                               disabled={isDeleting}
                               className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm font-mono"
                             />
-                            <p className="text-xs text-neutral-600 mt-1">
+                            <p className="text-xs text-secondary mt-1">
                               Enter the user ID or email address to confirm
                             </p>
                           </div>
@@ -729,9 +725,9 @@ export default function AdminAccounts() {
             if (e.target === e.currentTarget) setShowCreateModal(false);
           }}
         >
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
+          <div className="bg-surface rounded-lg shadow-2xl w-full max-w-md">
             <div className="p-4 border-b border-neutral-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-neutral-900">Create Account</h3>
+              <h3 className="text-lg font-semibold text">Create Account</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="text-neutral-600 hover:text-neutral-900 px-3 py-1 rounded-lg hover:bg-neutral-100"
@@ -747,7 +743,7 @@ export default function AdminAccounts() {
               )}
 
               <div>
-                <label className="block text-sm font-semibold text-neutral-700 mb-1">
+                <label className="block text-sm font-semibold text-secondary mb-1">
                   Email <span className="text-red-600">*</span>
                 </label>
                 <input
@@ -756,31 +752,31 @@ export default function AdminAccounts() {
                   onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="user@example.com"
                   disabled={isCreating}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-neutral-700 mb-1">Name</label>
+                <label className="block text-sm font-semibold text-secondary mb-1">Name</label>
                 <input
                   type="text"
                   value={createForm.name}
                   onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder="John Doe"
                   disabled={isCreating}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-neutral-700 mb-1">Phone</label>
+                <label className="block text-sm font-semibold text-secondary mb-1">Phone</label>
                 <input
                   type="tel"
                   value={createForm.phone}
                   onChange={(e) => setCreateForm((f) => ({ ...f, phone: e.target.value }))}
                   placeholder="(555) 123-4567"
                   disabled={isCreating}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
                 />
                 <button
                   onClick={() => setShowCreateModal(false)}
@@ -792,7 +788,7 @@ export default function AdminAccounts() {
                 <button
                   onClick={handleCreateAccount}
                   disabled={isCreating || !createForm.email.trim()}
-                  className="px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-brand-strong text-white rounded-lg hover:bg-brand font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isCreating ? 'Creating...' : 'Create Account'}
                 </button>

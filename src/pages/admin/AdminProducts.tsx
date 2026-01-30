@@ -187,7 +187,7 @@ export default function AdminProducts() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-6 py-10">
+    <main className="min-h-screen bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto">
         {/* Success Message */}
         {successMessage && (
@@ -198,10 +198,10 @@ export default function AdminProducts() {
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-          <h1 className="text-4xl font-bold text-neutral-900">Products</h1>
+          <h1 className="text-4xl font-bold text">Products</h1>
           <button
             onClick={openCreateModal}
-            className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 rounded-lg transition-colors font-medium"
+            className="bg-brand-strong hover:bg-brand text-white px-6 py-2 rounded-lg transition-colors font-medium"
           >
             + New Product
           </button>
@@ -214,16 +214,16 @@ export default function AdminProducts() {
             placeholder="Search products by name or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+            className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
           />
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
+        <div className="bg-surface rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-neutral-600">Loading products...</div>
+            <div className="p-8 text-center text-secondary">Loading products...</div>
           ) : filteredProducts.length === 0 ? (
-            <div className="p-8 text-center text-neutral-600">
+            <div className="p-8 text-center text-secondary">
               {searchQuery
                 ? 'No products match your search.'
                 : 'No products yet. Create one to get started!'}
@@ -267,17 +267,15 @@ export default function AdminProducts() {
                         )}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-neutral-900">{product.name}</div>
+                        <div className="text-sm font-medium text">{product.name}</div>
                         {product.description && (
-                          <div className="text-xs text-neutral-500 mt-1 line-clamp-2">
+                          <div className="text-xs text-secondary mt-1 line-clamp-2">
                             {product.description}
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-neutral-900">
-                        ${product.price.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-neutral-600">
+                      <td className="px-6 py-4 text-sm text">${product.price.toFixed(2)}</td>
+                      <td className="px-6 py-4 text-sm text-secondary">
                         {product.cost_to_make !== null
                           ? `$${product.cost_to_make.toFixed(2)}`
                           : '—'}
@@ -317,9 +315,9 @@ export default function AdminProducts() {
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-surface rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-neutral-200">
-              <h2 className="text-2xl font-bold text-neutral-900">
+              <h2 className="text-2xl font-bold text">
                 {modalMode === 'create' ? 'Create New Product' : 'Edit Product'}
               </h2>
             </div>
@@ -334,10 +332,7 @@ export default function AdminProducts() {
               <div className="space-y-4">
                 {/* Name */}
                 <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-semibold text-neutral-700 mb-1"
-                  >
+                  <label htmlFor="name" className="block text-sm font-semibold text-secondary mb-1">
                     Name <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -345,7 +340,7 @@ export default function AdminProducts() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
                     required
                   />
                 </div>
@@ -354,7 +349,7 @@ export default function AdminProducts() {
                 <div>
                   <label
                     htmlFor="price"
-                    className="block text-sm font-semibold text-neutral-700 mb-1"
+                    className="block text-sm font-semibold text-secondary mb-1"
                   >
                     Price <span className="text-red-600">*</span>
                   </label>
@@ -365,7 +360,7 @@ export default function AdminProducts() {
                     min="0"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
                     required
                   />
                 </div>
@@ -374,7 +369,7 @@ export default function AdminProducts() {
                 <div>
                   <label
                     htmlFor="cost_to_make"
-                    className="block text-sm font-semibold text-neutral-700 mb-1"
+                    className="block text-sm font-semibold text-secondary mb-1"
                   >
                     Cost to Make
                   </label>
@@ -385,7 +380,7 @@ export default function AdminProducts() {
                     min="0"
                     value={formData.cost_to_make}
                     onChange={(e) => setFormData({ ...formData, cost_to_make: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
                   />
                 </div>
 
@@ -393,7 +388,7 @@ export default function AdminProducts() {
                 <div>
                   <label
                     htmlFor="image_url"
-                    className="block text-sm font-semibold text-neutral-700 mb-1"
+                    className="block text-sm font-semibold text-secondary mb-1"
                   >
                     Image URL
                   </label>
@@ -402,7 +397,7 @@ export default function AdminProducts() {
                     type="url"
                     value={formData.image_url}
                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
                   />
                 </div>
 
@@ -410,7 +405,7 @@ export default function AdminProducts() {
                 <div>
                   <label
                     htmlFor="description"
-                    className="block text-sm font-semibold text-neutral-700 mb-1"
+                    className="block text-sm font-semibold text-secondary mb-1"
                   >
                     Description
                   </label>
@@ -419,7 +414,7 @@ export default function AdminProducts() {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700"
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
                   />
                 </div>
 
@@ -430,9 +425,9 @@ export default function AdminProducts() {
                     type="checkbox"
                     checked={formData.available}
                     onChange={(e) => setFormData({ ...formData, available: e.target.checked })}
-                    className="w-4 h-4 text-amber-700 border-neutral-300 rounded focus:ring-amber-700"
+                    className="w-4 h-4 text-brand-strong border-neutral-300 rounded focus:ring-brand-strong"
                   />
-                  <label htmlFor="available" className="ml-2 text-sm font-medium text-neutral-700">
+                  <label htmlFor="available" className="ml-2 text-sm font-medium text-secondary">
                     Available for purchase
                   </label>
                 </div>
@@ -451,7 +446,7 @@ export default function AdminProducts() {
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-brand-strong text-white rounded-lg hover:bg-brand transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {formLoading ? 'Saving...' : 'Save Product'}
                 </button>
@@ -469,9 +464,9 @@ export default function AdminProducts() {
             if (e.target === e.currentTarget) setDeleteConfirm(null);
           }}
         >
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <h3 className="text-xl font-bold text-neutral-900 mb-4">Confirm Delete</h3>
-            <p className="text-neutral-600 mb-6">
+          <div className="bg-surface rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text mb-4">Confirm Delete</h3>
+            <p className="text-secondary mb-6">
               Are you sure you want to delete this product? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">

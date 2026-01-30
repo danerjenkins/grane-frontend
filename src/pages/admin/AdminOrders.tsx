@@ -615,18 +615,14 @@ export default function AdminOrders() {
                       onClick={() => openDetails(order.id)}
                     >
                       <td className="px-4 py-3 text-sm text">{formatDate(order.created_at)}</td>
-                      <td className="px-4 py-3 text-sm text-secondary">
-                        {shortId(order.id)}
-                      </td>
+                      <td className="px-4 py-3 text-sm text-secondary">{shortId(order.id)}</td>
                       <td className="px-4 py-3 text-sm text-secondary">
                         {order.bake_day_id
                           ? (bakeDays.find((b) => b.id === order.bake_day_id)?.date ??
                             shortId(order.bake_day_id))
                           : '—'}
                       </td>
-                      <td className="px-4 py-3 text-sm text-text">
-                        {order.user?.name || '—'}
-                      </td>
+                      <td className="px-4 py-3 text-sm text-text">{order.user?.name || '—'}</td>
                       <td className="px-4 py-3">
                         {editingStatusOrderId === order.id ? (
                           <select
@@ -1017,8 +1013,7 @@ export default function AdminOrders() {
 
                       <div className="space-y-1">
                         <label className="text-sm text-red-800">
-                          Type{' '}
-                          <span className="">{requiredDeleteToken || 'order id'}</span> to
+                          Type <span className="">{requiredDeleteToken || 'order id'}</span> to
                           confirm
                         </label>
                         <input

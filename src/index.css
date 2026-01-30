@@ -3,34 +3,24 @@
 @tailwind utilities;
 
 :root {
-  /* Wheat/brand colors - edit these to change site theme */
-  --brand: 43 90% 55%; /* Main wheat/amber color */
-  --brand-soft: 43 90% 85%; /* Very light wheat tint for backgrounds */
-  --brand-strong: 43 80% 40%; /* Darker wheat for emphasis */
+  --brand: 42 40% 55%;
+  --brand-soft: 42 30% 92%;
+  --brand-strong: 42 35% 38%;
 
-  /* Surfaces & neutrals */
-  --surface: 0 0% 100%; /* Card backgrounds (white) */
-  --muted: 210 20% 98%; /* Subtle backgrounds */
+  --surface: 0 0% 100%;
+  --muted: 220 15% 97%;
 
-  /* Text colors */
-  --text: 222 47% 11%; /* Primary text */
-  --text-secondary: 215 16% 47%; /* Secondary text */
+  --text: 220 20% 12%;
+  --text-secondary: 220 12% 45%;
 
-  /* Accent colors - muted sage/olive for subtle emphasis */
-  --accent: 90 20% 45%; /* Muted sage/olive tone */
-  --accent-soft: 90 30% 95%; /* Very light sage for backgrounds */
+  --accent: 210 12% 40%;
+  --accent-soft: 210 20% 94%;
 }
 
 body {
   margin: 0;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
-
-/* TODO: Future accent color usage examples:
- * - Badge backgrounds: bg-accent-soft text-accent
- * - Secondary CTAs: border-accent text-accent hover:bg-accent-soft
- * - Subtle highlights: bg-accent-soft
- */
 
 .nav-link {
   @apply text-secondary hover:text-brand transition-colors duration-200 text-2xl;

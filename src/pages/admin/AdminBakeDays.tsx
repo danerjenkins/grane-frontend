@@ -193,7 +193,7 @@ export default function AdminBakeDays() {
           <h1 className="text-4xl font-bold text-text">Bake Days</h1>
           <button
             onClick={openCreateModal}
-            className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 rounded-lg transition-colors font-medium"
+            className="bg-brand-strong hover:bg-brand text-white px-6 py-2 rounded-lg transition-colors font-medium"
           >
             New Bake Day
           </button>

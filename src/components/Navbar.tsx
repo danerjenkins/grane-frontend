@@ -170,10 +170,10 @@ const Navbar = () => {
             {isUserAdmin && !sessionLoading && (
               <Link
                 to="/admin"
-                className="text-amber-900 font-semibold text-base tracking-wide hover:text-amber-800 transition-colors relative group"
+                className="text-brand-strong font-semibold text-base tracking-wide hover:text-brand transition-colors relative group"
               >
                 Admin
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-900 transition-all group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-strong transition-all group-hover:w-full"></span>
               </Link>
             )}
 
@@ -185,7 +185,7 @@ const Navbar = () => {
                 ) : (
                   <Link
                     to="/login"
-                    className="bg-amber-900 text-white px-5 py-2 rounded-full font-medium text-base tracking-wide hover:bg-amber-800 transition-all shadow-sm hover:shadow-md"
+                    className="bg-brand-strong text-white px-5 py-2 rounded-full font-medium text-base tracking-wide hover:bg-brand transition-all shadow-sm hover:shadow-md"
                   >
                     Log In
                   </Link>
@@ -315,7 +315,7 @@ const Navbar = () => {
           {isUserAdmin && !sessionLoading && (
             <Link
               to="/admin"
-              className="text-amber-900 font-semibold text-base hover:text-amber-800 transition-colors hover:translate-x-1 transform"
+              className="text-brand-strong font-semibold text-base hover:text-brand transition-colors hover:translate-x-1 transform"
               onClick={() => setIsOpen(false)}
             >
               Admin
@@ -329,7 +329,7 @@ const Navbar = () => {
               ) : (
                 <Link
                   to="/login"
-                  className="bg-amber-900 text-white px-5 py-2.5 rounded-full font-medium text-base text-center hover:bg-amber-800 transition-all shadow-sm"
+                  className="bg-brand-strong text-white px-5 py-2.5 rounded-full font-medium text-base text-center hover:bg-brand transition-all shadow-sm"
                   onClick={() => setIsOpen(false)}
                 >
                   Log In

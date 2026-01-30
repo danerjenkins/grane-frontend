@@ -170,14 +170,14 @@ export default function BakeDaysPage() {
 
               {/* Selected date badge */}
               {friendlySelectedDate && (
-                <div className="mt-4 inline-flex items-center rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
+                <div className="mt-4 inline-flex items-center rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand-strong">
                   <span className="mr-1.5">🗓️</span>
                   Bake Day: {friendlySelectedDate}
                 </div>
               )}
             </div>
           </section>
-          {/* <div className="mx-auto mt-4 max-w-xl rounded-lg bg-amber-50 p-4 text-sm text-amber-900">
+          {/* <div className="mx-auto mt-4 max-w-xl rounded-lg bg-brand-soft p-4 text-sm text-brand-strong">
             <p className="font-semibold mb-1">Thanksgiving Pickup Info</p>
             <p>
               <strong>Wednesday (Nov 26):</strong> 6:00–9:00 PM
@@ -202,7 +202,7 @@ export default function BakeDaysPage() {
 
                 {/* Progress bar animation */}
                 <div className="mt-6 w-48 h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-amber-500 animate-loading-bar" />
+                  <div className="h-full bg-brand-soft0 animate-loading-bar" />
                 </div>
 
                 {/* Animation styles */}

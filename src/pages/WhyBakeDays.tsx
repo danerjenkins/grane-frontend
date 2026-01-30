@@ -61,8 +61,8 @@ export default function WhyBakeDays() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Step 1 */}
             <div className="rounded-2xl border border-neutral-200 bg-muted p-8 shadow-sm transition hover:shadow-md">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
-                <Calendar className="h-6 w-6 text-amber-900" />
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft">
+                <Calendar className="h-6 w-6 text-brand-strong" />
               </div>
               <h3 className="text-xl font-semibold mb-3">1. Choose a bake day</h3>
               <p className="text-secondary leading-relaxed">
@@ -72,8 +72,8 @@ export default function WhyBakeDays() {
 
             {/* Step 2 */}
             <div className="rounded-2xl border border-neutral-200 bg-muted p-8 shadow-sm transition hover:shadow-md">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
-                <Clock className="h-6 w-6 text-amber-900" />
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft">
+                <Clock className="h-6 w-6 text-brand-strong" />
               </div>
               <h3 className="text-xl font-semibold mb-3">2. Order before cutoff</h3>
               <p className="text-secondary leading-relaxed">
@@ -84,8 +84,8 @@ export default function WhyBakeDays() {
 
             {/* Step 3 */}
             <div className="rounded-2xl border border-neutral-200 bg-muted p-8 shadow-sm transition hover:shadow-md">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
-                <Leaf className="h-6 w-6 text-amber-900" />
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft">
+                <Leaf className="h-6 w-6 text-brand-strong" />
               </div>
               <h3 className="text-xl font-semibold mb-3">3. Pick up fresh</h3>
               <p className="text-secondary leading-relaxed">
@@ -173,7 +173,7 @@ export default function WhyBakeDays() {
 
           <div className="space-y-5">
             <div className="flex gap-4">
-              <div className="flex-shrink-0 h-6 w-6 rounded-full bg-amber-200 flex items-center justify-center text-sm font-semibold text-amber-900">
+              <div className="flex-shrink-0 h-6 w-6 rounded-full bg-brand-soft flex items-center justify-center text-sm font-semibold text-brand-strong">
                 ✓
               </div>
               <p className="text-lg text-secondary leading-relaxed">
@@ -183,7 +183,7 @@ export default function WhyBakeDays() {
             </div>
 
             <div className="flex gap-4">
-              <div className="flex-shrink-0 h-6 w-6 rounded-full bg-amber-200 flex items-center justify-center text-sm font-semibold text-amber-900">
+              <div className="flex-shrink-0 h-6 w-6 rounded-full bg-brand-soft flex items-center justify-center text-sm font-semibold text-brand-strong">
                 ✓
               </div>
               <p className="text-lg text-secondary leading-relaxed">
@@ -194,7 +194,7 @@ export default function WhyBakeDays() {
             </div>
 
             <div className="flex gap-4">
-              <div className="flex-shrink-0 h-6 w-6 rounded-full bg-amber-200 flex items-center justify-center text-sm font-semibold text-amber-900">
+              <div className="flex-shrink-0 h-6 w-6 rounded-full bg-brand-soft flex items-center justify-center text-sm font-semibold text-brand-strong">
                 ✓
               </div>
               <p className="text-lg text-secondary leading-relaxed">
@@ -205,7 +205,7 @@ export default function WhyBakeDays() {
             </div>
 
             <div className="flex gap-4">
-              <div className="flex-shrink-0 h-6 w-6 rounded-full bg-amber-200 flex items-center justify-center text-sm font-semibold text-amber-900">
+              <div className="flex-shrink-0 h-6 w-6 rounded-full bg-brand-soft flex items-center justify-center text-sm font-semibold text-brand-strong">
                 ✓
               </div>
               <p className="text-lg text-secondary leading-relaxed">

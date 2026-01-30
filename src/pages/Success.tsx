@@ -156,9 +156,9 @@ export default function Success() {
           </div>
 
           {/* Next Steps */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">
-            <h3 className="font-semibold text-amber-900 mb-3">What's Next?</h3>
-            <ul className="space-y-2 text-sm text-amber-900">
+          <div className="bg-brand-soft border border-brand-soft rounded-lg p-6 mb-6">
+            <h3 className="font-semibold text-brand-strong mb-3">What's Next?</h3>
+            <ul className="space-y-2 text-sm text-brand-strong">
               <li className="flex gap-2">
                 <span className="font-bold">1.</span>
                 <span>We'll send you pickup details via text/email before bake day.</span>

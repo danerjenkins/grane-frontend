@@ -71,7 +71,7 @@ export default function Home() {
 
           <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
-              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-900">
+              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand-strong">
                 🗓️
               </div>
               <h3 className="text-base font-semibold text-neutral-900">1) Choose a Bake Day</h3>
@@ -81,7 +81,7 @@ export default function Home() {
             </div>
 
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
-              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-900">
+              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand-strong">
                 🥖
               </div>
               <h3 className="text-base font-semibold text-neutral-900">2) Reserve Your Loaves</h3>
@@ -89,7 +89,7 @@ export default function Home() {
             </div>
 
             <div className="rounded-2xl border bg-white p-6 shadow-sm">
-              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-900">
+              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand-strong">
                 📍
               </div>
               <h3 className="text-base font-semibold text-neutral-900">3) Pick Up in Provo</h3>

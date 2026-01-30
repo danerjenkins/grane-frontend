@@ -4,22 +4,21 @@
 
 :root {
   /* Font families - change these to control site typography */
-  --font-body: 'Inter';
-  --font-display: 'Fraunces';
+  --font-body: 'IBM Plex Sans';
+  --font-display: 'Libre Baskerville';
   --font-admin: 'ui-monospace';
-
-  --brand: 42 40% 55%;
-  --brand-soft: 42 30% 92%;
-  --brand-strong: 42 35% 38%;
+  --brand: 45 95% 65%;
+  --brand-soft: 45 100% 92%;
+  --brand-strong: 42 85% 45%;
 
   --surface: 0 0% 100%;
-  --muted: 220 15% 97%;
+  --muted: 45 30% 97%;
 
-  --text: 220 20% 12%;
-  --text-secondary: 220 12% 45%;
+  --text: 222 35% 15%;
+  --text-secondary: 220 15% 45%;
 
-  --accent: 210 12% 40%;
-  --accent-soft: 210 20% 94%;
+  --accent: 95 18% 45%;
+  --accent-soft: 95 30% 94%;
 }
 
 @layer base {

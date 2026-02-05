@@ -285,9 +285,7 @@ export default function BakeDaysPage() {
                         <div className="space-y-2 p-4">
                           <div className="flex items-start justify-between gap-4">
                             <div>
-                              <h3 className="text-lg font-semibold text-text">
-                                {product.name}
-                              </h3>
+                              <h3 className="text-lg font-semibold text-text">{product.name}</h3>
                               <p className="text-sm text-secondary">{product.description}</p>
                             </div>
                           </div>

@@ -5,6 +5,19 @@ import { getBakeDays, type BakeDay } from '../api/bakeDays';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 import ProductImage from '../components/ProductImage';
+import {
+  CalendarDays,
+  Sparkles,
+  MapPin,
+  Clock,
+  ArrowRight,
+  ShoppingBag,
+  Plus,
+  Minus,
+  CheckCircle2,
+  AlertTriangle,
+  Loader2,
+} from 'lucide-react';
 
 export default function BakeDaysPage() {
   const [bakeDays, setBakeDays] = useState<BakeDay[]>([]);
@@ -129,6 +142,9 @@ export default function BakeDaysPage() {
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <header className="mb-10 text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong">
+            <CalendarDays className="h-7 w-7" />
+          </div>
           <h1 className="mb-3 text-4xl font-bold tracking-tight text-text">
             Choose Your Pickup Day
           </h1>
@@ -142,6 +158,16 @@ export default function BakeDaysPage() {
           {/* Calendar Card */}
           <section className="w-full max-w-sm">
             <div className="rounded-2xl border bg-surface p-4 shadow-sm">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-text">Bake Day Calendar</h2>
+                  <p className="text-xs text-secondary">Tap a highlighted date to view items.</p>
+                </div>
+                <div className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-2.5 py-1 text-[11px] font-semibold text-brand-strong">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Fresh drops
+                </div>
+              </div>
               <Calendar
                 onClickDay={(value) => {
                   const dateStr = toLocalYMD(value);
@@ -162,16 +188,18 @@ export default function BakeDaysPage() {
                 tileClassName={getTileClassName}
                 prev2Label={null}
                 next2Label={null}
+                className="modern-calendar"
               />
 
-              <p className="mt-3 text-xs text-secondary">
-                Dates with a golden highlight are active bake days with available products.
-              </p>
+              <div className="mt-4 flex items-start gap-2 text-xs text-secondary">
+                <InfoIcon />
+                <p>Golden highlights mean a bake day is open with available products.</p>
+              </div>
 
               {/* Selected date badge */}
               {friendlySelectedDate && (
-                <div className="mt-4 inline-flex items-center rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand-strong">
-                  <span className="mr-1.5">🗓️</span>
+                <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand-strong">
+                  <CalendarDays className="h-4 w-4" />
                   Bake Day: {friendlySelectedDate}
                 </div>
               )}
@@ -194,18 +222,16 @@ export default function BakeDaysPage() {
           <section className="w-full max-w-xl">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                {/* Loading Animation */}
-                <div className="animate-bounce text-6xl mb-4">🥖</div>
-
-                {/* Cute message */}
-                <p className="text-lg font-medium text-secondary">Good things are baking...</p>
-
-                {/* Progress bar animation */}
-                <div className="mt-6 w-48 h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-brand-soft0 animate-loading-bar" />
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-brand-strong">
+                  <Loader2 className="h-7 w-7 animate-spin" />
                 </div>
 
-                {/* Animation styles */}
+                <p className="text-lg font-medium text-secondary">Good things are baking...</p>
+
+                <div className="mt-6 h-2 w-48 overflow-hidden rounded-full bg-muted">
+                  <div className="h-full animate-loading-bar bg-brand-strong/40" />
+                </div>
+
                 <style>
                   {`
                     @keyframes loadingBar {
@@ -221,12 +247,14 @@ export default function BakeDaysPage() {
               </div>
             ) : selectedBakeDayRecord ? (
               <div className="space-y-6">
-                <h2 className="text-center text-2xl font-semibold text-text">
+                <div className="flex items-center justify-center gap-2 text-2xl font-semibold text-text">
+                  <ShoppingBag className="h-6 w-6 text-brand-strong" />
                   Products for {friendlySelectedDate}
-                </h2>
+                </div>
                 {/* Toast */}
                 {addedMessage && (
-                  <div className="mb-6 rounded-lg bg-green-100 px-4 py-3 text-center text-sm font-medium text-green-800 shadow-sm">
+                  <div className="mb-6 flex items-center justify-center gap-2 rounded-lg bg-green-100 px-4 py-3 text-center text-sm font-medium text-green-800 shadow-sm">
+                    <CheckCircle2 className="h-4 w-4" />
                     {addedMessage}
                   </div>
                 )}
@@ -286,7 +314,7 @@ export default function BakeDaysPage() {
                               {/* Quantity stepper */}
                               <div className="flex w-32 items-center justify-between rounded-full border px-2 py-1 text-sm">
                                 <button
-                                  className="px-2 text-lg font-bold"
+                                  className="px-2 text-secondary hover:text-text"
                                   onClick={() => {
                                     if (cartItem.quantity === 1) {
                                       removeFromCart(cartItem.product_id);
@@ -295,7 +323,7 @@ export default function BakeDaysPage() {
                                     }
                                   }}
                                 >
-                                  –
+                                  <Minus className="h-4 w-4" />
                                 </button>
 
                                 <span className="min-w-[1.5rem] text-center">
@@ -303,13 +331,13 @@ export default function BakeDaysPage() {
                                 </span>
 
                                 <button
-                                  className="px-2 text-lg font-bold disabled:opacity-40"
+                                  className="px-2 text-secondary hover:text-text disabled:opacity-40"
                                   disabled={remaining <= 0}
                                   onClick={() =>
                                     updateQuantity(cartItem.product_id, cartItem.quantity + 1)
                                   }
                                 >
-                                  +
+                                  <Plus className="h-4 w-4" />
                                 </button>
                               </div>
 
@@ -337,7 +365,7 @@ export default function BakeDaysPage() {
           ${
             deadlineStatus === 'too-close'
               ? 'bg-muted text-secondary cursor-not-allowed'
-              : 'bg-text text-white hover:bg-secondary'
+              : 'bg-text text-white hover:bg-text/90'
           }
         `}
                                   disabled={deadlineStatus === 'too-close'}
@@ -360,9 +388,17 @@ export default function BakeDaysPage() {
                                     setTimeout(() => setAddedMessage(''), 2000);
                                   }}
                                 >
-                                  {deadlineStatus === 'too-close'
-                                    ? 'Too Late to Order'
-                                    : 'Add to Order'}
+                                  <span className="inline-flex items-center justify-center gap-2">
+                                    {deadlineStatus === 'too-close' ? (
+                                      <>
+                                        <AlertTriangle className="h-4 w-4" /> Too Late to Order
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Plus className="h-4 w-4" /> Add to Order
+                                      </>
+                                    )}
+                                  </span>
                                 </button>
                               );
 
@@ -399,9 +435,9 @@ export default function BakeDaysPage() {
         <p className="text-secondary">
           <a
             href="/why-bake-days#faq"
-            className="font-semibold text-text underline hover:text-secondary transition"
+            className="inline-flex items-center gap-2 font-semibold text-text underline hover:text-secondary transition"
           >
-            Have questions? Check our FAQ →
+            Have questions? Check our FAQ <ArrowRight className="h-4 w-4" />
           </a>
         </p>
       </div>
@@ -409,23 +445,87 @@ export default function BakeDaysPage() {
       {/* Calendar override styles */}
       <style>
         {`
-          .bake-day-highlight {
-            background: #facc15 !important;
-            border-radius: 0.375rem;
+          .modern-calendar {
+            border: 1px solid hsl(var(--brand-soft));
+            border-radius: 1rem;
+            padding: 0.75rem;
+            background: hsl(var(--surface));
+            box-shadow: 0 10px 24px -20px rgba(0, 0, 0, 0.2);
+          }
+          .modern-calendar .react-calendar__navigation {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
+          }
+          .modern-calendar .react-calendar__navigation button {
+            border-radius: 0.75rem;
+            color: hsl(var(--text));
             font-weight: 600;
-            color: #111827 !important;
+            transition: all 0.2s ease;
+          }
+          .modern-calendar .react-calendar__navigation button:enabled:hover {
+            background: hsl(var(--brand-soft));
+            color: hsl(var(--text));
+          }
+          .modern-calendar .react-calendar__month-view__weekdays {
+            text-transform: uppercase;
+            font-size: 0.65rem;
+            letter-spacing: 0.08em;
+            color: hsl(var(--text-secondary));
+          }
+          .modern-calendar .react-calendar__tile {
+            border-radius: 0.75rem;
+            padding: 0.6rem 0.25rem;
+            transition: all 0.2s ease;
+          }
+          .modern-calendar .react-calendar__tile:enabled:hover {
+            background: hsl(var(--accent-soft));
+            color: hsl(var(--text));
+          }
+          .modern-calendar .react-calendar__tile--active {
+            background: hsl(var(--brand-strong)) !important;
+            color: hsl(var(--surface)) !important;
+            box-shadow: 0 8px 16px -10px rgba(0, 0, 0, 0.35);
+          }
+          .bake-day-highlight {
+            background: hsl(var(--brand) / 0.35) !important;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            color: hsl(var(--text)) !important;
+            box-shadow: inset 0 0 0 1px hsl(var(--brand) / 0.5);
           }
           .react-calendar__month-view__days__day--weekend {
             color: inherit !important;
           }
-          .react-calendar__tile--now {
-            background-color: #e5e7eb !important;
-            color: #111827 !important;
+          .modern-calendar .react-calendar__tile--now {
+            background-color: hsl(var(--accent-soft)) !important;
+            color: hsl(var(--text)) !important;
             font-weight: 600;
-            border-radius: 0.375rem;
+            border-radius: 0.75rem;
           }
         `}
       </style>
     </main>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand-soft text-brand-strong">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-3.5 w-3.5"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="16" x2="12" y2="12" />
+        <line x1="12" y1="8" x2="12.01" y2="8" />
+      </svg>
+    </span>
   );
 }

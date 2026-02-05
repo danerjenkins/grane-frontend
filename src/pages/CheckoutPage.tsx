@@ -248,7 +248,9 @@ export default function CheckoutPage() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-xl font-semibold">Your Information</h2>
-                <p className="text-sm text-secondary">This helps us confirm and coordinate pickup.</p>
+                <p className="text-sm text-secondary">
+                  This helps us confirm and coordinate pickup.
+                </p>
               </div>
               {isLoggedIn && (
                 <button
@@ -495,8 +497,7 @@ export default function CheckoutPage() {
                   University)
                 </p>
                 <p className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-secondary" /> Pickup window: 6pm - 9pm on bake
-                  day
+                  <Clock className="h-4 w-4 text-secondary" /> Pickup window: 6pm - 9pm on bake day
                 </p>
                 <p className="text-xs text-secondary mt-2">
                   Exact address will be sent after payment. Questions? Text (702) 767-3350
@@ -515,7 +516,7 @@ export default function CheckoutPage() {
               className={`mt-4 w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition ${
                 !isFormValid() || isSubmitting
                   ? 'bg-muted text-secondary cursor-not-allowed'
-                  : 'bg-black text-white hover:bg-secondary'
+                  : 'bg-text text-white hover:bg-text/90'
               }`}
             >
               <CreditCard className="h-5 w-5" />

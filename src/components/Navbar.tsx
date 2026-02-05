@@ -258,7 +258,7 @@ const Navbar = () => {
                       <Link
                         to="/bake-days"
                         onClick={() => setCartOpen(false)}
-                        className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-muted transition-all shadow-sm hover:shadow-md"
+                        className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-text/90 transition-all shadow-sm hover:shadow-md"
                       >
                         Order Now
                       </Link>
@@ -266,7 +266,7 @@ const Navbar = () => {
                       <Link
                         to="/checkout"
                         onClick={() => setCartOpen(false)}
-                        className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-muted transition-all shadow-sm hover:shadow-md"
+                        className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-text/90 transition-all shadow-sm hover:shadow-md"
                       >
                         Proceed to Checkout
                       </Link>

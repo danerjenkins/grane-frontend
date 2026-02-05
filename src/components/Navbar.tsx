@@ -138,6 +138,13 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             {/* <Link to="/menu" className="nav-link">Menu</Link>*/}
             <Link
+              to="/"
+              className="text-text font-medium text-base tracking-wide hover:text-secondary transition-colors relative group"
+            >
+              Home
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
+            </Link>
+            <Link
               to="/about"
               className="text-text font-medium text-base tracking-wide hover:text-secondary transition-colors relative group"
             >
@@ -275,6 +282,13 @@ const Navbar = () => {
       {/* MOBILE MENU ITEMS */}
       {isOpen && (
         <div className="mt-6 flex flex-col space-y-4 md:hidden pb-4 border-t border-neutral-200 pt-4">
+          <Link
+            to="/"
+            className="text-text font-medium text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
+            onClick={() => setIsOpen(false)}
+          >
+            Home
+          </Link>
           <Link
             to="/about"
             className="text-text font-medium text-base hover:text-secondary transition-colors hover:translate-x-1 transform"

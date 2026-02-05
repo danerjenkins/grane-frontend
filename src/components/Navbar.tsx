@@ -152,13 +152,6 @@ const Navbar = () => {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
             </Link>
             <Link
-              to="/contact"
-              className="text-text font-medium text-base tracking-wide hover:text-secondary transition-colors relative group"
-            >
-              Contact
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
-            </Link>
-            <Link
               to="/bake-days"
               className="text-text font-semibold text-base tracking-wide hover:text-secondary transition-colors relative group"
             >
@@ -295,13 +288,6 @@ const Navbar = () => {
             onClick={() => setIsOpen(false)}
           >
             About Grane
-          </Link>
-          <Link
-            to="/contact"
-            className="text-text font-medium text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
-            onClick={() => setIsOpen(false)}
-          >
-            Contact
           </Link>
           <Link
             to="/bake-days"

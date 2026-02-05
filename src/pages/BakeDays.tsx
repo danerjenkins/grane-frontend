@@ -161,13 +161,13 @@ export default function BakeDaysPage() {
           </p>
         </header>
 
-        <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-start lg:justify-center">
+        <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:justify-center">
           {/* Calendar Card */}
-          <section className="w-full max-w-sm">
-            <div className="rounded-2xl border bg-surface p-4 shadow-sm">
-              <div className="mb-4 flex items-center justify-between">
+          <section className="w-full max-w-xl">
+            <div className="rounded-3xl border bg-surface p-6 shadow-sm">
+              <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-semibold text-text">Bake Day Calendar</h2>
+                  <h2 className="text-xl font-semibold text-text">Bake Day Calendar</h2>
                   <p className="text-xs text-secondary">Tap a highlighted date to view items.</p>
                 </div>
                 <div className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-2.5 py-1 text-[11px] font-semibold text-brand-strong">
@@ -197,14 +197,14 @@ export default function BakeDaysPage() {
                 className="modern-calendar"
               />
 
-              <div className="mt-4 flex items-start gap-2 text-xs text-secondary">
+              <div className="mt-5 flex items-start gap-2 text-sm text-secondary">
                 <InfoIcon />
                 <p>Golden highlights mean a bake day is open with available products.</p>
               </div>
 
               {/* Selected date badge */}
               {friendlySelectedDate && (
-                <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand-strong">
+                <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-brand-soft px-3 py-1 text-sm font-medium text-brand-strong">
                   <CalendarDays className="h-4 w-4" />
                   Bake Day: {friendlySelectedDate}
                 </div>
@@ -451,10 +451,13 @@ export default function BakeDaysPage() {
         {`
           .modern-calendar {
             border: 1px solid hsl(var(--brand-soft));
-            border-radius: 1rem;
-            padding: 0.75rem;
+            border-radius: 1.25rem;
+            padding: 1.25rem;
             background: hsl(var(--surface));
             box-shadow: 0 10px 24px -20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 36rem;
+            font-size: 1rem;
           }
           .modern-calendar .react-calendar__navigation {
             display: flex;
@@ -463,10 +466,19 @@ export default function BakeDaysPage() {
             margin-bottom: 0.5rem;
           }
           .modern-calendar .react-calendar__navigation button {
-            border-radius: 0.75rem;
+            border-radius: 0.9rem;
             color: hsl(var(--text));
             font-weight: 600;
             transition: all 0.2s ease;
+          }
+          .modern-calendar .react-calendar__navigation__label {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            letter-spacing: -0.01em;
+            color: hsl(var(--text));
+          }
+          .modern-calendar .react-calendar__navigation__label:enabled:hover {
+            background: hsl(var(--brand-soft));
           }
           .modern-calendar .react-calendar__navigation button:enabled:hover {
             background: hsl(var(--brand-soft));
@@ -474,14 +486,25 @@ export default function BakeDaysPage() {
           }
           .modern-calendar .react-calendar__month-view__weekdays {
             text-transform: uppercase;
-            font-size: 0.65rem;
-            letter-spacing: 0.08em;
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
             color: hsl(var(--text-secondary));
+            font-weight: 600;
+            border-bottom: 1px solid hsl(var(--brand-soft));
+            padding-bottom: 0.3rem;
+          }
+          .modern-calendar .react-calendar__month-view__days {
+            padding-top: 0.6rem;
+          }
+          .modern-calendar .react-calendar__month-view__weekdays__weekday abbr {
+            text-decoration: none;
+            border-bottom: none;
           }
           .modern-calendar .react-calendar__tile {
-            border-radius: 0.75rem;
-            padding: 0.6rem 0.25rem;
+            border-radius: 0;
+            padding: 1.05rem 0.45rem;
             transition: all 0.2s ease;
+            box-shadow: inset 0 0 0 2px hsl(var(--surface));
           }
           .modern-calendar .react-calendar__tile:enabled:hover {
             background: hsl(var(--accent-soft));
@@ -494,10 +517,11 @@ export default function BakeDaysPage() {
           }
           .bake-day-highlight {
             background: hsl(var(--brand) / 0.35) !important;
-            border-radius: 0.75rem;
             font-weight: 600;
             color: hsl(var(--text)) !important;
-            box-shadow: inset 0 0 0 1px hsl(var(--brand) / 0.5);
+            box-shadow:
+              inset 0 0 0 1px hsl(var(--brand) / 0.5),
+              inset 0 0 0 2px hsl(var(--surface));
           }
           .react-calendar__month-view__days__day--weekend {
             color: inherit !important;
@@ -506,7 +530,7 @@ export default function BakeDaysPage() {
             background-color: hsl(var(--accent-soft)) !important;
             color: hsl(var(--text)) !important;
             font-weight: 600;
-            border-radius: 0.75rem;
+            border-radius: 0;
           }
         `}
       </style>

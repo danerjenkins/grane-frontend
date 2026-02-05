@@ -32,7 +32,6 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [globalError, setGlobalError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
 
   // Track which fields have been touched for validation
   const [touched, setTouched] = useState({
@@ -133,7 +132,6 @@ export default function CheckoutPage() {
 
     // Clear previous messages
     setGlobalError('');
-    setSuccessMessage('');
 
     // Validate required fields
     if (!validateName(customerName)) {
@@ -234,13 +232,6 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      {/* Global Success Message */}
-      {successMessage && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3">
-          <BadgeCheck className="h-5 w-5 text-green-700 mt-0.5" />
-          <p className="text-green-800 font-semibold">{successMessage}</p>
-        </div>
-      )}
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
         {/* Customer Information */}
         <div className="space-y-6">

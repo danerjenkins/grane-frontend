@@ -3,8 +3,6 @@ import { useEffect } from 'react';
 import Home from './pages/Home.tsx';
 import About from './pages/About.tsx';
 import Navbar from './components/Navbar';
-import Menu from './pages/Menu.tsx';
-import Contact from './pages/Contact.tsx';
 import BakeDaysPage from './pages/BakeDays';
 import CheckoutPage from './pages/CheckoutPage';
 import AdminOrders from './pages/admin/AdminOrders.tsx';
@@ -54,8 +52,6 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/contact" element={<Contact />} />
         <Route path="/why-bake-days" element={<About />} />
         <Route path="/bake-days" element={<BakeDaysPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />

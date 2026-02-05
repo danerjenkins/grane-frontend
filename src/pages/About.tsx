@@ -91,7 +91,7 @@ export default function About() {
             <img
               src="/IMG_1097.jpg"
               alt="Dane baking"
-              className="rounded-xl w-full h-full max-h-[420px] object-cover"
+              className="rounded-xl w-full h-full max-h-[700px] object-cover"
             />
           </div>
         </div>

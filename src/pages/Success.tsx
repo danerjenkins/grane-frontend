@@ -177,7 +177,7 @@ export default function Success() {
           {/* CTA */}
           <div className="flex flex-col gap-3">
             <Link
-              to="/why-bake-days#faq"
+              to="/about#faq"
               className="bg-gray-100 text-text py-3 text-center rounded-lg hover:bg-muted transition font-medium"
             >
               Questions? Check our FAQ

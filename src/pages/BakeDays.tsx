@@ -438,7 +438,7 @@ export default function BakeDaysPage() {
       <div className="mt-12 text-center">
         <p className="text-secondary">
           <a
-            href="/why-bake-days#faq"
+            href="/about#faq"
             className="inline-flex items-center gap-2 font-semibold text-text underline hover:text-secondary transition"
           >
             Have questions? Check our FAQ <ArrowRight className="h-4 w-4" />

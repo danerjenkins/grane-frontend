@@ -7,11 +7,9 @@ export default function Contact() {
         say hi? I’d love to hear from you. Grane is a small one-person bakery, so every message goes
         straight to me — Dane.
       </p>
-
-      {/* Contact Button */}
       <a
-        href="mailto:support@granebakery.com?subject=Order%20Inquiry&body=Hi%20Grane%20Bakery%2C%0A%0AI%20had%20a%20question%20about..."
-        className="inline-block bg-black text-white px-8 py-4 rounded-xl text-lg font-medium hover:bg-muted transition shadow mb-10"
+        href="mailto:support@granebakery.com"
+        className="inline-block bg-text text-white px-8 py-4 rounded-xl text-lg font-medium hover:bg-text/90 transition shadow mb-10"
       >
         Email Me
       </a>
@@ -34,10 +32,7 @@ export default function Contact() {
           you'll love.
         </p>
         <p className="pt-4 text-text">
-          <a
-            href="/why-bake-days#faq"
-            className="font-semibold underline hover:text-secondary transition"
-          >
+          <a href="/about#faq" className="font-semibold underline hover:text-secondary transition">
             Check our FAQ →
           </a>
         </p>{' '}

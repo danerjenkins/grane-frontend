@@ -8,8 +8,6 @@ import ProductImage from '../components/ProductImage';
 import {
   CalendarDays,
   Sparkles,
-  MapPin,
-  Clock,
   ArrowRight,
   ShoppingBag,
   Plus,
@@ -48,6 +46,15 @@ export default function BakeDaysPage() {
       .catch(console.error)
       .finally(() => setIsLoading(false));
   }, [validateBakeDay]);
+
+  // Auto-select bake day based on current cart selection
+  useEffect(() => {
+    if (!selectedBakeDay?.date) return;
+    const selected = toLocalDateFromYMD(selectedBakeDay.date);
+    if (!selectedDate || toLocalYMD(selectedDate) !== selectedBakeDay.date) {
+      setSelectedDate(selected);
+    }
+  }, [selectedBakeDay, selectedDate]);
 
   // Highlight dates that have bake days
   const getTileClassName = ({ date }: { date: Date }) => {
@@ -172,19 +179,18 @@ export default function BakeDaysPage() {
                 onClickDay={(value) => {
                   const dateStr = toLocalYMD(value);
                   const record = bakeDays.find((b) => b.date === dateStr);
-                  if (record) {
-                    setSelectedBakeDay({ id: record.id, date: record.date });
-                  }
-                  // If cart has items and selectedBakeDay exists, prevent switching
-                  if (cart.length > 0 && selectedBakeDay) {
+                  if (cart.length > 0 && selectedBakeDay && dateStr !== selectedBakeDay.date) {
                     alert(
                       'You already have items in your cart. To change bake days, empty your cart first.'
                     );
                     return;
                   }
-
+                  if (record) {
+                    setSelectedBakeDay({ id: record.id, date: record.date });
+                  }
                   setSelectedDate(value);
                 }}
+                value={selectedDate ?? undefined}
                 tileClassName={getTileClassName}
                 prev2Label={null}
                 next2Label={null}

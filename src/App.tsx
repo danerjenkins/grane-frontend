@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Home from './pages/Home.tsx';
 import About from './pages/About.tsx';
 import Navbar from './components/Navbar';
+import ErrorPage from './components/ErrorPage';
 import BakeDaysPage from './pages/BakeDays';
 import CheckoutPage from './pages/CheckoutPage';
 import AdminOrders from './pages/admin/AdminOrders.tsx';
@@ -82,6 +83,7 @@ export default function App() {
         </Route>
         <Route path="/success" element={<Success />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="*" element={<ErrorPage statusCode={404} />} />
       </Routes>
     </div>
   );

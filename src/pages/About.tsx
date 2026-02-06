@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Calendar, Clock, Leaf, ArrowRight, Sparkles, Mail } from 'lucide-react';
+import { Calendar, Clock, Leaf, ArrowRight, Wheat, Mail } from 'lucide-react';
 
 type SectionId = 'top' | 'how-it-works' | 'about' | 'faq' | 'contact';
 
@@ -175,7 +175,7 @@ export default function About() {
       <section className="px-4 py-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong">
-            <Sparkles className="h-7 w-7" />
+            <Wheat className="h-7 w-7" />
           </div>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6">About Grane</h1>
           <p className="text-xl md:text-2xl text-secondary leading-relaxed mb-4">

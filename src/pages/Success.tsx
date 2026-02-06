@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { getOrderBySessionId, type Order } from '../api/orders';
 import { useCart } from '../context/CartContext';
+import PickupInfoCard from '../components/PickupInfoCard';
 
 interface ConfirmResponse {
   success: boolean;
@@ -96,12 +97,15 @@ export default function Success() {
             <div className="text-5xl mb-3">✓</div>
             <h1 className="text-3xl font-bold text-green-700 mb-2">Order Confirmed!</h1>
             <p className="text-text mb-3">
-              Thank you for your order. We'll send you the pickup address and time via text or email
-              shortly.
+              Your order will be ready for home pickup on your selected bake day.
             </p>
             <p className="text-sm text-secondary">
               Order ID: <span className="font-semibold">{order.id.slice(0, 8)}</span>
             </p>
+          </div>
+
+          <div className="mb-6">
+            <PickupInfoCard bakeDayDate={order.bake_days?.[0]?.date ?? null} variant="success" />
           </div>
 
           {/* Order Details */}
@@ -161,7 +165,7 @@ export default function Success() {
             <ul className="space-y-2 text-sm text-brand-strong">
               <li className="flex gap-2">
                 <span className="font-bold">1.</span>
-                <span>We'll send you pickup details via text/email before bake day.</span>
+                <span>Your pickup details are listed above.</span>
               </li>
               <li className="flex gap-2">
                 <span className="font-bold">2.</span>

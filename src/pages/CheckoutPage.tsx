@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart, type CartItem } from '../context/CartContext';
 import { getSession, signOut } from '../api/auth';
 import { getMyProfile } from '../api/profile';
+import PickupInfoCard from '../components/PickupInfoCard';
 import {
   AlertCircle,
   BadgeCheck,
@@ -231,6 +232,10 @@ export default function CheckoutPage() {
           <p className="text-red-800 font-semibold">{globalError}</p>
         </div>
       )}
+
+      <div className="mb-6">
+        <PickupInfoCard bakeDayDate={selectedBakeDay?.date} variant="checkout" />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
         {/* Customer Information */}

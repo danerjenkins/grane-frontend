@@ -433,7 +433,10 @@ function Accordion({ item }: { item: AccordionItem }) {
   const panelId = `${item.id}-panel`;
 
   return (
-    <details className="group border border-neutral-200 rounded-xl bg-surface p-6 hover:shadow-md transition">
+    <details
+      id={item.id}
+      className="group border border-neutral-200 rounded-xl bg-surface p-6 hover:shadow-md transition"
+    >
       <summary
         id={buttonId}
         aria-controls={panelId}

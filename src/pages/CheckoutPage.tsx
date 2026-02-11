@@ -97,9 +97,10 @@ export default function CheckoutPage() {
 
   const validatePhone = (phone: string) => {
     if (!phone.trim()) return false; // required
-    // Must have at least 7 digits
     const phoneDigits = phone.replace(/\D/g, '');
-    return phoneDigits.length >= 7;
+    if (phoneDigits.length === 10) return true;
+    if (phoneDigits.length === 11 && phoneDigits.startsWith('1')) return true;
+    return false;
   };
 
   // Real-time validation for touched fields
@@ -111,7 +112,9 @@ export default function CheckoutPage() {
           ? 'Please enter a valid email address (example@domain.com)'
           : '',
       phone:
-        touched.phone && !validatePhone(customerPhone) ? 'Phone must have at least 7 digits' : '',
+        touched.phone && !validatePhone(customerPhone)
+          ? 'Enter a valid 10-digit phone number'
+          : '',
     };
     setErrors(newErrors);
   }, [customerName, customerEmail, customerPhone, touched]);
@@ -146,7 +149,7 @@ export default function CheckoutPage() {
     }
 
     if (!validatePhone(customerPhone)) {
-      setGlobalError('Please enter a valid phone number with at least 7 digits.');
+      setGlobalError('Please enter a valid 10-digit phone number.');
       return;
     }
 
@@ -370,7 +373,7 @@ export default function CheckoutPage() {
                 </p>
               )}
               <p className="text-xs text-secondary mt-1">
-                We'll text you the pickup address and any updates (must be 7+ digits)
+                We'll text you the pickup address and any updates (10-digit number)
               </p>
             </div>
 

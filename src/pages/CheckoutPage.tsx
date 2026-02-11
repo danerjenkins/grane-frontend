@@ -112,9 +112,7 @@ export default function CheckoutPage() {
           ? 'Please enter a valid email address (example@domain.com)'
           : '',
       phone:
-        touched.phone && !validatePhone(customerPhone)
-          ? 'Enter a valid 10-digit phone number'
-          : '',
+        touched.phone && !validatePhone(customerPhone) ? 'Enter a valid 10-digit phone number' : '',
     };
     setErrors(newErrors);
   }, [customerName, customerEmail, customerPhone, touched]);

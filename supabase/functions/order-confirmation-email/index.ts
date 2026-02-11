@@ -1,12 +1,15 @@
 /// <reference lib="deno.ns" />
 
 import Stripe from 'https://esm.sh/stripe@14.25.0?target=deno';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 import { corsHeaders } from '../_shared/cors.ts';
 
 const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY');
 const STRIPE_WEBHOOK_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+const SB_URL = Deno.env.get('GRANE_SUPABASE_URL');
+const SB_SERVICE_ROLE = Deno.env.get('GRANE_SERVICE_ROLE_KEY');
 
 if (!STRIPE_SECRET_KEY) {
   throw new Error('Missing STRIPE_SECRET_KEY');
@@ -32,6 +35,23 @@ function formatBakeDay(dateString?: string | null) {
     month: 'short',
     day: 'numeric',
   }).format(parsedDate);
+}
+
+function buildOrderSummarySection(summaryLines: string[]) {
+  if (!summaryLines.length) return '';
+
+  const itemsHtml = summaryLines
+    .map((line) => `<p style="margin: 0 0 8px; color: #2B2620;">${line}</p>`)
+    .join('');
+
+  return `
+    <div style="background: #FFFFFF; border: 1px solid #E7E0D6; border-radius: 14px; padding: 16px 18px; margin: 0 0 18px;">
+      <p style="margin: 0 0 10px; font-family: Georgia, 'Times New Roman', serif;">
+        🧾 Order Summary
+      </p>
+      ${itemsHtml}
+    </div>
+  `;
 }
 
 async function sendWithResend({
@@ -114,6 +134,78 @@ Deno.serve(async (req) => {
 
     console.log(payload);
 
+    let orderSummaryLines: string[] = [];
+
+    if (payload.order_id) {
+      if (!SB_URL || !SB_SERVICE_ROLE) {
+        console.warn(
+          'Missing GRANE_SUPABASE_URL or GRANE_SERVICE_ROLE_KEY; skipping order summary'
+        );
+      } else {
+        try {
+          const supabase = createClient(SB_URL, SB_SERVICE_ROLE, {
+            auth: { persistSession: false },
+          });
+
+          const { data: orderItems, error: orderItemsError } = await supabase
+            .from('order_items')
+            .select('quantity, product_id, products(name)')
+            .eq('order_id', payload.order_id);
+
+          if (orderItemsError) {
+            console.warn('Order summary lookup failed:', orderItemsError.message);
+          } else if (orderItems && orderItems.length > 0) {
+            const directLines = orderItems
+              .map((item) => {
+                const productName =
+                  (item as { products?: { name?: string | null } })?.products?.name ?? null;
+                if (!productName) return null;
+                return `${productName} ×${item.quantity}`;
+              })
+              .filter((line): line is string => Boolean(line));
+
+            if (directLines.length) {
+              orderSummaryLines = directLines.sort((a, b) => a.localeCompare(b));
+            } else {
+              const productIds = Array.from(
+                new Set(
+                  orderItems
+                    .map((item) => item.product_id)
+                    .filter((id): id is string => Boolean(id))
+                )
+              );
+
+              if (productIds.length) {
+                const { data: products, error: productsError } = await supabase
+                  .from('products')
+                  .select('id, name')
+                  .in('id', productIds);
+
+                if (productsError) {
+                  console.warn('Order summary product lookup failed:', productsError.message);
+                } else if (products && products.length > 0) {
+                  const nameById = new Map(products.map((product) => [product.id, product.name]));
+
+                  orderSummaryLines = orderItems
+                    .map((item) => {
+                      const name = nameById.get(item.product_id ?? '') ?? null;
+                      if (!name) return null;
+                      return `${name} ×${item.quantity}`;
+                    })
+                    .filter((line): line is string => Boolean(line))
+                    .sort((a, b) => a.localeCompare(b));
+                }
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('Order summary fetch error:', err);
+        }
+      }
+    }
+
+    console.log('order_summary_count', orderSummaryLines.length);
+
     if (payload.email) {
       const formattedBakeDay = formatBakeDay(payload.bake_day_date);
       const subject = `Your Grane order is confirmed — pickup ${formattedBakeDay} 🍞`;
@@ -125,6 +217,7 @@ Deno.serve(async (req) => {
             Your order reference: <strong style="letter-spacing: 0.6px;">${orderRef}</strong>
           </p>`
         : '';
+      const orderSummarySection = buildOrderSummarySection(orderSummaryLines);
       const html = `
         <div style="background: #FFFBF5; padding: 28px 16px; color: #2B2620;">
           <div style="max-width: 560px; margin: 0 auto; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;">
@@ -152,6 +245,7 @@ Deno.serve(async (req) => {
                 Provo, UT 84606
               </p>
             </div>
+            ${orderSummarySection}
             ${orderRefLine}
             <p style="margin: 0 0 14px; color: #5C5248;">
               Just stop by anytime during the pickup window — no appointment needed. I’ll have your order ready.

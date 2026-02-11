@@ -46,10 +46,11 @@ async function sendWithResend({
   if (!RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
   const payload = {
-    from: 'Grane <onboarding@resend.dev>',
+    from: 'Grane Support <onboarding@resend.dev>',
     to: [toEmail],
     subject,
     html,
+    reply_to: 'support@granebakery.com',
   };
 
   const res = await fetch('https://api.resend.com/emails', {
@@ -115,18 +116,52 @@ Deno.serve(async (req) => {
 
     if (payload.email) {
       const formattedBakeDay = formatBakeDay(payload.bake_day_date);
-      const subject = `Your Grane order is confirmed 🍞 (${formattedBakeDay})`;
+      const subject = `Your Grane order is confirmed — pickup ${formattedBakeDay} 🍞`;
+      const firstName = payload.name?.trim().split(/\s+/)[0] ?? '';
+      const greeting = firstName ? `Hi ${firstName},` : 'Hi there,';
+      const orderRef = payload.order_id?.slice(0, 8).toUpperCase();
+      const orderRefLine = orderRef
+        ? `<p style="margin: 0 0 16px; color: #5C5248;">
+            Your order reference: <strong style="letter-spacing: 0.6px;">${orderRef}</strong>
+          </p>`
+        : '';
       const html = `
-        <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;">
-          <h2>Your Grane order is confirmed 🍞</h2>
-          <p><strong>Pickup details</strong></p>
-          <p>
-            Date: ${formattedBakeDay}<br />
-            Time: Anytime between 9:00 AM – 5:00 PM<br />
-            Location: Pickup is at my home (address will be provided soon).
-          </p>
-          <p>Come anytime during the pickup window — no appointment needed.</p>
-          <p>— Dane, Grane</p>
+        <div style="background: #FFFBF5; padding: 28px 16px; color: #2B2620;">
+          <div style="max-width: 560px; margin: 0 auto; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;">
+            <h2 style="font-family: Georgia, 'Times New Roman', serif; margin: 0 0 8px;">
+              Your Grane order is confirmed 🍞
+            </h2>
+            <div style="height: 1px; background: #E7E0D6; margin: 0 0 18px;"></div>
+            <p style="margin: 0 0 10px; color: #2B2620;">${greeting}</p>
+            <p style="margin: 0 0 18px; color: #5C5248;">
+              Thanks so much for your order! Your bread will be freshly baked and ready for pickup on:
+            </p>
+            <div style="background: #FFFFFF; border: 1px solid #E7E0D6; border-radius: 14px; padding: 16px 18px; margin: 0 0 18px;">
+              <p style="margin: 0 0 10px; font-family: Georgia, 'Times New Roman', serif;">
+                📍 Pickup Details
+              </p>
+              <p style="margin: 0 0 8px;">
+                <strong>Date:</strong> ${formattedBakeDay}
+              </p>
+              <p style="margin: 0 0 8px;">
+                <strong>Time:</strong> ⏰ Anytime between 9:00 AM – 5:00 PM
+              </p>
+              <p style="margin: 0;">
+                <strong>Pickup Location:</strong><br />
+                311 E 200 S<br />
+                Provo, UT 84606
+              </p>
+            </div>
+            ${orderRefLine}
+            <p style="margin: 0 0 14px; color: #5C5248;">
+              Just stop by anytime during the pickup window — no appointment needed. I’ll have your order ready.
+            </p>
+            <p style="margin: 0 0 20px; color: #5C5248;">
+              Questions? Reply to this email or contact support@granebakery.com.
+            </p>
+            <p style="margin: 0; color: #2B2620;">— Dane</p>
+            <p style="margin: 0; color: #2B2620;">Grane</p>
+          </div>
         </div>
       `;
 

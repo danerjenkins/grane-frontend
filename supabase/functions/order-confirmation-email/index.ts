@@ -34,9 +34,15 @@ function formatBakeDay(dateString?: string | null) {
   }).format(parsedDate);
 }
 
-async function sendWithResend(
-  { toEmail, subject, html }: { toEmail: string; subject: string; html: string }
-) {
+async function sendWithResend({
+  toEmail,
+  subject,
+  html,
+}: {
+  toEmail: string;
+  subject: string;
+  html: string;
+}) {
   if (!RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
   const payload = {

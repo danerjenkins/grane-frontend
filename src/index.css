@@ -39,6 +39,155 @@
   @apply text-secondary hover:text-brand transition-colors duration-200 text-2xl;
 }
 
+@keyframes soldOutPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 10px 30px rgba(180, 140, 40, 0.15);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 12px 36px rgba(180, 140, 40, 0.22);
+  }
+}
+
+@keyframes soldOutSweep {
+  0% {
+    transform: translateX(-60%);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(60%);
+    opacity: 0;
+  }
+}
+
+@keyframes soldOutWiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  45% {
+    transform: rotate(-1deg);
+  }
+  65% {
+    transform: rotate(1.5deg);
+  }
+}
+
+@keyframes limitedLeftPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 10px 20px rgba(226, 143, 24, 0.12);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 12px 28px rgba(226, 143, 24, 0.2);
+  }
+}
+
+@keyframes limitedLeftShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.sold-out-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(252, 246, 235, 0.92));
+  backdrop-filter: blur(1px);
+}
+
+.sold-out-overlay::after {
+  content: '';
+  position: absolute;
+  inset: -40% auto auto -40%;
+  width: 180%;
+  height: 180%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 100%
+  );
+  animation: soldOutSweep 2.6s ease-in-out infinite;
+}
+
+.sold-out-chip {
+  position: relative;
+  z-index: 1;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  background: rgba(34, 24, 8, 0.92);
+  color: #fff7e6;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  animation: soldOutWiggle 3.2s ease-in-out infinite;
+}
+
+.sold-out-pulse {
+  animation:
+    soldOutPulse 2.4s ease-in-out infinite,
+    soldOutWiggle 3.2s ease-in-out infinite;
+}
+
+.sold-out-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.sold-out-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  transform: translateX(-70%);
+  animation: soldOutSweep 3s ease-in-out infinite;
+  opacity: 0.5;
+}
+
+.limited-left-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: linear-gradient(120deg, #fef3c7, #fde68a, #fef3c7);
+  background-size: 200% 200%;
+  color: #9a3412;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  animation:
+    limitedLeftPulse 2.2s ease-in-out infinite,
+    limitedLeftShimmer 2.8s linear infinite;
+}
+
+.limited-left-text {
+  font-weight: 600;
+  color: #9a3412;
+  animation: limitedLeftPulse 2.2s ease-in-out infinite;
+}
+
 /* ===== FONT PRESETS - Copy/paste these values into :root ===== */
 
 /* PRESET A: Classic Bakery (Warm, traditional) */

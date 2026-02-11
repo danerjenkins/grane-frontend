@@ -258,13 +258,14 @@ export default function BakeDaysPage() {
                     const soldOut = quantity_sold >= quantity_limit;
                     const cartItem = cart.find((i) => i.product_id === product.id);
                     const remaining = quantity_limit - quantity_sold - (cartItem?.quantity ?? 0);
+                    const limitedLeft = remaining > 0 && remaining <= 3;
 
                     return (
                       <article
                         key={id}
-                        className="overflow-visible rounded-2xl border bg-surface shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md"
+                        className="group relative overflow-visible rounded-2xl border bg-surface shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md"
                       >
-                        <div className="h-52 w-full overflow-hidden">
+                        <div className="relative h-52 w-full overflow-hidden">
                           <Link to={`/product/${product.id}`}>
                             <ProductImage
                               imageUrl={product.image_url}
@@ -273,6 +274,11 @@ export default function BakeDaysPage() {
                               placeholderSize="medium"
                             />
                           </Link>
+                          {soldOut && !cartItem ? (
+                            <div className="sold-out-overlay">
+                              <div className="sold-out-chip sold-out-pulse">Sold out</div>
+                            </div>
+                          ) : null}
                         </div>
 
                         <div className="space-y-2 p-4">
@@ -287,15 +293,20 @@ export default function BakeDaysPage() {
                             <p className="text-base font-semibold text-text">
                               ${product.price.toFixed(2)}
                             </p>
-                            <p className="text-xs text-secondary">
-                              {quantity_sold}/{quantity_limit} sold
-                            </p>
+                            <div className="flex items-center gap-2">
+                              {limitedLeft && !soldOut ? (
+                                <span className="limited-left-chip">Only {remaining} left</span>
+                              ) : null}
+                              <p className="text-xs text-secondary">
+                                {quantity_sold}/{quantity_limit} sold
+                              </p>
+                            </div>
                           </div>
 
                           {/* Controls */}
                           {soldOut && !cartItem ? (
                             <button
-                              className="mt-2 w-full cursor-not-allowed rounded-lg bg-muted py-2 text-sm font-medium text-secondary"
+                              className="sold-out-button mt-2 w-full cursor-not-allowed rounded-lg bg-muted py-2 text-sm font-medium text-secondary"
                               disabled
                             >
                               Sold Out
@@ -332,7 +343,11 @@ export default function BakeDaysPage() {
                                 </button>
                               </div>
 
-                              <p className="text-xs text-secondary">
+                              <p
+                                className={`text-xs ${
+                                  limitedLeft ? 'limited-left-text text-text' : 'text-secondary'
+                                }`}
+                              >
                                 {remaining > 0 ? `${remaining} left` : 'No more available'}
                               </p>
                             </div>

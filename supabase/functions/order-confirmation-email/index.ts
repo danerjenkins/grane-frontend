@@ -41,12 +41,15 @@ function buildOrderSummarySection(summaryLines: string[]) {
   if (!summaryLines.length) return '';
 
   const itemsHtml = summaryLines
-    .map((line) => `<p style="margin: 0 0 8px; color: #2B2620;">${line}</p>`)
+    .map(
+      (line) =>
+        `<p style="margin: 0 0 6px; font-size: 14px; color: #2B1F16;">${line}</p>`
+    )
     .join('');
 
   return `
-    <div style="background: #FFFFFF; border: 1px solid #E7E0D6; border-radius: 14px; padding: 16px 18px; margin: 0 0 18px;">
-      <p style="margin: 0 0 10px; font-family: Georgia, 'Times New Roman', serif;">
+    <div style="background: #FFFCF7; border: 1px solid #EFE7DD; border-radius: 14px; padding: 14px; margin: 0 0 16px;">
+      <p style="margin: 0 0 10px; font-family: Georgia, 'Times New Roman', serif; font-weight: 700; color: #2B1F16;">
         🧾 Order Summary
       </p>
       ${itemsHtml}
@@ -213,33 +216,31 @@ Deno.serve(async (req) => {
       const greeting = firstName ? `Hi ${firstName},` : 'Hi there,';
       const orderRef = payload.order_id?.slice(0, 8).toUpperCase();
       const orderRefLine = orderRef
-        ? `<p style="margin: 0 0 16px; color: #5C5248;">
+        ? `<p style="margin: 0 0 16px; color: #5C5248; font-size: 14px;">
             Your order reference: <strong style="letter-spacing: 0.6px;">${orderRef}</strong>
           </p>`
         : '';
       const orderSummarySection = buildOrderSummarySection(orderSummaryLines);
       const html = `
-        <div style="background: #FFFBF5; padding: 28px 16px; color: #2B2620;">
-          <div style="max-width: 560px; margin: 0 auto; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;">
-            <h2 style="font-family: Georgia, 'Times New Roman', serif; margin: 0 0 8px;">
+        <div style="background: #FBF7F0; padding: 24px 12px; color: #2B2620;">
+          <div style="max-width: 640px; margin: 0 auto; background: #FFFFFF; border: 1px solid #E7E0D6; border-radius: 16px; padding: 24px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;">
+            <h1 style="font-family: Georgia, 'Times New Roman', serif; margin: 0 0 8px; font-size: 24px; font-weight: 700; line-height: 1.2;">
               Your Grane order is confirmed 🍞
-            </h2>
-            <div style="height: 1px; background: #E7E0D6; margin: 0 0 18px;"></div>
-            <p style="margin: 0 0 10px; color: #2B2620;">${greeting}</p>
-            <p style="margin: 0 0 18px; color: #5C5248;">
-              Thanks so much for your order! Your bread will be freshly baked and ready for pickup on:
+            </h1>
+            <p style="margin: 0 0 16px; color: #5B4B3A; font-size: 14px; line-height: 1.5;">
+              Thanks so much for your order! Your bread will be freshly baked and ready for pickup on ${formattedBakeDay}.
             </p>
-            <div style="background: #FFFFFF; border: 1px solid #E7E0D6; border-radius: 14px; padding: 16px 18px; margin: 0 0 18px;">
-              <p style="margin: 0 0 10px; font-family: Georgia, 'Times New Roman', serif;">
-                📍 Pickup Details
-              </p>
-              <p style="margin: 0 0 8px;">
+            <div style="border-top: 1px solid #EFE7DD; margin: 16px 0;"></div>
+            <p style="margin: 0 0 12px; color: #2B2620; font-size: 14px;">${greeting}</p>
+            <div style="border: 1px solid #EFE7DD; border-radius: 14px; padding: 14px; background: #FFFFFF; margin: 0 0 16px;">
+              <p style="margin: 0 0 8px; font-weight: 700; color: #2B1F16;">Pickup details</p>
+              <p style="margin: 0 0 6px; color: #5C5248;">
                 <strong>Date:</strong> ${formattedBakeDay}
               </p>
-              <p style="margin: 0 0 8px;">
+              <p style="margin: 0 0 6px; color: #5C5248;">
                 <strong>Time:</strong> ⏰ Anytime between 9:00 AM – 5:00 PM
               </p>
-              <p style="margin: 0;">
+              <p style="margin: 0; color: #5C5248;">
                 <strong>Pickup Location:</strong><br />
                 311 E 200 S<br />
                 Provo, UT 84606
@@ -247,10 +248,10 @@ Deno.serve(async (req) => {
             </div>
             ${orderSummarySection}
             ${orderRefLine}
-            <p style="margin: 0 0 14px; color: #5C5248;">
+            <p style="margin: 0 0 12px; color: #5C5248; font-size: 14px;">
               Just stop by anytime during the pickup window — no appointment needed. I’ll have your order ready.
             </p>
-            <p style="margin: 0 0 20px; color: #5C5248;">
+            <p style="margin: 0 0 16px; color: #5C5248; font-size: 14px;">
               Questions? Reply to this email or contact support@granebakery.com.
             </p>
             <p style="margin: 0; color: #2B2620;">— Dane</p>

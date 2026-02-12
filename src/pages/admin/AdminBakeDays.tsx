@@ -11,6 +11,7 @@ import { listBakeDayProductsByBakeDayId } from '../../api/admin/bakeDayProductsA
 import type { BakeDay, BakeDayProductWithProduct } from '../../api/admin/types';
 
 type ModalMode = 'create' | 'edit' | null;
+type BakeDayStatus = 'Draft' | 'Published' | 'Announced';
 
 function shortId(id: string) {
   return id.slice(0, 8);
@@ -27,6 +28,24 @@ function formatDate(dateString: string) {
   });
 }
 
+function getStatus(day: BakeDay): BakeDayStatus {
+  if (day.announcement_sent_at) return 'Announced';
+  if (day.is_published) return 'Published';
+  return 'Draft';
+}
+
+function getStatusStyles(status: BakeDayStatus) {
+  if (status === 'Announced') {
+    return 'bg-green-50 text-green-800 border border-green-200';
+  }
+
+  if (status === 'Published') {
+    return 'bg-brand-soft text-brand-strong border border-brand';
+  }
+
+  return 'bg-muted text-secondary border border-neutral-200';
+}
+
 export default function AdminBakeDays() {
   const [bakeDays, setBakeDays] = useState<BakeDay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +60,12 @@ export default function AdminBakeDays() {
   const [upcomingProducts, setUpcomingProducts] = useState<BakeDayProductWithProduct[]>([]);
   const [upcomingLoading, setUpcomingLoading] = useState(false);
   const [upcomingError, setUpcomingError] = useState<string | null>(null);
+  const [publishModalOpen, setPublishModalOpen] = useState(false);
+  const [publishingBakeDay, setPublishingBakeDay] = useState<BakeDay | null>(null);
+  const [publishModalLoadingProducts, setPublishModalLoadingProducts] = useState(false);
+  const [publishModalProductCount, setPublishModalProductCount] = useState<number | null>(null);
+  const [publishSaving, setPublishSaving] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,6 +150,52 @@ export default function AdminBakeDays() {
     setEditingBakeDay(null);
     setFormDate('');
     setModalError(null);
+  };
+
+  const openPublishModal = async (day: BakeDay) => {
+    setPublishingBakeDay(day);
+    setPublishModalOpen(true);
+    setPublishModalLoadingProducts(true);
+    setPublishModalProductCount(null);
+    setPublishError(null);
+
+    try {
+      const products = await listBakeDayProductsByBakeDayId(day.id);
+      const availableCount = products.filter((item) => item.available).length;
+      setPublishModalProductCount(availableCount);
+    } catch (err) {
+      setPublishError(err instanceof Error ? err.message : 'Failed to load bake day products');
+      setPublishModalProductCount(0);
+    } finally {
+      setPublishModalLoadingProducts(false);
+    }
+  };
+
+  const closePublishModal = () => {
+    setPublishModalOpen(false);
+    setPublishingBakeDay(null);
+    setPublishModalLoadingProducts(false);
+    setPublishModalProductCount(null);
+    setPublishSaving(false);
+    setPublishError(null);
+  };
+
+  const handlePublish = async () => {
+    if (!publishingBakeDay) return;
+    if (publishModalProductCount !== null && publishModalProductCount === 0) return;
+
+    try {
+      setPublishSaving(true);
+      await updateBakeDay(publishingBakeDay.id, { is_published: true });
+      setSuccess('Bake day published — announcement sending now.');
+      await loadBakeDays();
+      closePublishModal();
+      setTimeout(() => setSuccess(null), 2500);
+    } catch (err) {
+      setPublishError(err instanceof Error ? err.message : 'Failed to publish bake day');
+    } finally {
+      setPublishSaving(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -291,6 +362,9 @@ export default function AdminBakeDays() {
                     <th className="px-6 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       ID
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                      Status
+                    </th>
                     <th className="px-6 py-3 text-center text-xs font-semibold text-secondary uppercase tracking-wider">
                       Actions
                     </th>
@@ -304,6 +378,15 @@ export default function AdminBakeDays() {
                         <div className="text-xs text-secondary">{day.date}</div>
                       </td>
                       <td className="px-6 py-4 text-sm text-secondary">{shortId(day.id)}</td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${getStatusStyles(
+                            getStatus(day)
+                          )}`}
+                        >
+                          {getStatus(day)}
+                        </span>
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center gap-2">
                           <button
@@ -331,6 +414,14 @@ export default function AdminBakeDays() {
                           >
                             <Trash2 size={16} />
                           </button>
+                          {!day.is_published && (
+                            <button
+                              onClick={() => openPublishModal(day)}
+                              className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-strong hover:bg-brand text-white rounded-md transition-colors text-sm font-medium"
+                            >
+                              Publish
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -405,6 +496,77 @@ export default function AdminBakeDays() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Publish Modal */}
+      {publishModalOpen && publishingBakeDay && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closePublishModal();
+          }}
+        >
+          <div className="bg-surface rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-6 border-b border-neutral-200">
+              <h2 className="text-2xl font-bold text">Publish Bake Day?</h2>
+              <p className="text-sm text-secondary mt-1">
+                This will email subscribers who opted into Bake Day alerts.
+              </p>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {publishError && (
+                <div className="bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
+                  {publishError}
+                </div>
+              )}
+
+              <div className="text-sm text-secondary">
+                Date: {formatDate(publishingBakeDay.date)}
+              </div>
+
+              {publishModalLoadingProducts ? (
+                <div className="text-sm text-secondary">Checking available products...</div>
+              ) : publishModalProductCount === 0 ? (
+                <div className="bg-yellow-50 border border-yellow-200 text-yellow-900 px-4 py-3 rounded-lg">
+                  Add at least one available product before publishing.
+                </div>
+              ) : (
+                <div className="text-sm text-secondary">
+                  {publishModalProductCount} available product(s) found.
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 px-6 pb-6">
+              <button
+                type="button"
+                onClick={closePublishModal}
+                className="px-4 py-2 rounded-lg border border-neutral-300 text-secondary hover:bg-muted"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handlePublish}
+                disabled={
+                  publishSaving ||
+                  publishModalLoadingProducts ||
+                  publishModalProductCount === 0
+                }
+                className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${
+                  publishSaving ||
+                  publishModalLoadingProducts ||
+                  publishModalProductCount === 0
+                    ? 'bg-neutral-400 cursor-not-allowed'
+                    : 'bg-brand-strong hover:bg-brand'
+                }`}
+              >
+                {publishSaving ? 'Publishing...' : 'Publish'}
+              </button>
+            </div>
           </div>
         </div>
       )}

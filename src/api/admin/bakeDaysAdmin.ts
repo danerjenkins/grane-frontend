@@ -50,7 +50,9 @@ export async function getBakeDayById(id: string): Promise<BakeDay> {
   return data;
 }
 
-export async function createBakeDay(payload: Omit<BakeDay, 'id'>): Promise<BakeDay> {
+export async function createBakeDay(
+  payload: Omit<BakeDay, 'id' | 'is_published' | 'announcement_sent_at'>
+): Promise<BakeDay> {
   const { data, error } = await supabase.from('bake_days').insert([payload]).select().single();
 
   if (error) {

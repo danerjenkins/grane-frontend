@@ -56,6 +56,8 @@ export interface UserRole {
 export interface BakeDay {
   id: string;
   date: string;
+  is_published: boolean;
+  announcement_sent_at: string | null;
 }
 
 export interface BakeDayProduct {

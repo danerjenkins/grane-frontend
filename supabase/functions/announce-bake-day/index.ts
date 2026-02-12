@@ -5,7 +5,7 @@ const ANNOUNCE_SECRET = Deno.env.get('GRANE_ANNOUNCE_SECRET');
 const SB_URL = Deno.env.get('GRANE_SUPABASE_URL');
 const SB_SERVICE_ROLE = Deno.env.get('GRANE_SERVICE_ROLE_KEY');
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-const PUBLIC_SITE_URL = 'https://granebakery.com';
+const PUBLIC_SITE_URL = Deno.env.get('PUBLIC_SITE_URL') ?? 'https://granebakery.com';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -147,7 +147,7 @@ Deno.serve(async (req) => {
 
   const { data: bakeDayProducts, error: productsError } = await supabase
     .from('bake_day_products')
-    .select('available, products(name)')
+    .select('available, product_id, products(name, image_url, price)')
     .eq('bake_day_id', body.bake_day_id)
     .eq('available', true);
 
@@ -158,13 +158,24 @@ Deno.serve(async (req) => {
     });
   }
 
-  const products = (bakeDayProducts ?? [])
+  type EmailProduct = { name: string; image_url?: string | null; price?: number | null };
+
+  const emailProducts = (bakeDayProducts ?? [])
     .map((row) => {
-      const product = (row as { products?: { name?: string | null } })?.products ?? null;
-      return product?.name ?? null;
+      const product =
+        (row as {
+          products?: { name?: string | null; image_url?: string | null; price?: number | null };
+        })?.products ?? null;
+
+      if (!product?.name) return null;
+
+      const imageUrl = product.image_url?.trim() ? product.image_url : null;
+      return { name: product.name, image_url: imageUrl, price: product.price };
     })
-    .filter((name): name is string => Boolean(name))
-    .sort((a, b) => a.localeCompare(b));
+    .filter((item): item is EmailProduct => Boolean(item))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const products = emailProducts.map((item) => item.name);
 
   const { data: recipients, error: recipientsError } = await supabase
     .from('users')
@@ -186,10 +197,43 @@ Deno.serve(async (req) => {
   const formattedBakeDay = formatBakeDay(bakeDay.date);
   const subject = `New Bake Day posted — ${formattedBakeDay} 🍞`;
   const bakeDaysUrl = `${PUBLIC_SITE_URL}/bake-days`;
-  const productsList = products.length
-    ? `<ul style="margin: 0 0 18px; padding-left: 18px; color: #2B2620;">
-        ${products.map((name) => `<li style="margin: 0 0 6px;">${name}</li>`).join('')}
-      </ul>`
+  const accountUrl = `${PUBLIC_SITE_URL}/account`;
+  const productsList = emailProducts.length
+    ? `<div style="margin: 0 0 18px;">
+        ${emailProducts
+          .map((product, index) => {
+            const imageHtml = product.image_url
+              ? `<img
+                  src="${product.image_url}"
+                  alt="${product.name}"
+                  width="96"
+                  height="96"
+                  style="width: 96px; height: 96px; object-fit: cover; border-radius: 12px; border: 1px solid #E7E0D6; display: block;"
+                />`
+              : '';
+            const priceLine =
+              typeof product.price === 'number'
+                ? `<p style="margin: 4px 0 0; color: #5C5248; font-size: 13px;">
+                    $${product.price.toFixed(2)}
+                  </p>`
+                : '';
+            const borderStyle =
+              index === emailProducts.length - 1 ? '' : 'border-bottom: 1px solid #F1ECE3;';
+
+            return `
+              <div style="display: flex; gap: 12px; align-items: center; padding: 10px 0; ${borderStyle}">
+                ${imageHtml}
+                <div>
+                  <p style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; color: #2B2620;">
+                    ${product.name}
+                  </p>
+                  ${priceLine}
+                </div>
+              </div>
+            `;
+          })
+          .join('')}
+      </div>`
     : `<p style="margin: 0 0 18px; color: #5C5248;">We’ll share the lineup soon.</p>`;
 
   for (const recipient of recipients ?? []) {
@@ -225,9 +269,16 @@ Deno.serve(async (req) => {
           >
             View Bake Days
           </a>
-          <p style="margin: 0; font-size: 12px; color: #8B7D6B;">
-            You’re receiving this because you opted into Bake Day email alerts in your Grane account.
+          <div style="height: 1px; background: #E7E0D6; margin: 8px 0 12px;"></div>
+          <p style="margin: 0 0 6px; font-size: 12px; color: #8B7D6B;">
+            You’re receiving this because you opted into Bake Day email alerts.
           </p>
+          <a
+            href="${accountUrl}"
+            style="font-size: 12px; color: #8B7D6B; text-decoration: underline;"
+          >
+            Manage your alerts in your account settings.
+          </a>
         </div>
       </div>
     `;
@@ -255,7 +306,7 @@ Deno.serve(async (req) => {
   console.log({
     bake_day_id: body.bake_day_id,
     bake_day_date: bakeDay.date,
-    products_count: products.length,
+    products_count: emailProducts.length,
     recipients: recipientCount,
     emailed,
     failed,

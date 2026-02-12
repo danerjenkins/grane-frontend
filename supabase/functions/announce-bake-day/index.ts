@@ -201,9 +201,10 @@ Deno.serve(async (req) => {
   const bakeDaysUrl = `${PUBLIC_SITE_URL}/bake-days`;
   const accountUrl = `${PUBLIC_SITE_URL}/account`;
   const productsList = emailProducts.length
-    ? `<div style="margin: 0 0 18px;">
+    ? `
+      <div style="margin: 0 0 18px;">
         ${emailProducts
-          .map((product, index) => {
+          .map((product) => {
             const imageHtml = product.image_url
               ? `<img
                   src="${product.image_url}"
@@ -215,27 +216,32 @@ Deno.serve(async (req) => {
               : '';
             const priceLine =
               typeof product.price === 'number'
-                ? `<p style="margin: 4px 0 0; color: #5C5248; font-size: 13px;">
+                ? `<p style="margin: 0; font-size: 13px; color: #6B5A48;">
                     $${product.price.toFixed(2)}
                   </p>`
                 : '';
-            const borderStyle =
-              index === emailProducts.length - 1 ? '' : 'border-bottom: 1px solid #F1ECE3;';
 
             return `
-              <div style="display: flex; gap: 12px; align-items: center; padding: 10px 0; ${borderStyle}">
-                ${imageHtml}
-                <div>
-                  <p style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; color: #2B2620;">
-                    ${product.name}
-                  </p>
-                  ${priceLine}
-                </div>
+              <div style="border: 1px solid #EFE7DD; border-radius: 14px; padding: 12px; margin: 0 0 12px; background: #FFFCF7;">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                  <tr>
+                    <td style="width: 104px; padding-right: 12px; vertical-align: top;">
+                      ${imageHtml}
+                    </td>
+                    <td style="vertical-align: top; padding-top: 4px;">
+                      <p style="margin: 0 0 4px; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; font-weight: 700; color: #2B1F16;">
+                        ${product.name}
+                      </p>
+                      ${priceLine}
+                    </td>
+                  </tr>
+                </table>
               </div>
             `;
           })
           .join('')}
-      </div>`
+      </div>
+    `
     : `<p style="margin: 0 0 18px; color: #5C5248;">We’ll share the lineup soon.</p>`;
 
   for (const recipient of recipients ?? []) {
@@ -244,40 +250,45 @@ Deno.serve(async (req) => {
     }
 
     const html = `
-      <div style="background: #FFFBF5; padding: 28px 16px; color: #2B2620;">
-        <div style="max-width: 560px; margin: 0 auto; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;">
-          <h2 style="font-family: Georgia, 'Times New Roman', serif; margin: 0 0 8px;">
+      <div style="background: #FBF7F0; padding: 24px 12px; color: #2B2620;">
+        <div style="max-width: 640px; margin: 0 auto; background: #FFFFFF; border: 1px solid #E7E0D6; border-radius: 16px; padding: 24px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;">
+          <h1 style="font-family: Georgia, 'Times New Roman', serif; margin: 0 0 8px; font-size: 24px; font-weight: 700; line-height: 1.2;">
             A new Bake Day is live! 🍞
-          </h2>
-          <div style="height: 1px; background: #E7E0D6; margin: 0 0 18px;"></div>
-          <p style="margin: 0 0 14px; color: #5C5248;">
+          </h1>
+          <p style="margin: 0 0 16px; color: #5B4B3A; font-size: 14px; line-height: 1.5;">
+            Freshly baked goodness is on the calendar for ${formattedBakeDay}.
+          </p>
+          <div style="border-top: 1px solid #EFE7DD; margin: 16px 0;"></div>
+
+          <p style="margin: 0 0 14px; color: #5C5248; font-size: 14px;">
             <strong>Date:</strong> ${formattedBakeDay}
           </p>
-          <p style="margin: 0 0 14px; color: #5C5248;">
-            Here’s what’s available on that day:
-          </p>
-          <div style="background: #FFFFFF; border: 1px solid #E7E0D6; border-radius: 14px; padding: 16px 18px; margin: 0 0 18px;">
-            ${productsList}
-            <p style="margin: 0 0 6px; color: #5C5248;">
-              Pickup at 311 E 200 S, Provo, UT 84606
-            </p>
-            <p style="margin: 0; color: #5C5248;">
-              Pickup window: 9:00 AM – 5:00 PM
-            </p>
+
+          <h2 style="margin: 0 0 12px; font-size: 16px; font-weight: 700; color: #2B1F16;">
+            What’s available
+          </h2>
+          ${productsList}
+
+          <div style="border: 1px solid #EFE7DD; border-radius: 14px; padding: 14px; background: #FFFFFF; margin: 0 0 14px;">
+            <p style="margin: 0 0 8px; font-weight: 700; color: #2B1F16;">Pickup details</p>
+            <p style="margin: 0 0 6px; color: #5C5248;">Pickup at 311 E 200 S, Provo, UT 84606</p>
+            <p style="margin: 0; color: #5C5248;">Pickup window: 9:00 AM – 5:00 PM</p>
           </div>
+
           <a
             href="${bakeDaysUrl}"
-            style="display: inline-block; background: #2B2620; color: #FFFFFF; text-decoration: none; padding: 12px 18px; border-radius: 10px; font-weight: 600; margin: 0 0 16px;"
+            style="display: inline-block; background: #CFA86A; color: #FFFFFF; text-decoration: none; padding: 12px 16px; border-radius: 12px; font-weight: 700; margin: 14px 0 10px;"
           >
             View Bake Days
           </a>
-          <div style="height: 1px; background: #E7E0D6; margin: 8px 0 12px;"></div>
-          <p style="margin: 0 0 6px; font-size: 12px; color: #8B7D6B;">
+
+          <div style="border-top: 1px solid #EFE7DD; margin: 16px 0 0;"></div>
+          <p style="margin: 16px 0 6px; font-size: 12px; color: #7A6A58; line-height: 1.5;">
             You’re receiving this because you opted into Bake Day email alerts.
           </p>
           <a
             href="${accountUrl}"
-            style="font-size: 12px; color: #8B7D6B; text-decoration: underline;"
+            style="font-size: 12px; color: #7A6A58; text-decoration: underline;"
           >
             Manage your alerts in your account settings.
           </a>

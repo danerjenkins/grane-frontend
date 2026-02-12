@@ -15,6 +15,7 @@ export default function Account() {
   // Form state
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [notifyNewBakeDays, setNotifyNewBakeDays] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -33,6 +34,7 @@ export default function Account() {
         setUser(profile);
         setName(profile.name || '');
         setPhone(profile.phone || '');
+        setNotifyNewBakeDays(profile.notify_new_bake_days ?? false);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to load profile';
         setError(message);
@@ -77,6 +79,12 @@ export default function Account() {
     setSaveSuccess(false);
   };
 
+  const handleNotifyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNotifyNewBakeDays(e.target.checked);
+    setIsDirty(true);
+    setSaveSuccess(false);
+  };
+
   const handleSave = async () => {
     if (!user) return;
 
@@ -88,6 +96,7 @@ export default function Account() {
       const updatedProfile = await updateMyProfile({
         name: name || null,
         phone: phone || null,
+        notify_new_bake_days: notifyNewBakeDays,
       });
 
       // Update local state with returned profile
@@ -202,9 +211,7 @@ export default function Account() {
 
             {/* Email (Read-only) */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-text mb-2">
-                Email Address
-              </label>
+              <label className="block text-sm font-medium text-text mb-2">Email Address</label>
               <input
                 type="email"
                 value={user.email || ''}
@@ -257,11 +264,29 @@ export default function Account() {
               />
             </div>
 
-            {/* Account Created */}
+            {/* Bake Day Email Alerts */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-text mb-2">
-                Account Created
+                Bake Day email alerts
               </label>
+              <div className="flex items-center gap-3">
+                <input
+                  id="notify-new-bake-days"
+                  type="checkbox"
+                  checked={notifyNewBakeDays}
+                  onChange={handleNotifyChange}
+                  disabled={isSaving}
+                  className="h-4 w-4 text-text border-neutral-300 rounded"
+                />
+                <label htmlFor="notify-new-bake-days" className="text-sm text-text">
+                  Get an email when a new Bake Day is posted, including what’s available.
+                </label>
+              </div>
+            </div>
+
+            {/* Account Created */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-text mb-2">Account Created</label>
               <input
                 type="text"
                 value={new Date(user.created_at).toLocaleDateString(undefined, {
@@ -291,6 +316,7 @@ export default function Account() {
                 onClick={() => {
                   setName(user.name || '');
                   setPhone(user.phone || '');
+                  setNotifyNewBakeDays(user.notify_new_bake_days ?? false);
                   setIsDirty(false);
                 }}
                 className="px-6 py-2 border border-neutral-200 text-text rounded-lg font-medium hover:bg-muted transition"

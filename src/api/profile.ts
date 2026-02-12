@@ -14,6 +14,7 @@ export interface UserProfile {
   name: string | null;
   phone: string | null;
   email: string | null;
+  notify_new_bake_days: boolean;
   created_at: string;
 }
 
@@ -34,7 +35,7 @@ export async function getMyProfile(): Promise<UserProfile> {
   // Fetch user's profile from public.users
   const { data, error } = await supabase
     .from('users')
-    .select('*')
+    .select('id, name, phone, email, created_at, notify_new_bake_days')
     .eq('id', authData.user.id)
     .single();
 
@@ -52,6 +53,7 @@ export async function getMyProfile(): Promise<UserProfile> {
         email: authData.user.email || null,
         name: null,
         phone: null,
+        notify_new_bake_days: false,
       })
       .select()
       .single();
@@ -93,6 +95,7 @@ export async function getMyProfile(): Promise<UserProfile> {
 export async function updateMyProfile(patch: {
   name?: string | null;
   phone?: string | null;
+  notify_new_bake_days?: boolean;
 }): Promise<UserProfile> {
   // Get current authenticated user
   const { data: authData, error: authError } = await supabase.auth.getUser();

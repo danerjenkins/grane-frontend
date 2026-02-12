@@ -163,9 +163,11 @@ Deno.serve(async (req) => {
   const emailProducts = (bakeDayProducts ?? [])
     .map((row) => {
       const product =
-        (row as {
-          products?: { name?: string | null; image_url?: string | null; price?: number | null };
-        })?.products ?? null;
+        (
+          row as {
+            products?: { name?: string | null; image_url?: string | null; price?: number | null };
+          }
+        )?.products ?? null;
 
       if (!product?.name) return null;
 

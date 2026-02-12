@@ -41,10 +41,7 @@ function buildOrderSummarySection(summaryLines: string[]) {
   if (!summaryLines.length) return '';
 
   const itemsHtml = summaryLines
-    .map(
-      (line) =>
-        `<p style="margin: 0 0 6px; font-size: 14px; color: #2B1F16;">${line}</p>`
-    )
+    .map((line) => `<p style="margin: 0 0 6px; font-size: 14px; color: #2B1F16;">${line}</p>`)
     .join('');
 
   return `

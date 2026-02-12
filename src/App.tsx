@@ -12,6 +12,7 @@ import ProductDetail from './pages/ProductDetail';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Account from './pages/Account';
+import MyOrders from './pages/MyOrders';
 import ProtectedRoute from './routes/ProtectedRoute';
 import AdminRoute from './routes/AdminRoute';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -63,6 +64,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Account />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-orders"
+          element={
+            <ProtectedRoute redirectMessage="Please log in to view your orders.">
+              <MyOrders />
             </ProtectedRoute>
           }
         />

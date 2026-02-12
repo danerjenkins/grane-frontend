@@ -4,6 +4,8 @@ import { getSession } from '../api/auth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  redirectTo?: string;
+  redirectMessage?: string;
 }
 
 /**
@@ -12,7 +14,11 @@ interface ProtectedRouteProps {
  * Used for /account and other customer-only pages.
  * (Note: /admin uses AdminRoute which checks RPC is_admin())
  */
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+export default function ProtectedRoute({
+  children,
+  redirectTo = '/login',
+  redirectMessage,
+}: ProtectedRouteProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -39,7 +45,10 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   // Not authenticated - redirect to login
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    const redirectUrl = redirectMessage
+      ? `${redirectTo}?message=${encodeURIComponent(redirectMessage)}`
+      : redirectTo;
+    return <Navigate to={redirectUrl} replace />;
   }
 
   // Authenticated - render children

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { signInWithEmail, ensureUserProfile } from '../api/auth';
 import { isAdmin } from '../api/admin';
 
@@ -9,6 +9,8 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const redirectMessage = searchParams.get('message');
 
   // Track which fields have been touched
   const [touched, setTouched] = useState({
@@ -101,6 +103,12 @@ export default function Login() {
           <p className="text-secondary text-sm text-center mb-6">
             Enter your credentials to continue
           </p>
+
+          {redirectMessage && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-700">
+              {redirectMessage}
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (

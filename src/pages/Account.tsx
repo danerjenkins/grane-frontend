@@ -126,6 +126,8 @@ export default function Account() {
     }
   };
 
+  const recentOrders = orders.slice(0, 3);
+
   if (loading) {
     return (
       <main className="min-h-screen bg-muted px-6 py-10">
@@ -188,6 +190,17 @@ export default function Account() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-text mb-2">My Account</h1>
           <p className="text-secondary">View and manage your account information</p>
+        </div>
+
+        {/* Quick Links */}
+        <div className="bg-surface rounded-lg shadow-sm border p-6 mb-6">
+          <h2 className="text-xl font-bold text-text mb-3">Quick Links</h2>
+          <Link
+            to="/my-orders"
+            className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-text text-white text-sm font-medium hover:bg-secondary transition"
+          >
+            View My Orders
+          </Link>
         </div>
 
         {/* Error Banner */}
@@ -329,7 +342,15 @@ export default function Account() {
 
         {/* My Orders */}
         <div className="bg-surface rounded-lg shadow-sm border p-8">
-          <h2 className="text-2xl font-bold text-text mb-4">My Orders</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h2 className="text-2xl font-bold text-text">Recent Orders</h2>
+            <Link
+              to="/my-orders"
+              className="text-sm font-medium text-text hover:text-secondary"
+            >
+              View all orders
+            </Link>
+          </div>
 
           {ordersLoading && <p className="text-sm text-secondary">Loading your orders...</p>}
 
@@ -350,7 +371,7 @@ export default function Account() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {orders.map((order) => {
+                  {recentOrders.map((order) => {
                     const totalPrice = order.price_with_tax ?? order.total_price ?? null;
                     const totalDisplay = totalPrice === null ? '—' : `$${totalPrice.toFixed(2)}`;
                     const statusDisplay = order.status || order.stripe_status || '—';

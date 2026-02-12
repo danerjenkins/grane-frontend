@@ -159,6 +159,16 @@ const Navbar = () => {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
             </Link>
 
+            {isLoggedIn && !sessionLoading && (
+              <Link
+                to="/my-orders"
+                className="text-text font-medium text-base tracking-wide hover:text-secondary transition-colors relative group"
+              >
+                My Orders
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
+              </Link>
+            )}
+
             {/* Admin Link */}
             {isUserAdmin && !sessionLoading && (
               <Link
@@ -296,6 +306,16 @@ const Navbar = () => {
           >
             Order
           </Link>
+
+          {isLoggedIn && !sessionLoading && (
+            <Link
+              to="/my-orders"
+              className="text-text font-medium text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
+              onClick={() => setIsOpen(false)}
+            >
+              My Orders
+            </Link>
+          )}
 
           {/* Admin Link */}
           {isUserAdmin && !sessionLoading && (

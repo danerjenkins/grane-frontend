@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import { useEffect, useMemo, useState } from 'react';
 import { getBakeDays, type BakeDay } from '../api/bakeDays';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 import ProductImage from '../components/ProductImage';
+import BakeDayTileCalendar, { type DayStatus } from '../components/BakeDayTileCalendar';
 import {
   CalendarDays,
   Sparkles,
@@ -56,12 +55,6 @@ export default function BakeDaysPage() {
     }
   }, [selectedBakeDay, selectedDate]);
 
-  // Highlight dates that have bake days
-  const getTileClassName = ({ date }: { date: Date }) => {
-    const dateStr = toLocalYMD(date);
-    const match = bakeDays.some((b) => b.date === dateStr);
-    return match ? 'bake-day-highlight' : null;
-  };
   // Convert Date → YYYY-MM-DD in local time (NO UTC shift)
   const toLocalYMD = (date: Date) => {
     const y = date.getFullYear();
@@ -73,6 +66,15 @@ export default function BakeDaysPage() {
     const [y, m, d] = ymd.split('-').map(Number);
     return new Date(y, m - 1, d); // <-- Local time, no UTC shift
   }
+
+  const dayStatusByYmd = useMemo<Record<string, DayStatus>>(() => {
+    const map: Record<string, DayStatus> = {};
+    bakeDays.forEach((b) => {
+      const hasAvailable = b.bake_day_products?.some((p) => p.available) ?? false;
+      map[b.date] = hasAvailable ? 'available' : 'closed';
+    });
+    return map;
+  }, [bakeDays]);
 
   // Find selected bake day record
   const selectedBakeDayRecord = bakeDays.find(
@@ -175,9 +177,11 @@ export default function BakeDaysPage() {
                   Fresh drops
                 </div>
               </div>
-              <Calendar
-                onClickDay={(value) => {
-                  const dateStr = toLocalYMD(value);
+              <BakeDayTileCalendar
+                value={selectedDate}
+                dayStatusByYmd={dayStatusByYmd}
+                onChange={(date) => {
+                  const dateStr = toLocalYMD(date);
                   const record = bakeDays.find((b) => b.date === dateStr);
                   if (cart.length > 0 && selectedBakeDay && dateStr !== selectedBakeDay.date) {
                     alert(
@@ -188,13 +192,8 @@ export default function BakeDaysPage() {
                   if (record) {
                     setSelectedBakeDay({ id: record.id, date: record.date });
                   }
-                  setSelectedDate(value);
+                  setSelectedDate(date);
                 }}
-                value={selectedDate ?? undefined}
-                tileClassName={getTileClassName}
-                prev2Label={null}
-                next2Label={null}
-                className="modern-calendar"
               />
 
               <div className="mt-5 flex items-start gap-2 text-sm text-secondary">
@@ -448,94 +447,6 @@ export default function BakeDaysPage() {
         </p>
       </div>
 
-      {/* Calendar override styles */}
-      <style>
-        {`
-          .modern-calendar {
-            border: 1px solid hsl(var(--brand-soft));
-            border-radius: 1.25rem;
-            padding: 1.25rem;
-            background: hsl(var(--surface));
-            box-shadow: 0 10px 24px -20px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 36rem;
-            font-size: 1rem;
-          }
-          .modern-calendar .react-calendar__navigation {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            margin-bottom: 0.5rem;
-          }
-          .modern-calendar .react-calendar__navigation button {
-            border-radius: 0.9rem;
-            color: hsl(var(--text));
-            font-weight: 600;
-            transition: all 0.2s ease;
-          }
-          .modern-calendar .react-calendar__navigation__label {
-            font-family: var(--font-display);
-            font-size: 1.1rem;
-            letter-spacing: -0.01em;
-            color: hsl(var(--text));
-          }
-          .modern-calendar .react-calendar__navigation__label:enabled:hover {
-            background: hsl(var(--brand-soft));
-          }
-          .modern-calendar .react-calendar__navigation button:enabled:hover {
-            background: hsl(var(--brand-soft));
-            color: hsl(var(--text));
-          }
-          .modern-calendar .react-calendar__month-view__weekdays {
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            letter-spacing: 0.12em;
-            color: hsl(var(--text-secondary));
-            font-weight: 600;
-            border-bottom: 1px solid hsl(var(--brand-soft));
-            padding-bottom: 0.3rem;
-          }
-          .modern-calendar .react-calendar__month-view__days {
-            padding-top: 0.6rem;
-          }
-          .modern-calendar .react-calendar__month-view__weekdays__weekday abbr {
-            text-decoration: none;
-            border-bottom: none;
-          }
-          .modern-calendar .react-calendar__tile {
-            border-radius: 0;
-            padding: 1.05rem 0.45rem;
-            transition: all 0.2s ease;
-            box-shadow: inset 0 0 0 2px hsl(var(--surface));
-          }
-          .modern-calendar .react-calendar__tile:enabled:hover {
-            background: hsl(var(--accent-soft));
-            color: hsl(var(--text));
-          }
-          .modern-calendar .react-calendar__tile--active {
-            background: hsl(var(--brand-strong)) !important;
-            color: hsl(var(--surface)) !important;
-            box-shadow: 0 8px 16px -10px rgba(0, 0, 0, 0.35);
-          }
-          .bake-day-highlight {
-            background: hsl(var(--brand) / 0.35) !important;
-            font-weight: 600;
-            color: hsl(var(--text)) !important;
-            box-shadow:
-              inset 0 0 0 1px hsl(var(--brand) / 0.5),
-              inset 0 0 0 2px hsl(var(--surface));
-          }
-          .react-calendar__month-view__days__day--weekend {
-            color: inherit !important;
-          }
-          .modern-calendar .react-calendar__tile--now {
-            background-color: hsl(var(--accent-soft)) !important;
-            color: hsl(var(--text)) !important;
-            font-weight: 600;
-            border-radius: 0;
-          }
-        `}
-      </style>
     </main>
   );
 }

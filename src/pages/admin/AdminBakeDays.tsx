@@ -487,9 +487,7 @@ export default function AdminBakeDays() {
                   type="submit"
                   disabled={saving}
                   className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${
-                    saving
-                      ? 'bg-neutral-400 cursor-not-allowed'
-                      : 'bg-text hover:bg-secondary'
+                    saving ? 'bg-neutral-400 cursor-not-allowed' : 'bg-text hover:bg-secondary'
                   }`}
                 >
                   {saving ? 'Saving...' : modalMode === 'create' ? 'Create' : 'Save Changes'}
@@ -552,14 +550,10 @@ export default function AdminBakeDays() {
                 type="button"
                 onClick={handlePublish}
                 disabled={
-                  publishSaving ||
-                  publishModalLoadingProducts ||
-                  publishModalProductCount === 0
+                  publishSaving || publishModalLoadingProducts || publishModalProductCount === 0
                 }
                 className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${
-                  publishSaving ||
-                  publishModalLoadingProducts ||
-                  publishModalProductCount === 0
+                  publishSaving || publishModalLoadingProducts || publishModalProductCount === 0
                     ? 'bg-neutral-400 cursor-not-allowed'
                     : 'bg-brand-strong hover:bg-brand'
                 }`}

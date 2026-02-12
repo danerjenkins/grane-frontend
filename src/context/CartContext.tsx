@@ -388,12 +388,15 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    const interval = setInterval(() => {
-      if (isBakeDayPastOrTooLate(selectedBakeDay.date)) {
-        console.log('Selected bake day is past or too close to order, clearing cart');
-        clearCart();
-      }
-    }, 1000 * 60 * 60);
+    const interval = setInterval(
+      () => {
+        if (isBakeDayPastOrTooLate(selectedBakeDay.date)) {
+          console.log('Selected bake day is past or too close to order, clearing cart');
+          clearCart();
+        }
+      },
+      1000 * 60 * 60
+    );
 
     return () => clearInterval(interval);
   }, [selectedBakeDay, clearCart]);

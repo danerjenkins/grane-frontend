@@ -344,10 +344,7 @@ export default function Account() {
         <div className="bg-surface rounded-lg shadow-sm border p-8">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <h2 className="text-2xl font-bold text-text">Recent Orders</h2>
-            <Link
-              to="/my-orders"
-              className="text-sm font-medium text-text hover:text-secondary"
-            >
+            <Link to="/my-orders" className="text-sm font-medium text-text hover:text-secondary">
               View all orders
             </Link>
           </div>

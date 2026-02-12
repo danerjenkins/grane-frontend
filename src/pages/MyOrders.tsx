@@ -52,10 +52,7 @@ export default function MyOrders() {
           <Link to="/account" className="text-sm text-secondary hover:text-text">
             Back to Account
           </Link>
-          <Link
-            to="/bake-days"
-            className="text-sm font-medium text-text hover:text-secondary"
-          >
+          <Link to="/bake-days" className="text-sm font-medium text-text hover:text-secondary">
             Order more bake days
           </Link>
         </div>
@@ -156,9 +153,13 @@ export default function MyOrders() {
                                   <p className="font-medium text-text">
                                     {item.product?.name ?? 'Item'}
                                   </p>
-                                  <p className="text-sm text-secondary">Quantity: {item.quantity}</p>
+                                  <p className="text-sm text-secondary">
+                                    Quantity: {item.quantity}
+                                  </p>
                                 </div>
-                                <div className="text-sm text-secondary">Item price: {priceLabel}</div>
+                                <div className="text-sm text-secondary">
+                                  Item price: {priceLabel}
+                                </div>
                               </div>
                             );
                           })}

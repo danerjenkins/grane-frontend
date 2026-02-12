@@ -6,6 +6,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 const CART_STORAGE_KEY = 'grane_cart_v1';
 const CART_VERSION = 2;
 const CART_EXPIRY_DAYS = 7; // Cart items expire after 7 days
+const ORDER_DEADLINE_DAYS = 3; // Orders must be placed at least 3 days before bake day
 
 export interface CartItem {
   product_id: string;
@@ -49,6 +50,24 @@ interface CartContextType {
 // ============================================================================
 // Helper Functions for Persistence
 // ============================================================================
+
+function toLocalDateFromYMD(ymd: string): Date | null {
+  const [y, m, d] = ymd.split('-').map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d);
+}
+
+function isBakeDayPastOrTooLate(bakeDayStr: string): boolean {
+  const bakeDay = toLocalDateFromYMD(bakeDayStr);
+  if (!bakeDay) return false;
+
+  const today = new Date();
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const bakeDayStart = new Date(bakeDay.getFullYear(), bakeDay.getMonth(), bakeDay.getDate());
+  const diffDays = (bakeDayStart.getTime() - todayStart.getTime()) / (1000 * 60 * 60 * 24);
+
+  return diffDays < ORDER_DEADLINE_DAYS;
+}
 
 /**
  * Validates and parses persisted cart from localStorage.
@@ -118,6 +137,10 @@ function loadPersistedCart(): { cart: CartItem[]; selectedBakeDay: SelectedBakeD
       if (typeof bakeDay.id === 'string' && typeof bakeDay.date === 'string') {
         validBakeDay = bakeDay;
       }
+    }
+
+    if (validBakeDay && isBakeDayPastOrTooLate(validBakeDay.date)) {
+      return { cart: [], selectedBakeDay: null };
     }
 
     return { cart: validCart, selectedBakeDay: validBakeDay };
@@ -354,6 +377,26 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => clearInterval(interval);
   }, [clearExpiredItems]);
+
+  // Clear cart if selected bake day is past or too late to order
+  useEffect(() => {
+    if (!selectedBakeDay) return;
+
+    if (isBakeDayPastOrTooLate(selectedBakeDay.date)) {
+      console.log('Selected bake day is past or too close to order, clearing cart');
+      clearCart();
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (isBakeDayPastOrTooLate(selectedBakeDay.date)) {
+        console.log('Selected bake day is past or too close to order, clearing cart');
+        clearCart();
+      }
+    }, 1000 * 60 * 60);
+
+    return () => clearInterval(interval);
+  }, [selectedBakeDay, clearCart]);
   const cartQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (

@@ -90,9 +90,7 @@ export default function BakeDayTileCalendar({
           type="button"
           className="rounded-lg px-2 py-2 text-text hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           onClick={() =>
-            setCurrentMonth(
-              (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
-            )
+            setCurrentMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
           }
           aria-label="Previous month"
         >
@@ -103,9 +101,7 @@ export default function BakeDayTileCalendar({
           type="button"
           className="rounded-lg px-2 py-2 text-text hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           onClick={() =>
-            setCurrentMonth(
-              (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
-            )
+            setCurrentMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
           }
           aria-label="Next month"
         >
@@ -169,9 +165,7 @@ export default function BakeDayTileCalendar({
               <div className="flex h-full w-full flex-col justify-between p-2">
                 <span className="text-sm sm:text-base">{date.getDate()}</span>
                 {status === 'closed' && (
-                  <span className="text-[10px] uppercase tracking-wide text-secondary">
-                    CLOSED
-                  </span>
+                  <span className="text-[10px] uppercase tracking-wide text-secondary">CLOSED</span>
                 )}
               </div>
             </button>

@@ -446,7 +446,6 @@ export default function BakeDaysPage() {
           </a>
         </p>
       </div>
-
     </main>
   );
 }

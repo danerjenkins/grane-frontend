@@ -23,6 +23,15 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 
+const SESSION_LOOKUP_TIMEOUT_MS = 2500;
+const CHECKOUT_REQUEST_TIMEOUT_MS = 15000;
+
+function timeoutAfter<T>(ms: number, fallback: T): Promise<T> {
+  return new Promise((resolve) => {
+    window.setTimeout(() => resolve(fallback), ms);
+  });
+}
+
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, selectedBakeDay, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -175,7 +184,13 @@ export default function CheckoutPage() {
 
       // Get current session and add auth header if logged in
       try {
-        const session = await getSession();
+        const session = await Promise.race([
+          getSession(),
+          timeoutAfter<typeof null | Awaited<ReturnType<typeof getSession>>>(
+            SESSION_LOOKUP_TIMEOUT_MS,
+            null
+          ),
+        ]);
         if (session?.access_token) {
           headers['Authorization'] = `Bearer ${session.access_token}`;
         }
@@ -183,11 +198,15 @@ export default function CheckoutPage() {
         // Continue without auth headers for guest checkout.
       }
 
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), CHECKOUT_REQUEST_TIMEOUT_MS);
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/checkout`, {
         method: 'POST',
         headers,
         body: JSON.stringify(body),
-      });
+        signal: controller.signal,
+      }).finally(() => window.clearTimeout(timeoutId));
 
       const data = await res.json();
 
@@ -207,7 +226,11 @@ export default function CheckoutPage() {
       }
     } catch (error) {
       console.error('Checkout Error', error);
-      setGlobalError('An error occurred. Please check your information and try again.');
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        setGlobalError('Checkout timed out before Stripe could open. Please try again.');
+      } else {
+        setGlobalError('An error occurred. Please check your information and try again.');
+      }
       setIsSubmitting(false);
     }
   };

@@ -5,24 +5,50 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 import { corsHeaders } from '../_shared/cors.ts';
 
-const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY');
-const STRIPE_WEBHOOK_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+const STRIPE_TEST_SECRET_KEY = Deno.env.get('STRIPE_TEST_SECRET_KEY');
+const STRIPE_LIVE_SECRET_KEY = Deno.env.get('STRIPE_LIVE_SECRET_KEY');
+const STRIPE_TEST_WEBHOOK_SECRET = Deno.env.get('STRIPE_TEST_WEBHOOK_SECRET');
+const STRIPE_LIVE_WEBHOOK_SECRET = Deno.env.get('STRIPE_LIVE_WEBHOOK_SECRET');
+const LEGACY_STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY');
+const LEGACY_STRIPE_WEBHOOK_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 const SB_URL = Deno.env.get('GRANE_SUPABASE_URL');
 const SB_SERVICE_ROLE = Deno.env.get('GRANE_SERVICE_ROLE_KEY');
 
-if (!STRIPE_SECRET_KEY) {
-  throw new Error('Missing STRIPE_SECRET_KEY');
+const stripeApiKey = STRIPE_LIVE_SECRET_KEY ?? STRIPE_TEST_SECRET_KEY ?? LEGACY_STRIPE_SECRET_KEY;
+const stripeWebhookSecrets = [
+  STRIPE_TEST_WEBHOOK_SECRET,
+  STRIPE_LIVE_WEBHOOK_SECRET,
+  LEGACY_STRIPE_WEBHOOK_SECRET,
+].filter((secret): secret is string => Boolean(secret));
+
+if (!stripeApiKey) {
+  throw new Error('Missing Stripe API key');
 }
 
-if (!STRIPE_WEBHOOK_SECRET) {
-  throw new Error('Missing STRIPE_WEBHOOK_SECRET');
+if (stripeWebhookSecrets.length === 0) {
+  throw new Error('Missing Stripe webhook secret');
 }
 
-const stripe = new Stripe(STRIPE_SECRET_KEY, {
+const stripe = new Stripe(stripeApiKey, {
   apiVersion: '2024-06-20',
   httpClient: Stripe.createFetchHttpClient(),
 });
+
+async function constructStripeEvent(rawBody: string, signature: string) {
+  let lastError: unknown = null;
+
+  for (const webhookSecret of stripeWebhookSecrets) {
+    try {
+      const event = await stripe.webhooks.constructEventAsync(rawBody, signature, webhookSecret);
+      return { event, webhookSecret };
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  throw lastError ?? new Error('Stripe webhook verification failed');
+}
 
 function formatBakeDay(dateString?: string | null) {
   if (!dateString) return 'your selected bake day';
@@ -113,11 +139,13 @@ Deno.serve(async (req) => {
   const rawBody = await req.text();
 
   try {
-    const event = await stripe.webhooks.constructEventAsync(
-      rawBody,
-      signature,
-      STRIPE_WEBHOOK_SECRET
-    );
+    const { event, webhookSecret } = await constructStripeEvent(rawBody, signature);
+    const stripeMode =
+      webhookSecret === STRIPE_LIVE_WEBHOOK_SECRET
+        ? 'live'
+        : webhookSecret === STRIPE_TEST_WEBHOOK_SECRET
+          ? 'test'
+          : 'legacy';
 
     if (event.type !== 'checkout.session.completed') {
       return new Response('ignored', { status: 200, headers: corsHeaders });
@@ -133,6 +161,7 @@ Deno.serve(async (req) => {
     };
 
     console.log(payload);
+    console.log('stripe_mode', stripeMode);
 
     let orderSummaryLines: string[] = [];
 

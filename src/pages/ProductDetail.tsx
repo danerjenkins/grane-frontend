@@ -13,6 +13,15 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const friendlySelectedBakeDay = selectedBakeDay
+    ? new Date(`${selectedBakeDay.date}T00:00:00`).toLocaleDateString(undefined, {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : null;
+
   useEffect(() => {
     if (!id) return;
 
@@ -79,8 +88,8 @@ export default function ProductDetail() {
             </a>
 
             <p className="text-xs text-secondary mt-3 text-center">
-              {selectedBakeDay
-                ? `Your selected bake day: ${selectedBakeDay}`
+              {friendlySelectedBakeDay
+                ? `Your selected bake day: ${friendlySelectedBakeDay}`
                 : 'Choose a bake day to order.'}
             </p>
           </div>

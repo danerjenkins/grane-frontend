@@ -51,6 +51,14 @@ export default function ProductDetail() {
     );
   }
 
+  if (!product) {
+    return (
+      <main className="px-6 py-10 text-center">
+        <p className="banner banner-error inline-block">Product not found.</p>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-muted px-4 py-10">
       <div className="surface-card mx-auto max-w-4xl p-6 md:p-10">

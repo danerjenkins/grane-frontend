@@ -1,14 +1,7 @@
 #!/usr/bin/env sh
-echo "pre-push: running typecheck..."
-npm run typecheck || {
-  echo "pre-push failed: typecheck failed"
-  exit 1
-}
+set -e
 
-echo "pre-push: running production build..."
-npm run build || {
-  echo "pre-push failed: build failed"
-  exit 1
-}
+echo "pre-push: running production build (includes TypeScript checks)..."
+npm run build
 
 echo "pre-push: all checks passed"

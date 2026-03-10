@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CalendarDays, ClipboardList, Package, Users } from 'lucide-react';
 import { getSession } from '../../api/auth';
 import { getUserById } from '../../api/admin/usersAdmin';
-import type { UserRow } from '../../api/admin/types';
+import { getAppSettings, updateStripeMode } from '../../api/admin/appSettingsAdmin';
+import type { AppSettings, UserRow } from '../../api/admin/types';
 
 const cards = [
   {
@@ -40,6 +41,11 @@ export default function AdminHome() {
   const [currentUser, setCurrentUser] = useState<UserRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [appSettings, setAppSettings] = useState<AppSettings | null>(null);
+  const [settingsLoading, setSettingsLoading] = useState(true);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
+  const [settingsSuccess, setSettingsSuccess] = useState<string | null>(null);
+  const [switchingMode, setSwitchingMode] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -73,6 +79,52 @@ export default function AdminHome() {
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadAppSettings = async () => {
+      try {
+        setSettingsLoading(true);
+        setSettingsError(null);
+        const settings = await getAppSettings();
+        if (!active) return;
+        setAppSettings(settings);
+      } catch (err) {
+        if (!active) return;
+        setSettingsError(err instanceof Error ? err.message : 'Failed to load app settings');
+      } finally {
+        if (active) setSettingsLoading(false);
+      }
+    };
+
+    loadAppSettings();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const currentStripeMode = appSettings?.stripe_mode ?? 'test';
+
+  const handleStripeModeChange = async (nextMode: AppSettings['stripe_mode']) => {
+    if (nextMode === currentStripeMode) return;
+
+    try {
+      setSwitchingMode(true);
+      setSettingsError(null);
+      setSettingsSuccess(null);
+      const updatedSettings = await updateStripeMode(nextMode);
+      setAppSettings(updatedSettings);
+      setSettingsSuccess(
+        `Stripe mode switched to ${updatedSettings.stripe_mode === 'live' ? 'Live' : 'Sandbox'}.`
+      );
+      window.setTimeout(() => setSettingsSuccess(null), 2500);
+    } catch (err) {
+      setSettingsError(err instanceof Error ? err.message : 'Failed to switch Stripe mode');
+    } finally {
+      setSwitchingMode(false);
+    }
+  };
 
   return (
     <main className="bg-muted px-6 py-10">
@@ -112,6 +164,74 @@ export default function AdminHome() {
           ) : (
             <div className="text-secondary">No user data available.</div>
           )}
+        </div>
+
+        <div className="admin-card p-6 mb-8">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text mb-2">Stripe Mode</h2>
+              <p className="text-sm text-secondary">
+                New checkout sessions will use the selected Stripe environment.
+              </p>
+            </div>
+            {appSettings && (
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                  appSettings.stripe_mode === 'live'
+                    ? 'bg-danger-soft text-danger border border-danger/30'
+                    : 'bg-brand-soft text-brand-strong border border-brand'
+                }`}
+              >
+                {appSettings.stripe_mode === 'live' ? 'Live' : 'Sandbox'}
+              </span>
+            )}
+          </div>
+
+          <div className="mt-4">
+            {settingsLoading ? (
+              <div className="text-secondary">Loading Stripe settings...</div>
+            ) : settingsError ? (
+              <div className="banner banner-error text-sm">{settingsError}</div>
+            ) : appSettings ? (
+              <div className="space-y-4">
+                {settingsSuccess && (
+                  <div className="banner banner-success text-sm">{settingsSuccess}</div>
+                )}
+                <div className="flex flex-col gap-3 md:flex-row">
+                  <button
+                    type="button"
+                    onClick={() => handleStripeModeChange('test')}
+                    disabled={switchingMode || currentStripeMode === 'test'}
+                    className={`btn-secondary ${
+                      switchingMode || currentStripeMode === 'test'
+                        ? 'cursor-not-allowed opacity-60'
+                        : ''
+                    }`}
+                  >
+                    Use Sandbox
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleStripeModeChange('live')}
+                    disabled={switchingMode || currentStripeMode === 'live'}
+                    className={`btn-primary ${
+                      switchingMode || currentStripeMode === 'live'
+                        ? 'cursor-not-allowed opacity-60'
+                        : ''
+                    }`}
+                  >
+                    Use Live
+                  </button>
+                </div>
+                <p className="text-xs text-secondary">
+                  This changes checkout mode for new sessions only. Existing Stripe sessions stay in
+                  the mode they were created with.
+                </p>
+              </div>
+            ) : (
+              <div className="text-secondary">No Stripe settings found.</div>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

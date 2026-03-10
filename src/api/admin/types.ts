@@ -72,3 +72,9 @@ export interface BakeDayProduct {
 export interface BakeDayProductWithProduct extends BakeDayProduct {
   product?: Product;
 }
+
+export interface AppSettings {
+  id: string;
+  stripe_mode: 'test' | 'live';
+  updated_at?: string;
+}

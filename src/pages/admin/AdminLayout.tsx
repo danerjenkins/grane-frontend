@@ -51,6 +51,7 @@ export default function AdminLayout() {
               <NavLink
                 key={link.path}
                 to={link.path}
+                end={link.path === '/admin'}
                 onClick={() => setSidebarOpen(false)}
                 className={({ isActive }) =>
                   `block px-4 py-2 rounded-lg transition-colors ${

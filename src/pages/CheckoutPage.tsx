@@ -184,12 +184,10 @@ export default function CheckoutPage() {
 
       // Get current session and add auth header if logged in
       try {
+        type SessionResult = Awaited<ReturnType<typeof getSession>>;
         const session = await Promise.race([
           getSession(),
-          timeoutAfter<typeof null | Awaited<ReturnType<typeof getSession>>>(
-            SESSION_LOOKUP_TIMEOUT_MS,
-            null
-          ),
+          timeoutAfter<SessionResult>(SESSION_LOOKUP_TIMEOUT_MS, null),
         ]);
         if (session?.access_token) {
           headers['Authorization'] = `Bearer ${session.access_token}`;

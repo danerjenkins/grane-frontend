@@ -25,21 +25,15 @@ import { getSession, ensureUserProfile } from './api/auth';
 
 export default function App() {
   useEffect(() => {
-    // Warm up backend
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/health`)
-      .then(() => console.log('Backend warmed'))
-      .catch(() => console.log('Backend ping failed'));
+    void fetch(`${import.meta.env.VITE_BACKEND_URL}/api/health`).catch(() => {});
 
-    // On app initialization, ensure user profile exists if user is logged in
     const initializeUserProfile = async () => {
       try {
         const session = await getSession();
         if (session) {
-          // User is logged in, ensure their profile exists in public.users
           await ensureUserProfile(session.user.id, session.user.email);
         }
       } catch (err) {
-        // Non-blocking error - log but don't prevent app from loading
         console.error('Failed to initialize user profile:', err);
       }
     };

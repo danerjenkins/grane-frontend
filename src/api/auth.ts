@@ -195,14 +195,11 @@ export async function ensureUserProfile(
       // If insert fails with duplicate, profile might have been created by another process
       if (insertError) {
         if (insertError.code === '23505') {
-          // 23505 = unique constraint violation
-          console.log(`Profile already exists for user ${userId}`);
           return;
         }
         throw insertError;
       }
 
-      console.log(`Created profile for user ${userId}`);
       return;
     }
 

@@ -62,9 +62,8 @@ export default function CheckoutPage() {
         } else {
           setIsLoggedIn(false);
         }
-      } catch (err) {
-        // User not logged in or error loading profile - just continue with empty form
-        console.log('No profile loaded:', err);
+      } catch {
+        // User not logged in or profile unavailable; continue with an empty form.
         setIsLoggedIn(false);
       }
     };
@@ -180,9 +179,8 @@ export default function CheckoutPage() {
         if (session?.access_token) {
           headers['Authorization'] = `Bearer ${session.access_token}`;
         }
-      } catch (err) {
-        // No session or error getting session - continue without auth header (guest checkout)
-        console.log('No active session, proceeding with guest checkout');
+      } catch {
+        // Continue without auth headers for guest checkout.
       }
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/checkout`, {

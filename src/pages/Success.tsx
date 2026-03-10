@@ -36,9 +36,7 @@ export default function Success() {
         return res.json();
       })
       .then((data: ConfirmResponse) => {
-        console.log('Payment confirmed:', data);
         setConfirmResponse(data);
-        // Clear the cart after successful payment confirmation
         clearCart();
       })
       .catch((err) => {

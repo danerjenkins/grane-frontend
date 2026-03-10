@@ -322,10 +322,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         return daysSinceAdded <= CART_EXPIRY_DAYS;
       });
 
-      if (filtered.length < prev.length) {
-        console.log('Cleared expired cart items');
-      }
-
       return filtered;
     });
   }, []);
@@ -340,10 +336,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
       const isStillAvailable = availableBakeDays.some((bd) => bd.id === selectedBakeDay.id);
 
-      if (!isStillAvailable) {
-        console.log('Selected bake day is no longer available, clearing cart');
-        clearCart();
-      }
+      if (!isStillAvailable) clearCart();
     },
     [clearCart, selectedBakeDay]
   );
@@ -354,10 +347,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const removeUnavailableProducts = useCallback((availableProductIds: string[]) => {
     setCart((prev) => {
       const filtered = prev.filter((item) => availableProductIds.includes(item.product_id));
-
-      if (filtered.length < prev.length) {
-        console.log('Removed unavailable products from cart');
-      }
 
       return filtered;
     });
@@ -383,7 +372,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     if (!selectedBakeDay) return;
 
     if (isBakeDayPastOrTooLate(selectedBakeDay.date)) {
-      console.log('Selected bake day is past or too close to order, clearing cart');
       clearCart();
       return;
     }
@@ -391,7 +379,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const interval = setInterval(
       () => {
         if (isBakeDayPastOrTooLate(selectedBakeDay.date)) {
-          console.log('Selected bake day is past or too close to order, clearing cart');
           clearCart();
         }
       },

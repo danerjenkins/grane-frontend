@@ -35,10 +35,6 @@
   }
 }
 
-.nav-link {
-  @apply text-secondary hover:text-brand transition-colors duration-200 text-2xl;
-}
-
 @keyframes soldOutPulse {
   0%,
   100% {
@@ -188,24 +184,3 @@
   animation: limitedLeftPulse 2.2s ease-in-out infinite;
 }
 
-/* ===== FONT PRESETS - Copy/paste these values into :root ===== */
-
-/* PRESET A: Classic Bakery (Warm, traditional) */
-/* --font-body: "Lora"; */
-/* --font-display: "Playfair Display"; */
-
-/* PRESET B: Modern Artisan (Clean, sophisticated) */
-/* --font-body: "Inter"; */
-/* --font-display: "Fraunces"; */
-
-/* PRESET C: Rustic Farmhouse (Organic, handcrafted) */
-/* --font-body: "Nunito Sans"; */
-/* --font-display: "Cormorant Garamond"; */
-
-/* PRESET D: Vintage French (Elegant, refined) */
-/* --font-body: "Montserrat"; */
-/* --font-display: "Libre Baskerville"; */
-
-/* PRESET E: Contemporary Minimal (Bold, geometric) */
-/* --font-body: "DM Sans"; */
-/* --font-display: "Crimson Pro"; */

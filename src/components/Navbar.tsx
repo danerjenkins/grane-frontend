@@ -159,7 +159,6 @@ const Navbar = () => {
 
           {/* DESKTOP MENU + DESKTOP CART */}
           <div className="hidden md:flex items-center space-x-8">
-            {/* <Link to="/menu" className="nav-link">Menu</Link>*/}
             <Link
               to="/"
               className={desktopNavLinkClass('/')}

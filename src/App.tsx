@@ -42,7 +42,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-50 text-neutral-800">
+    <div className="flex min-h-screen flex-col bg-muted text-text">
       <Navbar />
 
       <div className="flex-1 min-h-0">

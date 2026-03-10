@@ -65,25 +65,22 @@ export default function MyOrders() {
         </div>
 
         {loading && (
-          <div className="bg-surface border border-neutral-200 rounded-lg p-6">
+          <div className="admin-card p-6">
             <p className="text-sm text-secondary">Loading your orders...</p>
           </div>
         )}
 
         {!loading && error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-red-700 mb-2">We hit a snag</h2>
-            <p className="text-sm text-red-700">{error}</p>
+          <div className="banner banner-error p-6">
+            <h2 className="mb-2 text-lg font-semibold">We hit a snag</h2>
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
         {!loading && !error && orders.length === 0 && (
-          <div className="bg-surface border border-neutral-200 rounded-lg p-8 text-center">
+          <div className="admin-card p-8 text-center">
             <p className="text-sm text-secondary mb-4">You haven't placed any orders yet.</p>
-            <Link
-              to="/bake-days"
-              className="inline-flex items-center justify-center px-5 py-2 rounded-lg bg-text text-white text-sm font-medium hover:bg-secondary transition"
-            >
+            <Link to="/bake-days" className="btn-neutral inline-flex items-center justify-center px-5 py-2 text-sm">
               Browse bake days
             </Link>
           </div>
@@ -100,7 +97,7 @@ export default function MyOrders() {
               return (
                 <div
                   key={order.id}
-                  className="bg-surface border border-neutral-200 rounded-lg p-6 shadow-sm"
+                  className="admin-card p-6"
                 >
                   <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div className="space-y-2">

@@ -189,20 +189,20 @@ export default function About() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Link
               to="/bake-days"
-              className="inline-flex items-center justify-center rounded-xl bg-text px-8 py-4 text-base font-semibold text-white shadow-sm transition hover:bg-text/90"
+              className="btn-neutral-lg rounded-xl px-8 py-4 text-base"
             >
               View Upcoming Bake Days
             </Link>
             <a
               href="#how-it-works"
-              className="inline-flex items-center justify-center rounded-xl border bg-surface px-8 py-4 text-base font-semibold text-text shadow-sm transition hover:bg-muted"
+              className="btn-secondary rounded-xl px-8 py-4 text-base"
             >
               How ordering works
             </a>
             <a
               href="#contact"
               onClick={handleNavClick('contact')}
-              className="inline-flex items-center justify-center rounded-xl border border-transparent bg-brand-soft px-8 py-4 text-base font-semibold text-brand-strong shadow-sm transition hover:bg-brand-soft/80"
+              className="btn-soft rounded-xl px-8 py-4 text-base font-semibold shadow-sm"
             >
               Questions? Contact Grane
             </a>
@@ -254,7 +254,7 @@ export default function About() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="rounded-2xl border border-neutral-200 bg-muted p-8 shadow-sm transition hover:shadow-md">
+            <div className="surface-card bg-muted p-8 transition hover:shadow-md">
               <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft">
                 <Calendar className="h-6 w-6 text-brand-strong" />
               </div>
@@ -264,7 +264,7 @@ export default function About() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-neutral-200 bg-muted p-8 shadow-sm transition hover:shadow-md">
+            <div className="surface-card bg-muted p-8 transition hover:shadow-md">
               <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft">
                 <Clock className="h-6 w-6 text-brand-strong" />
               </div>
@@ -275,7 +275,7 @@ export default function About() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-neutral-200 bg-muted p-8 shadow-sm transition hover:shadow-md">
+            <div className="surface-card bg-muted p-8 transition hover:shadow-md">
               <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft">
                 <Leaf className="h-6 w-6 text-brand-strong" />
               </div>
@@ -291,7 +291,7 @@ export default function About() {
       {/* About Me */}
       <section id="about" className="px-4 py-16">
         <div className="mx-auto max-w-5xl grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-2xl border border-neutral-200 bg-surface p-8 shadow-sm">
+          <div className="surface-card p-8">
             <h2 className="text-3xl font-bold mb-4">Hi, I’m Dane</h2>
             <div className="space-y-5 text-lg text-secondary leading-relaxed">
               <p>
@@ -324,7 +324,7 @@ export default function About() {
               </a>
             </div>
           </div>
-          <div className="rounded-2xl border border-neutral-200 bg-surface p-6 shadow-sm flex items-center justify-center">
+          <div className="surface-card flex items-center justify-center p-6">
             <img
               src="/IMG_1097.jpg"
               alt="Dane baking"
@@ -359,7 +359,7 @@ export default function About() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
-            <div className="rounded-2xl border border-neutral-200 bg-muted p-8 shadow-sm">
+            <div className="surface-card bg-muted p-8">
               <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft text-brand-strong">
                 <Mail className="h-5 w-5" />
               </div>
@@ -369,18 +369,18 @@ export default function About() {
                 idea, a question about bake days, or need help with an order, send me a note and
                 I&apos;ll get back to you there.
               </p>
-              <div className="rounded-xl border border-neutral-200 bg-surface px-4 py-3 text-sm font-medium text-text mb-5">
+              <div className="surface-card mb-5 rounded-xl px-4 py-3 text-sm font-medium text-text">
                 support@granebakery.com
               </div>
               <a
                 href="mailto:support@granebakery.com"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-text px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-text/90"
+                className="btn-neutral rounded-xl px-6 py-3 text-base"
               >
                 <Mail className="h-4 w-4" /> Open Email
               </a>
             </div>
 
-            <div className="rounded-2xl border border-neutral-200 bg-muted p-6 shadow-sm">
+            <div className="surface-card bg-muted p-6">
               <h3 className="text-lg font-semibold mb-4">Helpful things to include</h3>
               <div className="space-y-4 text-sm text-secondary leading-relaxed">
                 <div className="rounded-xl bg-surface p-4">
@@ -411,7 +411,7 @@ function Accordion({ item }: { item: AccordionItem }) {
   return (
     <details
       id={item.id}
-      className="group border border-neutral-200 rounded-xl bg-surface p-6 hover:shadow-md transition"
+      className="surface-card group rounded-xl p-6 transition hover:shadow-md"
     >
       <summary
         id={buttonId}

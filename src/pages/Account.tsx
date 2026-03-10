@@ -145,9 +145,9 @@ export default function Account() {
           <Link to="/" className="text-sm text-secondary hover:text-text mb-6 inline-block">
             ← Back to Home
           </Link>
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <h1 className="text-xl font-bold text-red-700 mb-2">Error</h1>
-            <p className="text-red-700">{error}</p>
+          <div className="banner banner-error p-6">
+            <h1 className="text-xl font-bold mb-2">Error</h1>
+            <p>{error}</p>
           </div>
         </div>
       </main>
@@ -161,9 +161,9 @@ export default function Account() {
           <Link to="/" className="text-sm text-secondary hover:text-text mb-6 inline-block">
             ← Back to Home
           </Link>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-            <h1 className="text-xl font-bold text-yellow-700 mb-2">Not Found</h1>
-            <p className="text-yellow-700">Your profile could not be found.</p>
+          <div className="banner banner-warning p-6">
+            <h1 className="text-xl font-bold mb-2">Not Found</h1>
+            <p>Your profile could not be found.</p>
           </div>
         </div>
       </main>
@@ -180,7 +180,7 @@ export default function Account() {
           </Link>
           <button
             onClick={handleSignOut}
-            className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition"
+            className="btn-danger text-sm"
           >
             Sign Out
           </button>
@@ -193,11 +193,11 @@ export default function Account() {
         </div>
 
         {/* Quick Links */}
-        <div className="bg-surface rounded-lg shadow-sm border p-6 mb-6">
+        <div className="admin-card p-6 mb-6">
           <h2 className="text-xl font-bold text-text mb-3">Quick Links</h2>
           <Link
             to="/my-orders"
-            className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-text text-white text-sm font-medium hover:bg-secondary transition"
+            className="btn-neutral inline-flex items-center justify-center px-5 py-2.5 text-sm"
           >
             View My Orders
           </Link>
@@ -205,20 +205,20 @@ export default function Account() {
 
         {/* Error Banner */}
         {saveError && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-700">{saveError}</p>
+          <div className="banner banner-error mb-6 p-4">
+            <p className="text-sm">{saveError}</p>
           </div>
         )}
 
         {/* Success Banner */}
         {saveSuccess && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-sm text-green-700">Profile updated successfully!</p>
+          <div className="banner banner-success mb-6 p-4">
+            <p className="text-sm">Profile updated successfully!</p>
           </div>
         )}
 
         {/* Account Card */}
-        <div className="bg-surface rounded-lg shadow-sm border p-8 mb-6">
+        <div className="admin-card p-8 mb-6">
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-text mb-6">Account Information</h2>
 
@@ -229,7 +229,7 @@ export default function Account() {
                 type="email"
                 value={user.email || ''}
                 disabled
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-muted text-secondary"
+                className="input-base input-muted"
               />
               <p className="text-xs text-secondary mt-1">
                 This email is associated with your account
@@ -243,7 +243,7 @@ export default function Account() {
                 type="text"
                 value={user.id}
                 disabled
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-muted text-secondary text-sm"
+                className="input-base input-muted text-sm"
               />
             </div>
 
@@ -258,7 +258,7 @@ export default function Account() {
                 value={name}
                 onChange={handleNameChange}
                 placeholder="John Doe"
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg text-text placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="input-base"
               />
             </div>
 
@@ -273,7 +273,7 @@ export default function Account() {
                 value={phone}
                 onChange={handlePhoneChange}
                 placeholder="(555) 123-4567"
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg text-text placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="input-base"
               />
             </div>
 
@@ -289,7 +289,7 @@ export default function Account() {
                   checked={notifyNewBakeDays}
                   onChange={handleNotifyChange}
                   disabled={isSaving}
-                  className="h-4 w-4 text-text border-neutral-300 rounded"
+                  className="input-check"
                 />
                 <label htmlFor="notify-new-bake-days" className="text-sm text-text">
                   Get an email when a new Bake Day is posted, including what’s available.
@@ -310,7 +310,7 @@ export default function Account() {
                   minute: '2-digit',
                 })}
                 disabled
-                className="w-full px-4 py-2 border border-neutral-200 rounded-lg bg-muted text-secondary"
+                className="input-base input-muted"
               />
             </div>
           </div>
@@ -320,7 +320,7 @@ export default function Account() {
             <button
               onClick={handleSave}
               disabled={!isDirty || isSaving}
-              className="px-6 py-2 bg-text text-white rounded-lg font-medium hover:bg-secondary transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-neutral-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
@@ -332,7 +332,7 @@ export default function Account() {
                   setNotifyNewBakeDays(user.notify_new_bake_days ?? false);
                   setIsDirty(false);
                 }}
-                className="px-6 py-2 border border-neutral-200 text-text rounded-lg font-medium hover:bg-muted transition"
+                className="btn-secondary"
               >
                 Cancel
               </button>
@@ -341,7 +341,7 @@ export default function Account() {
         </div>
 
         {/* My Orders */}
-        <div className="bg-surface rounded-lg shadow-sm border p-8">
+        <div className="admin-card p-8">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <h2 className="text-2xl font-bold text-text">Recent Orders</h2>
             <Link to="/my-orders" className="text-sm font-medium text-text hover:text-secondary">
@@ -351,7 +351,7 @@ export default function Account() {
 
           {ordersLoading && <p className="text-sm text-secondary">Loading your orders...</p>}
 
-          {!ordersLoading && ordersError && <p className="text-sm text-red-700">{ordersError}</p>}
+          {!ordersLoading && ordersError && <p className="text-sm text-danger">{ordersError}</p>}
 
           {!ordersLoading && !ordersError && orders.length === 0 && (
             <p className="text-sm text-secondary">You haven’t placed any orders yet.</p>

@@ -36,7 +36,7 @@ function getStatus(day: BakeDay): BakeDayStatus {
 
 function getStatusStyles(status: BakeDayStatus) {
   if (status === 'Announced') {
-    return 'bg-green-50 text-green-800 border border-green-200';
+    return 'bg-success-soft text-success border border-success';
   }
 
   if (status === 'Published') {
@@ -249,12 +249,12 @@ export default function AdminBakeDays() {
       <div className="max-w-7xl mx-auto">
         {/* Banners */}
         {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
+          <div className="banner banner-error mb-4">
             {error}
           </div>
         )}
         {success && (
-          <div className="mb-4 bg-green-50 border border-green-200 text-green-900 px-4 py-3 rounded-lg">
+          <div className="banner banner-success mb-4">
             {success}
           </div>
         )}
@@ -264,15 +264,15 @@ export default function AdminBakeDays() {
           <h1 className="text-4xl font-bold text-text">Bake Days</h1>
           <button
             onClick={openCreateModal}
-            className="bg-brand-strong hover:bg-brand text-white px-6 py-2 rounded-lg transition-colors font-medium"
+            className="btn-primary-lg"
           >
             New Bake Day
           </button>
         </div>
 
         {/* Upcoming Bake Day */}
-        <div className="bg-surface rounded-lg shadow-sm border border-neutral-200 overflow-hidden mb-6">
-          <div className="px-6 py-4 border-b border-neutral-200 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="table-shell mb-6">
+          <div className="flex flex-col gap-3 border-b border-neutral-200 px-6 py-4 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-xs uppercase tracking-widest text-secondary">Upcoming Bake Day</p>
               <h2 className="text-2xl font-bold text mt-1">
@@ -285,7 +285,7 @@ export default function AdminBakeDays() {
             {upcomingBakeDay && (
               <button
                 onClick={() => navigate(`/admin/bake-days/${upcomingBakeDay.id}`)}
-                className="bg-brand-strong hover:bg-brand text-white px-4 py-2 rounded-lg transition-colors font-medium"
+                className="btn-primary"
               >
                 Manage Products
               </button>
@@ -294,7 +294,7 @@ export default function AdminBakeDays() {
 
           <div className="p-6">
             {upcomingError && (
-              <div className="mb-4 bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
+              <div className="banner banner-error mb-4">
                 {upcomingError}
               </div>
             )}
@@ -324,14 +324,14 @@ export default function AdminBakeDays() {
                   {upcomingProducts.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between rounded-lg border border-neutral-200 bg-muted px-3 py-2"
+                      className="admin-card flex items-center justify-between bg-muted px-3 py-2"
                     >
                       <div>
                         <p className="text-sm font-medium text">
                           {item.product?.name ?? 'Unnamed product'}
                         </p>
                         {item.available === false && (
-                          <p className="text-xs text-red-700">Unavailable</p>
+                          <p className="text-xs text-danger">Unavailable</p>
                         )}
                       </div>
                       <div className="inline-flex items-center rounded-full bg-brand-soft px-3 py-1 text-sm font-bold text-brand-strong">
@@ -346,7 +346,7 @@ export default function AdminBakeDays() {
         </div>
 
         {/* Table */}
-        <div className="bg-surface rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
+        <div className="table-shell">
           {loading ? (
             <div className="p-8 text-center text-secondary">Loading bake days...</div>
           ) : sortedBakeDays.length === 0 ? (
@@ -354,18 +354,18 @@ export default function AdminBakeDays() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-muted border-b border-neutral-200">
+                <thead className="table-head">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                     <th className="table-head-cell">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                     <th className="table-head-cell">
                       ID
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                     <th className="table-head-cell">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-secondary uppercase tracking-wider">
+                     <th className="table-head-cell text-center">
                       Actions
                     </th>
                   </tr>
@@ -391,13 +391,13 @@ export default function AdminBakeDays() {
                         <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={() => navigate(`/admin/bake-days/${day.id}`)}
-                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted hover:bg-muted text-secondary hover:text-text rounded-md transition-colors text-sm font-medium"
+                            className="btn-muted inline-flex items-center gap-2 px-3 text-sm font-medium"
                           >
                             Manage Products
                           </button>
                           <button
                             onClick={() => openEditModal(day)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-muted hover:bg-muted text-secondary hover:text-text rounded-md transition-colors"
+                            className="btn-muted inline-flex items-center gap-1"
                             title="Edit bake day date"
                           >
                             <Calendar size={16} />
@@ -407,8 +407,8 @@ export default function AdminBakeDays() {
                             disabled={deleteLoadingId === day.id}
                             className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md transition-colors ${
                               deleteLoadingId === day.id
-                                ? 'bg-red-100 text-red-300 cursor-not-allowed'
-                                : 'bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-900'
+                                ? 'bg-danger-soft text-danger/40 cursor-not-allowed'
+                                : 'btn-danger-soft'
                             }`}
                             title={deleteLoadingId === day.id ? 'Deleting...' : 'Delete bake day'}
                           >
@@ -417,7 +417,7 @@ export default function AdminBakeDays() {
                           {!day.is_published && (
                             <button
                               onClick={() => openPublishModal(day)}
-                              className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-strong hover:bg-brand text-white rounded-md transition-colors text-sm font-medium"
+                              className="btn-primary inline-flex items-center gap-2 px-3 text-sm font-medium"
                             >
                               Publish
                             </button>
@@ -436,12 +436,12 @@ export default function AdminBakeDays() {
       {/* Create/Edit Modal */}
       {modalMode && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="modal-backdrop"
           onClick={(e) => {
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          <div className="bg-surface rounded-lg shadow-xl w-full max-w-md">
+          <div className="modal-panel w-full max-w-md">
             <div className="p-6 border-b border-neutral-200">
               <h2 className="text-2xl font-bold text">
                 {modalMode === 'create' ? 'New Bake Day' : 'Edit Bake Day'}
@@ -453,7 +453,7 @@ export default function AdminBakeDays() {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {modalError && (
-                <div className="bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
+                <div className="banner banner-error">
                   {modalError}
                 </div>
               )}
@@ -470,7 +470,7 @@ export default function AdminBakeDays() {
                   type="date"
                   value={formDate}
                   onChange={(e) => setFormDate(e.target.value)}
-                  className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                  className="input-base"
                   required
                 />
               </div>
@@ -479,15 +479,15 @@ export default function AdminBakeDays() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 rounded-lg border border-neutral-300 text-secondary hover:bg-muted"
+                  className="btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${
-                    saving ? 'bg-neutral-400 cursor-not-allowed' : 'bg-text hover:bg-secondary'
+                  className={`btn-neutral ${
+                    saving ? 'cursor-not-allowed opacity-50' : ''
                   }`}
                 >
                   {saving ? 'Saving...' : modalMode === 'create' ? 'Create' : 'Save Changes'}
@@ -501,12 +501,12 @@ export default function AdminBakeDays() {
       {/* Publish Modal */}
       {publishModalOpen && publishingBakeDay && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="modal-backdrop"
           onClick={(e) => {
             if (e.target === e.currentTarget) closePublishModal();
           }}
         >
-          <div className="bg-surface rounded-lg shadow-xl w-full max-w-md">
+          <div className="modal-panel w-full max-w-md">
             <div className="p-6 border-b border-neutral-200">
               <h2 className="text-2xl font-bold text">Publish Bake Day?</h2>
               <p className="text-sm text-secondary mt-1">
@@ -516,7 +516,7 @@ export default function AdminBakeDays() {
 
             <div className="p-6 space-y-4">
               {publishError && (
-                <div className="bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
+                <div className="banner banner-error">
                   {publishError}
                 </div>
               )}
@@ -528,7 +528,7 @@ export default function AdminBakeDays() {
               {publishModalLoadingProducts ? (
                 <div className="text-sm text-secondary">Checking available products...</div>
               ) : publishModalProductCount === 0 ? (
-                <div className="bg-yellow-50 border border-yellow-200 text-yellow-900 px-4 py-3 rounded-lg">
+                <div className="banner banner-warning">
                   Add at least one available product before publishing.
                 </div>
               ) : (
@@ -542,7 +542,7 @@ export default function AdminBakeDays() {
               <button
                 type="button"
                 onClick={closePublishModal}
-                className="px-4 py-2 rounded-lg border border-neutral-300 text-secondary hover:bg-muted"
+                className="btn-secondary"
               >
                 Cancel
               </button>
@@ -552,10 +552,10 @@ export default function AdminBakeDays() {
                 disabled={
                   publishSaving || publishModalLoadingProducts || publishModalProductCount === 0
                 }
-                className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${
+                className={`btn-primary ${
                   publishSaving || publishModalLoadingProducts || publishModalProductCount === 0
-                    ? 'bg-neutral-400 cursor-not-allowed'
-                    : 'bg-brand-strong hover:bg-brand'
+                    ? 'cursor-not-allowed opacity-50'
+                    : ''
                 }`}
               >
                 {publishSaving ? 'Publishing...' : 'Publish'}

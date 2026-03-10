@@ -1,32 +1,3 @@
-/**
- * Admin Accounts Page
- *
- * IDENTITY STANDARD:
- * ==================
- * - public.users is the profile table; id is the primary key
- * - auth.users contains authentication records (Supabase Auth)
- * - For authenticated users: public.users.id = auth.users.id (auth.uid())
- * - For guest users (from checkout): public.users has a generated UUID, no auth account
- * - Admin status is stored in user_roles table (role = 'admin'), NOT in public.users.is_admin
- *
- * PROFILE SYNC:
- * =============
- * - When a user logs in, ensureUserProfile() creates a public.users row if missing (api/auth.ts)
- * - On app init, ensureUserProfile() is called to sync any authenticated users
- * - Guest profiles are created during checkout and are never associated with auth accounts
- *
- * DATA FLOW:
- * ==========
- * - listUsers() returns all public.users rows (both guests and authenticated users)
- * - createUser() creates guest profiles (used by admin to manually add customers)
- * - updateUser() modifies profile fields (name, email, phone)
- * - deleteUserProfileCascade() safely deletes profiles and cascades to user_roles and orders
- * - getUserRolesByUserId() fetches roles from user_roles table (source of truth for admin status)
- *
- * NOTE: Manually created profiles in AdminAccounts are guest profiles (no auth accounts)
- * To create an admin user with auth, use Supabase Auth sign-up/creation flow
- */
-
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Edit2 } from 'lucide-react';
@@ -350,11 +321,7 @@ export default function AdminAccounts() {
     <main className="bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto">
         {/* Error banner */}
-        {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
-            {error}
-          </div>
-        )}
+        {error && <div className="banner banner-error mb-4">{error}</div>}
 
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
@@ -364,7 +331,7 @@ export default function AdminAccounts() {
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-brand-strong text-white rounded-lg hover:bg-brand font-medium transition-colors"
+            className="btn-primary"
           >
             + Create Account
           </button>
@@ -377,12 +344,12 @@ export default function AdminAccounts() {
             placeholder="Search by name, email, phone, or user ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+            className="input-base"
           />
         </div>
 
         {/* Table */}
-        <div className="bg-surface rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
+        <div className="table-shell">
           {loading ? (
             <div className="p-8 text-center text-secondary">Loading users...</div>
           ) : filteredUsers.length === 0 ? (
@@ -392,24 +359,24 @@ export default function AdminAccounts() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-neutral-100 border-b border-neutral-200">
+                <thead className="table-head">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell">
                       Email
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell">
                       Phone
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell">
                       Roles
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell">
                       Created
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell text-right">
                       Actions
                     </th>
                   </tr>
@@ -433,10 +400,10 @@ export default function AdminAccounts() {
                             {(userRolesMap[user.id] || []).map((role) => (
                               <span
                                 key={role}
-                                className={`px-2 py-1 text-xs font-semibold rounded ${
+                                className={`status-chip ${
                                   role === 'admin'
-                                    ? 'bg-blue-100 text-blue-800'
-                                    : 'bg-neutral-100 text-neutral-800'
+                                    ? 'bg-info-soft text-info'
+                                    : 'bg-muted text-text'
                                 }`}
                               >
                                 {role}
@@ -457,7 +424,7 @@ export default function AdminAccounts() {
                               e.stopPropagation();
                               setSelectedUserId(user.id);
                             }}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-neutral-900 rounded-md transition-colors"
+                            className="btn-muted inline-flex items-center gap-1"
                             title="View and edit user details"
                           >
                             <Edit2 size={16} />
@@ -476,14 +443,14 @@ export default function AdminAccounts() {
       {/* Detail Drawer */}
       {selectedUserId && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-end z-50"
+          className="fixed inset-0 z-50 flex items-start justify-end bg-black/50"
           onClick={(e) => {
             if (e.target === e.currentTarget) closeDrawer();
           }}
         >
-          <div className="bg-surface h-full w-full max-w-2xl overflow-y-auto shadow-xl">
+          <div className="h-full w-full max-w-2xl overflow-y-auto bg-surface shadow-xl">
             {/* Drawer Header */}
-            <div className="sticky top-0 bg-surface border-b border-neutral-200 px-6 py-4 flex items-center justify-between z-10">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-neutral-200 bg-surface px-6 py-4">
               <div>
                 <h2 className="text-2xl font-bold text">User Details</h2>
                 <p className="text-sm text-secondary">
@@ -492,30 +459,16 @@ export default function AdminAccounts() {
               </div>
               <button
                 onClick={closeDrawer}
-                className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+                className="btn-secondary px-3 py-1"
               >
-                <svg
-                  className="w-6 h-6 text-neutral-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                Close
               </button>
             </div>
 
             {/* Drawer Content */}
             <div className="p-6 space-y-6">
               {drawerError && (
-                <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-lg">
-                  {drawerError}
-                </div>
+                <div className="banner banner-error">{drawerError}</div>
               )}
 
               {drawerLoading ? (
@@ -523,7 +476,7 @@ export default function AdminAccounts() {
               ) : selectedUser ? (
                 <>
                   {/* Basic Info Section - Editable */}
-                  <div className="bg-neutral-50 rounded-lg p-4 space-y-3">
+                  <div className="admin-card bg-muted p-4 space-y-3">
                     <h3 className="text-lg font-semibold text">Basic Information</h3>
                     <div className="grid grid-cols-1 gap-3">
                       <div>
@@ -534,7 +487,7 @@ export default function AdminAccounts() {
                           type="text"
                           value={editName}
                           onChange={(e) => handleProfileChange('name', e.target.value)}
-                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong text-sm"
+                           className="input-base text-sm"
                         />
                       </div>
                       <div>
@@ -545,7 +498,7 @@ export default function AdminAccounts() {
                           type="email"
                           value={editEmail}
                           onChange={(e) => handleProfileChange('email', e.target.value)}
-                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong text-sm"
+                           className="input-base text-sm"
                         />
                       </div>
                       <div>
@@ -565,10 +518,10 @@ export default function AdminAccounts() {
                       <button
                         onClick={handleSaveProfile}
                         disabled={!profileDirty || profileSaving}
-                        className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                        className={`btn-primary text-sm ${
                           !profileDirty || profileSaving
-                            ? 'bg-neutral-200 text-neutral-500 cursor-not-allowed'
-                            : 'bg-brand-strong hover:bg-brand text-white'
+                            ? 'cursor-not-allowed opacity-50'
+                            : ''
                         }`}
                       >
                         {profileSaving ? 'Saving...' : 'Save Changes'}
@@ -577,7 +530,7 @@ export default function AdminAccounts() {
                   </div>
 
                   {/* Admin Access Section */}
-                  <div className="bg-neutral-50 rounded-lg p-4 space-y-3">
+                  <div className="admin-card bg-muted p-4 space-y-3">
                     <h3 className="text-lg font-semibold text">Admin Access</h3>
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
@@ -611,7 +564,7 @@ export default function AdminAccounts() {
                   </div>
 
                   {/* Roles Section */}
-                  <div className="bg-neutral-50 rounded-lg p-4 space-y-3">
+                  <div className="admin-card bg-muted p-4 space-y-3">
                     <h3 className="text-lg font-semibold text">Roles</h3>
                     <div className="space-y-2">
                       {userRoles.length > 0 ? (
@@ -619,7 +572,7 @@ export default function AdminAccounts() {
                           {userRoles.map((role) => (
                             <span
                               key={role}
-                              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+                               className="status-chip bg-info-soft text-sm text-info"
                             >
                               {role}
                             </span>
@@ -632,19 +585,19 @@ export default function AdminAccounts() {
                   </div>
 
                   {/* Danger Zone Section */}
-                  <div className="border-2 border-red-300 bg-red-50 rounded-lg p-4 space-y-4">
-                    <h3 className="text-lg font-semibold text-red-900">Danger Zone</h3>
+                  <div className="banner banner-error space-y-4 border-2 p-4">
+                    <h3 className="text-lg font-semibold">Danger Zone</h3>
 
                     {selectedUserId === currentUserId ? (
-                      <div className="bg-surface rounded p-3 border border-red-200">
-                        <p className="text-sm text-red-700">
+                      <div className="rounded border border-danger bg-surface p-3">
+                        <p className="text-sm text-danger">
                           <strong>You can't delete your own profile row.</strong> Contact another
                           admin to remove your profile if needed.
                         </p>
                       </div>
                     ) : (
                       <>
-                        <p className="text-sm text-neutral-700">
+                        <p className="text-sm text">
                           <strong>Delete User Profile Row</strong>
                           <br />
                           This permanently deletes the user's profile record from the database. It{' '}
@@ -652,8 +605,8 @@ export default function AdminAccounts() {
                         </p>
 
                         {linkedOrderCount !== null && (
-                          <div className="bg-surface rounded p-3 border border-orange-200">
-                            <p className="text-sm text-orange-800">
+                          <div className="banner banner-warning p-3">
+                            <p className="text-sm">
                               <strong>Linked orders: {linkedOrderCount}</strong>
                               <br />
                               These orders will remain in the system but will be disassociated
@@ -669,7 +622,7 @@ export default function AdminAccounts() {
                               checked={deleteAck}
                               onChange={(e) => setDeleteAck(e.target.checked)}
                               disabled={isDeleting}
-                              className="w-4 h-4 accent-red-600 cursor-pointer"
+                              className="input-check cursor-pointer"
                             />
                             <span className="text-sm text-secondary">
                               I understand this is permanent and cannot be undone
@@ -686,7 +639,7 @@ export default function AdminAccounts() {
                               value={deleteToken}
                               onChange={(e) => setDeleteToken(e.target.value)}
                               disabled={isDeleting}
-                              className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                              className="input-base text-sm"
                             />
                             <p className="text-xs text-secondary mt-1">
                               Enter the user ID or email address to confirm
@@ -696,10 +649,10 @@ export default function AdminAccounts() {
                           <button
                             onClick={handleDeleteProfileRow}
                             disabled={!canDelete || isDeleting}
-                            className={`w-full py-2 rounded-lg font-medium text-sm transition-colors ${
+                            className={`btn-danger w-full text-sm ${
                               !canDelete || isDeleting
-                                ? 'bg-neutral-200 text-neutral-500 cursor-not-allowed'
-                                : 'bg-red-600 hover:bg-red-700 text-white'
+                                ? 'cursor-not-allowed opacity-50'
+                                : ''
                             }`}
                           >
                             {isDeleting ? 'Deleting Profile...' : 'Delete User Profile Row'}
@@ -720,31 +673,29 @@ export default function AdminAccounts() {
       {/* Create Account Modal */}
       {showCreateModal && (
         <div
-          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+          className="modal-backdrop"
           onClick={(e) => {
             if (e.target === e.currentTarget) setShowCreateModal(false);
           }}
         >
-          <div className="bg-surface rounded-lg shadow-2xl w-full max-w-md">
-            <div className="p-4 border-b border-neutral-200 flex items-center justify-between">
+          <div className="modal-panel w-full max-w-md">
+            <div className="flex items-center justify-between border-b border-neutral-200 p-4">
               <h3 className="text-lg font-semibold text">Create Account</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-neutral-600 hover:text-neutral-900 px-3 py-1 rounded-lg hover:bg-neutral-100"
+                className="btn-secondary px-3 py-1"
               >
                 Close
               </button>
             </div>
             <div className="p-4 space-y-4">
               {createError && (
-                <div className="bg-red-50 border border-red-200 text-red-900 px-3 py-2 rounded-lg text-sm">
-                  {createError}
-                </div>
+                <div className="banner banner-error text-sm">{createError}</div>
               )}
 
               <div>
                 <label className="block text-sm font-semibold text-secondary mb-1">
-                  Email <span className="text-red-600">*</span>
+                  Email <span className="text-danger">*</span>
                 </label>
                 <input
                   type="email"
@@ -752,7 +703,7 @@ export default function AdminAccounts() {
                   onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="user@example.com"
                   disabled={isCreating}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                  className="input-base"
                 />
               </div>
 
@@ -764,7 +715,7 @@ export default function AdminAccounts() {
                   onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder="John Doe"
                   disabled={isCreating}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                  className="input-base"
                 />
               </div>
 
@@ -776,19 +727,21 @@ export default function AdminAccounts() {
                   onChange={(e) => setCreateForm((f) => ({ ...f, phone: e.target.value }))}
                   placeholder="(555) 123-4567"
                   disabled={isCreating}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                  className="input-base"
                 />
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
                 <button
                   onClick={() => setShowCreateModal(false)}
                   disabled={isCreating}
-                  className="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-100 font-medium transition-colors disabled:opacity-50"
+                  className="btn-secondary disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCreateAccount}
                   disabled={isCreating || !createForm.email.trim()}
-                  className="px-4 py-2 bg-brand-strong text-white rounded-lg hover:bg-brand font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isCreating ? 'Creating...' : 'Create Account'}
                 </button>

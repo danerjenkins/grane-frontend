@@ -191,7 +191,7 @@ export default function AdminProducts() {
       <div className="max-w-7xl mx-auto">
         {/* Success Message */}
         {successMessage && (
-          <div className="mb-6 bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg">
+          <div className="banner banner-success mb-6">
             {successMessage}
           </div>
         )}
@@ -201,7 +201,7 @@ export default function AdminProducts() {
           <h1 className="text-4xl font-bold text">Products</h1>
           <button
             onClick={openCreateModal}
-            className="bg-brand-strong hover:bg-brand text-white px-6 py-2 rounded-lg transition-colors font-medium"
+            className="btn-primary-lg"
           >
             + New Product
           </button>
@@ -214,12 +214,12 @@ export default function AdminProducts() {
             placeholder="Search products by name or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+            className="input-base"
           />
         </div>
 
         {/* Table */}
-        <div className="bg-surface rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
+        <div className="table-shell">
           {loading ? (
             <div className="p-8 text-center text-secondary">Loading products...</div>
           ) : filteredProducts.length === 0 ? (
@@ -231,21 +231,21 @@ export default function AdminProducts() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-neutral-100 border-b border-neutral-200">
+                <thead className="table-head">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell">
                       Image
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell">
                       Price
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell">
                       Cost
                     </th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                    <th className="table-head-cell text-center">
                       Actions
                     </th>
                   </tr>
@@ -261,7 +261,7 @@ export default function AdminProducts() {
                             className="w-12 h-12 object-cover rounded"
                           />
                         ) : (
-                          <div className="w-12 h-12 bg-neutral-200 rounded flex items-center justify-center text-neutral-400 text-xs">
+                          <div className="placeholder-tile">
                             No img
                           </div>
                         )}
@@ -284,14 +284,14 @@ export default function AdminProducts() {
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => openEditModal(product)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-neutral-900 rounded-md transition-colors"
+                            className="btn-muted inline-flex items-center gap-1"
                             title="Edit product"
                           >
                             <Edit2 size={16} />
                           </button>
                           <button
                             onClick={() => handleDelete(product)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-900 rounded-md transition-colors"
+                            className="btn-danger-soft inline-flex items-center gap-1"
                             title="Delete product"
                           >
                             <Trash2 size={16} />
@@ -310,12 +310,12 @@ export default function AdminProducts() {
       {/* Create/Edit Modal */}
       {modalMode && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="modal-backdrop"
           onClick={(e) => {
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          <div className="bg-surface rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="modal-panel max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-neutral-200">
               <h2 className="text-2xl font-bold text">
                 {modalMode === 'create' ? 'Create New Product' : 'Edit Product'}
@@ -324,7 +324,7 @@ export default function AdminProducts() {
 
             <form onSubmit={handleSubmit} className="p-6">
               {formError && (
-                <div className="mb-4 bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-lg">
+                  <div className="banner banner-error mb-4">
                   {formError}
                 </div>
               )}
@@ -333,14 +333,14 @@ export default function AdminProducts() {
                 {/* Name */}
                 <div>
                   <label htmlFor="name" className="block text-sm font-semibold text-secondary mb-1">
-                    Name <span className="text-red-600">*</span>
+                    Name <span className="text-danger">*</span>
                   </label>
                   <input
                     id="name"
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                    className="input-base"
                     required
                   />
                 </div>
@@ -351,7 +351,7 @@ export default function AdminProducts() {
                     htmlFor="price"
                     className="block text-sm font-semibold text-secondary mb-1"
                   >
-                    Price <span className="text-red-600">*</span>
+                    Price <span className="text-danger">*</span>
                   </label>
                   <input
                     id="price"
@@ -360,7 +360,7 @@ export default function AdminProducts() {
                     min="0"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                    className="input-base"
                     required
                   />
                 </div>
@@ -380,7 +380,7 @@ export default function AdminProducts() {
                     min="0"
                     value={formData.cost_to_make}
                     onChange={(e) => setFormData({ ...formData, cost_to_make: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                    className="input-base"
                   />
                 </div>
 
@@ -397,7 +397,7 @@ export default function AdminProducts() {
                     type="url"
                     value={formData.image_url}
                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                    className="input-base"
                   />
                 </div>
 
@@ -414,7 +414,7 @@ export default function AdminProducts() {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                    className="input-base"
                   />
                 </div>
 
@@ -425,7 +425,7 @@ export default function AdminProducts() {
                     type="checkbox"
                     checked={formData.available}
                     onChange={(e) => setFormData({ ...formData, available: e.target.checked })}
-                    className="w-4 h-4 text-brand-strong border-neutral-300 rounded focus:ring-brand-strong"
+                    className="input-check"
                   />
                   <label htmlFor="available" className="ml-2 text-sm font-medium text-secondary">
                     Available for purchase
@@ -439,14 +439,14 @@ export default function AdminProducts() {
                   type="button"
                   onClick={closeModal}
                   disabled={formLoading}
-                  className="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors disabled:opacity-50"
+                  className="btn-secondary disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="px-4 py-2 bg-brand-strong text-white rounded-lg hover:bg-brand transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {formLoading ? 'Saving...' : 'Save Product'}
                 </button>
@@ -459,12 +459,12 @@ export default function AdminProducts() {
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="modal-backdrop"
           onClick={(e) => {
             if (e.target === e.currentTarget) setDeleteConfirm(null);
           }}
         >
-          <div className="bg-surface rounded-lg shadow-xl max-w-md w-full p-6">
+          <div className="modal-panel max-w-md w-full p-6">
             <h3 className="text-xl font-bold text mb-4">Confirm Delete</h3>
             <p className="text-secondary mb-6">
               Are you sure you want to delete this product? This action cannot be undone.
@@ -472,13 +472,13 @@ export default function AdminProducts() {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors"
+                className="btn-secondary"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="btn-danger"
               >
                 Delete
               </button>

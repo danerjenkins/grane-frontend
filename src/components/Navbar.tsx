@@ -104,7 +104,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-surface border-b border-neutral-200 px-3 md:px-8 py-4 relative">
+    <nav className="relative border-b border-neutral-200 bg-surface px-3 py-4 md:px-8">
       <div className="w-full">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -128,7 +128,7 @@ const Navbar = () => {
             >
               <ShoppingCart className="w-6 h-6 text-text transition-colors group-hover:text-secondary" />
               {cart.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-text text-white text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">
+                <span className="btn-neutral absolute -right-2 -top-2 rounded-full px-2 py-0.5 text-xs font-medium shadow-sm">
                   {cartQuantity}
                 </span>
               )}
@@ -238,7 +238,7 @@ const Navbar = () => {
                 ) : (
                   <Link
                     to="/login"
-                    className="bg-brand-strong text-white px-5 py-2 rounded-full font-medium text-base tracking-wide hover:bg-brand transition-all shadow-sm hover:shadow-md"
+                    className="btn-primary rounded-full px-5 py-2 text-base tracking-wide shadow-sm transition-all hover:shadow-md"
                   >
                     Log In
                   </Link>
@@ -256,7 +256,7 @@ const Navbar = () => {
               <button className="relative group" onClick={() => setCartOpen(!cartOpen)}>
                 <ShoppingCart className="w-6 h-6 text-text transition-colors group-hover:text-secondary" />
                 {cart.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-text text-white text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">
+                  <span className="btn-neutral absolute -right-2 -top-2 rounded-full px-2 py-0.5 text-xs font-medium shadow-sm">
                     {cartQuantity}
                   </span>
                 )}
@@ -264,7 +264,7 @@ const Navbar = () => {
 
               {/* Desktop Dropdown */}
               {cartOpen && (
-                <div className="absolute right-0 top-full mt-2 w-72 bg-surface shadow-2xl border border-neutral-200 rounded-xl p-5 z-50 backdrop-blur-sm">
+                <div className="surface-card absolute right-0 top-full z-50 mt-2 w-72 rounded-xl p-5 shadow-2xl backdrop-blur-sm">
                   <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
                     <h3 className="text-lg font-bold text-text">Your Cart</h3>
                     {cart.length > 0 && (
@@ -274,7 +274,7 @@ const Navbar = () => {
                             clearCart();
                           }
                         }}
-                        className="text-xs text-red-600 hover:text-red-800 hover:underline"
+                        className="link-danger text-xs"
                       >
                         Clear
                       </button>
@@ -296,7 +296,7 @@ const Navbar = () => {
                             </p>
                           </div>
                           <button
-                            className="text-red-600 text-xs font-medium hover:text-red-700 transition-colors"
+                            className="link-danger text-xs"
                             onClick={() => removeFromCart(item.product_id)}
                           >
                             Remove
@@ -311,7 +311,7 @@ const Navbar = () => {
                       <Link
                         to="/bake-days"
                         onClick={() => setCartOpen(false)}
-                        className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-text/90 transition-all shadow-sm hover:shadow-md"
+                        className="btn-neutral block text-center py-2.5 shadow-sm hover:shadow-md"
                       >
                         Order Now
                       </Link>
@@ -319,7 +319,7 @@ const Navbar = () => {
                       <Link
                         to="/checkout"
                         onClick={() => setCartOpen(false)}
-                        className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-text/90 transition-all shadow-sm hover:shadow-md"
+                        className="btn-neutral block text-center py-2.5 shadow-sm hover:shadow-md"
                       >
                         Proceed to Checkout
                       </Link>
@@ -385,7 +385,7 @@ const Navbar = () => {
               ) : (
                 <Link
                   to="/login"
-                  className="bg-brand-strong text-white px-5 py-2.5 rounded-full font-medium text-base text-center hover:bg-brand transition-all shadow-sm"
+                  className="btn-primary rounded-full px-5 py-2.5 text-center text-base shadow-sm transition-all"
                   onClick={() => setIsOpen(false)}
                 >
                   Log In
@@ -397,7 +397,7 @@ const Navbar = () => {
       )}
 
       {cartOpen && (
-        <div className="md:hidden mt-6 w-full bg-surface shadow-xl border border-neutral-200 rounded-xl p-5 z-50">
+        <div className="surface-card z-50 mt-6 w-full rounded-xl p-5 shadow-xl md:hidden">
           <div className="flex items-center justify-between mb-4 border-b border-neutral-200 pb-2">
             <h3 className="text-lg font-bold text-text">Your Cart</h3>
             {cart.length > 0 && (
@@ -407,7 +407,7 @@ const Navbar = () => {
                     clearCart();
                   }
                 }}
-                className="text-xs text-red-600 hover:text-red-800 hover:underline"
+                className="link-danger text-xs"
               >
                 Clear
               </button>
@@ -430,7 +430,7 @@ const Navbar = () => {
                     </p>
                   </div>
                   <button
-                    className="text-red-600 text-xs font-medium hover:text-red-700 transition-colors"
+                    className="link-danger text-xs"
                     onClick={() => removeFromCart(item.product_id)}
                   >
                     Remove
@@ -445,7 +445,7 @@ const Navbar = () => {
               <Link
                 to="/bake-days"
                 onClick={() => setCartOpen(false)}
-                className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-muted transition-all shadow-sm"
+                className="btn-neutral block text-center py-2.5 shadow-sm"
               >
                 Order Now
               </Link>
@@ -453,7 +453,7 @@ const Navbar = () => {
               <Link
                 to="/checkout"
                 onClick={() => setCartOpen(false)}
-                className="block bg-text text-white text-center py-2.5 rounded-lg font-medium hover:bg-muted transition-all shadow-sm"
+                className="btn-neutral block text-center py-2.5 shadow-sm"
               >
                 Proceed to Checkout
               </Link>

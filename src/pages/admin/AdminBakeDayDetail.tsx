@@ -228,7 +228,7 @@ export default function AdminBakeDayDetail() {
   if (!bakeDayId || !bakeDay) {
     return (
       <main className="bg-muted px-6 py-10">
-        <div className="max-w-6xl mx-auto text-red-700">Bake day not found.</div>
+        <div className="mx-auto max-w-6xl banner banner-error inline-block">Bake day not found.</div>
       </main>
     );
   }
@@ -237,16 +237,8 @@ export default function AdminBakeDayDetail() {
     <main className="bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Banners */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-lg">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="bg-green-50 border border-green-200 text-green-900 px-4 py-3 rounded-lg">
-            {success}
-          </div>
-        )}
+        {error && <div className="banner banner-error">{error}</div>}
+        {success && <div className="banner banner-success">{success}</div>}
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -257,7 +249,7 @@ export default function AdminBakeDayDetail() {
           </div>
           <button
             onClick={() => navigate('/admin/bake-days')}
-            className="self-start md:self-auto inline-flex items-center gap-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-4 py-2 rounded-lg transition-colors"
+            className="btn-secondary self-start md:self-auto inline-flex items-center gap-2"
           >
             <ArrowLeft size={16} />
             Back to Bake Days
@@ -266,8 +258,8 @@ export default function AdminBakeDayDetail() {
 
         {/* Inventory management */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-surface rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-neutral-200">
+          <div className="table-shell lg:col-span-2">
+            <div className="border-b border-neutral-200 px-6 py-4">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
                   <h2 className="text-lg font-semibold text">Assigned Products</h2>
@@ -283,18 +275,18 @@ export default function AdminBakeDayDetail() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-neutral-100 border-b border-neutral-200">
+                  <thead className="table-head">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      <th className="table-head-cell">
                         Product
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      <th className="table-head-cell">
                         Limit
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      <th className="table-head-cell">
                         Sold
                       </th>
-                      <th className="px-6 py-3 text-center text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      <th className="table-head-cell text-center">
                         Actions
                       </th>
                     </tr>
@@ -315,7 +307,7 @@ export default function AdminBakeDayDetail() {
                             onChange={(e) =>
                               handleRowChange(dp.id, 'quantity_limit', e.target.value)
                             }
-                            className="w-24 px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong text-sm"
+                            className="input-base w-24 px-3 text-sm"
                           />
                         </td>
                         <td className="px-6 py-4 text-sm text-secondary">
@@ -326,7 +318,7 @@ export default function AdminBakeDayDetail() {
                             onChange={(e) =>
                               handleRowChange(dp.id, 'quantity_sold', e.target.value)
                             }
-                            className="w-24 px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong text-sm"
+                            className="input-base w-24 px-3 text-sm"
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -334,11 +326,11 @@ export default function AdminBakeDayDetail() {
                             <button
                               onClick={() => handleUpdateRow(dp.id)}
                               disabled={updatingId === dp.id}
-                              className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                                updatingId === dp.id
-                                  ? 'bg-brand-soft text-brand cursor-not-allowed'
-                                  : 'bg-brand-strong hover:bg-brand text-white'
-                              }`}
+                               className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors ${
+                                 updatingId === dp.id
+                                    ? 'bg-brand-soft text-brand cursor-not-allowed'
+                                   : 'btn-primary'
+                               }`}
                               title={updatingId === dp.id ? 'Saving...' : 'Save changes'}
                             >
                               <Save size={14} />
@@ -349,11 +341,11 @@ export default function AdminBakeDayDetail() {
                             <button
                               onClick={() => handleDeleteRow(dp.id)}
                               disabled={deletingId === dp.id}
-                              className={`inline-flex items-center justify-center px-2.5 py-1.5 rounded-md transition-colors ${
-                                deletingId === dp.id
-                                  ? 'bg-red-100 text-red-300 cursor-not-allowed'
-                                  : 'bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-900'
-                              }`}
+                               className={`inline-flex items-center justify-center rounded-md px-2.5 py-1.5 transition-colors ${
+                                 deletingId === dp.id
+                                   ? 'cursor-not-allowed bg-danger-soft text-danger/50'
+                                   : 'btn-danger-soft'
+                               }`}
                               title={deletingId === dp.id ? 'Removing...' : 'Remove product'}
                             >
                               <Trash2 size={14} />
@@ -369,7 +361,7 @@ export default function AdminBakeDayDetail() {
             )}
           </div>
 
-          <div className="bg-surface rounded-lg shadow-sm border border-neutral-200 p-6 space-y-4">
+          <div className="admin-card p-6 space-y-4">
             <div className="space-y-3">
               <div>
                 <h2 className="text-lg font-semibold text">Add Product</h2>
@@ -384,7 +376,7 @@ export default function AdminBakeDayDetail() {
                   <select
                     value={formProductId}
                     onChange={(e) => setFormProductId(e.target.value)}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                    className="input-base px-3"
                   >
                     <option value="">Select a product</option>
                     {filteredAvailableProductsForAdd.map((product) => (
@@ -405,7 +397,7 @@ export default function AdminBakeDayDetail() {
                     value={formQuantityLimit}
                     onChange={(e) => setFormQuantityLimit(e.target.value)}
                     placeholder="Leave blank for no limit"
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-strong"
+                    className="input-base px-3"
                   />
                   <p className="text-xs text-secondary mt-1">
                     Enter a cap or keep empty for unlimited.
@@ -415,8 +407,8 @@ export default function AdminBakeDayDetail() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className={`w-full py-2 rounded-lg text-white font-medium transition-colors ${
-                    saving ? 'bg-brand cursor-not-allowed' : 'bg-brand-strong hover:bg-brand'
+                  className={`btn-primary w-full ${
+                    saving ? 'cursor-not-allowed opacity-50' : ''
                   }`}
                 >
                   {saving ? 'Adding...' : 'Add to Bake Day'}

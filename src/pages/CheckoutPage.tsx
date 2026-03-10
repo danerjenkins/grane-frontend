@@ -215,7 +215,7 @@ export default function CheckoutPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <div className="h-12 w-12 rounded-2xl bg-amber-100 text-amber-700 grid place-items-center">
+        <div className="grid h-12 w-12 place-items-center rounded-2xl bg-warning-soft text-warning">
           <ShoppingBag className="h-6 w-6" />
         </div>
         <div>
@@ -226,9 +226,9 @@ export default function CheckoutPage() {
 
       {/* Global Error Message */}
       {globalError && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-red-700 mt-0.5" />
-          <p className="text-red-800 font-semibold">{globalError}</p>
+        <div className="banner banner-error mb-6 flex items-start gap-3 rounded-xl p-4">
+          <AlertCircle className="h-5 w-5 mt-0.5" />
+          <p className="font-semibold">{globalError}</p>
         </div>
       )}
 
@@ -239,7 +239,7 @@ export default function CheckoutPage() {
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
         {/* Customer Information */}
         <div className="space-y-6">
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <div className="surface-card p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-xl font-semibold">Your Information</h2>
@@ -250,7 +250,7 @@ export default function CheckoutPage() {
               {isLoggedIn && (
                 <button
                   onClick={handleSignOut}
-                  className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                  className="inline-flex items-center gap-2 link-info"
                   title="Sign out to use different information"
                 >
                   <LogOut className="h-4 w-4" />
@@ -263,21 +263,21 @@ export default function CheckoutPage() {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <label className="block font-semibold">
-                  Name <span className="text-red-500">*</span>
+                  Name <span className="text-danger">*</span>
                 </label>
                 {touched.name && validateName(customerName) && (
-                  <BadgeCheck className="h-4 w-4 text-green-600" />
+                  <BadgeCheck className="h-4 w-4 text-success" />
                 )}
               </div>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary" />
                 <input
-                  className={`border rounded-xl p-3 pl-9 w-full transition ${
+                  className={`w-full rounded-xl border p-3 pl-9 transition ${
                     touched.name
                       ? validateName(customerName)
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-red-500 bg-red-50'
-                      : 'border-gray-300'
+                        ? 'field-valid'
+                        : 'field-invalid'
+                      : 'field-default'
                   } ${isLoggedIn ? 'bg-muted cursor-not-allowed' : ''}`}
                   type="text"
                   value={customerName}
@@ -288,7 +288,7 @@ export default function CheckoutPage() {
                 />
               </div>
               {errors.name && (
-                <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+                <p className="feedback-error">
                   <AlertCircle className="h-4 w-4" /> {errors.name}
                 </p>
               )}
@@ -301,21 +301,21 @@ export default function CheckoutPage() {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <label className="block font-semibold">
-                  Email <span className="text-red-500">*</span>
+                  Email <span className="text-danger">*</span>
                 </label>
                 {touched.email && validateEmail(customerEmail) && (
-                  <BadgeCheck className="h-4 w-4 text-green-600" />
+                  <BadgeCheck className="h-4 w-4 text-success" />
                 )}
               </div>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary" />
                 <input
-                  className={`border rounded-xl p-3 pl-9 w-full transition ${
+                  className={`w-full rounded-xl border p-3 pl-9 transition ${
                     touched.email
                       ? validateEmail(customerEmail)
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-red-500 bg-red-50'
-                      : 'border-gray-300'
+                        ? 'field-valid'
+                        : 'field-invalid'
+                      : 'field-default'
                   } ${isLoggedIn ? 'bg-muted cursor-not-allowed' : ''}`}
                   type="email"
                   value={customerEmail}
@@ -326,7 +326,7 @@ export default function CheckoutPage() {
                 />
               </div>
               {errors.email && (
-                <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+                <p className="feedback-error">
                   <AlertCircle className="h-4 w-4" /> {errors.email}
                 </p>
               )}
@@ -339,21 +339,21 @@ export default function CheckoutPage() {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <label className="block font-semibold">
-                  Phone <span className="text-red-500">*</span>
+                  Phone <span className="text-danger">*</span>
                 </label>
                 {touched.phone && validatePhone(customerPhone) && (
-                  <BadgeCheck className="h-4 w-4 text-green-600" />
+                  <BadgeCheck className="h-4 w-4 text-success" />
                 )}
               </div>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary" />
                 <input
-                  className={`border rounded-xl p-3 pl-9 w-full transition ${
+                  className={`w-full rounded-xl border p-3 pl-9 transition ${
                     touched.phone
                       ? validatePhone(customerPhone)
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-red-500 bg-red-50'
-                      : 'border-gray-300'
+                        ? 'field-valid'
+                        : 'field-invalid'
+                      : 'field-default'
                   } ${isLoggedIn ? 'bg-muted cursor-not-allowed' : ''}`}
                   type="tel"
                   value={customerPhone}
@@ -364,7 +364,7 @@ export default function CheckoutPage() {
                 />
               </div>
               {errors.phone && (
-                <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+                <p className="feedback-error">
                   <AlertCircle className="h-4 w-4" /> {errors.phone}
                 </p>
               )}
@@ -379,7 +379,7 @@ export default function CheckoutPage() {
               <div className="relative">
                 <StickyNote className="absolute left-3 top-4 h-4 w-4 text-secondary" />
                 <textarea
-                  className="border border-gray-300 rounded-xl p-3 pl-9 w-full"
+                  className="input-base rounded-xl pl-9"
                   rows={3}
                   value={orderNote}
                   onChange={(e) => setOrderNote(e.target.value)}
@@ -393,7 +393,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Cart Items */}
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <div className="surface-card p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold">Your Items</h2>
@@ -406,7 +406,7 @@ export default function CheckoutPage() {
                       clearCart();
                     }
                   }}
-                  className="inline-flex items-center gap-2 text-sm text-red-600 hover:text-red-800 hover:underline"
+                  className="inline-flex items-center gap-2 link-danger"
                 >
                   <Trash2 className="h-4 w-4" />
                   Clear Cart
@@ -472,12 +472,12 @@ export default function CheckoutPage() {
 
         {/* Summary */}
         <div className="space-y-6">
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <div className="surface-card p-6">
             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
             {/* Bake Day Info */}
-            <div className="mb-6 rounded-xl bg-amber-50 p-4">
-              <div className="flex items-center gap-2 text-amber-900 font-semibold mb-2">
+            <div className="banner banner-warning mb-6 rounded-xl p-4">
+              <div className="mb-2 flex items-center gap-2 font-semibold">
                 <CalendarDays className="h-4 w-4" />
                 <span>
                   Bake Day:{' '}
@@ -511,7 +511,7 @@ export default function CheckoutPage() {
               className={`mt-4 w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition ${
                 !isFormValid() || isSubmitting
                   ? 'bg-muted text-secondary cursor-not-allowed'
-                  : 'bg-text text-white hover:bg-text/90'
+                  : 'btn-neutral'
               }`}
             >
               <CreditCard className="h-5 w-5" />

@@ -477,18 +477,10 @@ export default function AdminOrders() {
   return (
     <main className="bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto space-y-6">
-        {pageSuccess && (
-          <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg">
-            {pageSuccess}
-          </div>
-        )}
+        {pageSuccess && <div className="banner banner-success">{pageSuccess}</div>}
 
         {/* Error banner */}
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-lg">
-            {error}
-          </div>
-        )}
+        {error && <div className="banner banner-error">{error}</div>}
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -499,20 +491,20 @@ export default function AdminOrders() {
         </div>
 
         {/* Filters */}
-        <div className="bg-surface border border-neutral-200 rounded-lg p-4 space-y-3 shadow-sm">
+        <div className="admin-card p-4 space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             <input
               type="text"
               placeholder="Search by order id, stripe session, customer, note"
               value={filters.search}
               onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
-              className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="input-base px-3"
             />
 
             <select
               value={filters.status}
               onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))}
-              className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="input-base px-3"
             >
               <option value="all">All statuses</option>
               <option value="pending">Pending</option>
@@ -523,7 +515,7 @@ export default function AdminOrders() {
             <select
               value={filters.stripeStatus}
               onChange={(e) => setFilters((f) => ({ ...f, stripeStatus: e.target.value }))}
-              className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="input-base px-3"
             >
               <option value="all">All Stripe statuses</option>
               <option value="paid">Paid</option>
@@ -535,7 +527,7 @@ export default function AdminOrders() {
             <select
               value={filters.bakeDayId}
               onChange={(e) => setFilters((f) => ({ ...f, bakeDayId: e.target.value }))}
-              className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="input-base px-3"
             >
               <option value="all">All bake days</option>
               {bakeDays.map((bd) => (
@@ -550,7 +542,7 @@ export default function AdminOrders() {
               onChange={(e) =>
                 setFilters((f) => ({ ...f, dateRange: e.target.value as DateFilter }))
               }
-              className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="input-base px-3"
             >
               <option value="all">All time</option>
               <option value="7d">Last 7 days</option>
@@ -568,7 +560,7 @@ export default function AdminOrders() {
         </div>
 
         {/* Table */}
-        <div className="bg-surface border border-neutral-200 rounded-lg shadow-sm overflow-hidden">
+        <div className="table-shell">
           {loading ? (
             <div className="p-8 text-center text-secondary">Loading orders...</div>
           ) : filtered.length === 0 ? (
@@ -576,33 +568,33 @@ export default function AdminOrders() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-muted border-b border-neutral-200">
+                <thead className="table-head">
                   <tr>
                     <th
-                      className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider cursor-pointer"
+                      className="table-head-cell cursor-pointer px-4"
                       onClick={toggleSort}
                     >
                       Created {sortDir === 'desc' ? '↓' : '↑'}
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                    <th className="table-head-cell px-4">
                       Order ID
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                    <th className="table-head-cell px-4">
                       Bake Day
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                    <th className="table-head-cell px-4">
                       User
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                    <th className="table-head-cell px-4">
                       Status
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                    <th className="table-head-cell px-4">
                       Stripe
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                    <th className="table-head-cell px-4">
                       Total
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-secondary uppercase tracking-wider">
+                    <th className="table-head-cell px-4 text-center">
                       Actions
                     </th>
                   </tr>
@@ -634,7 +626,7 @@ export default function AdminOrders() {
                             onBlur={() => setEditingStatusOrderId(null)}
                             disabled={statusUpdateLoading}
                             autoFocus
-                            className="text-sm px-2 py-1 border border-neutral-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="input-base px-2 py-1 text-sm"
                             onClick={(e) => e.stopPropagation()}
                           >
                             {statusOptions.map((status) => (
@@ -684,7 +676,7 @@ export default function AdminOrders() {
                       <td className="px-4 py-3">
                         <div className="flex justify-center">
                           <button
-                            className="px-3 py-1.5 bg-muted hover:bg-muted text-secondary text-sm font-medium rounded-lg transition-colors border border-neutral-300"
+                            className="btn-secondary text-sm"
                             onClick={(e) => {
                               e.stopPropagation();
                               openDetails(order.id);
@@ -706,20 +698,20 @@ export default function AdminOrders() {
       {/* Details Drawer */}
       {selectedOrderId && (
         <div
-          className="fixed inset-0 bg-black/40 z-50 flex justify-end"
+          className="fixed inset-0 z-50 flex justify-end bg-black/40"
           onClick={(e) => {
             if (e.target === e.currentTarget) closeDetails();
           }}
         >
-          <div className="w-full max-w-xl h-full bg-surface shadow-2xl border-l border-neutral-200 overflow-y-auto">
-            <div className="p-4 border-b border-neutral-200 flex items-center justify-between">
+          <div className="h-full w-full max-w-xl overflow-y-auto border-l border-neutral-200 bg-surface shadow-2xl">
+            <div className="flex items-center justify-between border-b border-neutral-200 p-4">
               <div>
                 <p className="text-sm text-secondary">Order</p>
                 <h2 className="text-2xl font-bold text">{selectedOrderId}</h2>
               </div>
               <button
                 onClick={closeDetails}
-                className="text-secondary hover:text-text px-3 py-1 rounded-lg hover:bg-muted"
+                className="btn-secondary px-3 py-1"
               >
                 Close
               </button>
@@ -730,20 +722,18 @@ export default function AdminOrders() {
             ) : selectedOrder ? (
               <div className="p-6 space-y-5">
                 {orderSuccess && (
-                  <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg">
-                    {orderSuccess}
-                  </div>
+                  <div className="banner banner-success">{orderSuccess}</div>
                 )}
 
                 {/* Summary */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-muted border border-neutral-200 rounded-lg p-4">
+                  <div className="admin-card bg-muted p-4">
                     <p className="text-sm text-secondary">Created</p>
                     <p className="text-lg font-semibold text">
                       {formatDate(selectedOrder.created_at)}
                     </p>
                   </div>
-                  <div className="bg-muted border border-neutral-200 rounded-lg p-4 col-span-2">
+                  <div className="admin-card col-span-2 bg-muted p-4">
                     <p className="text-sm text-secondary mb-1">Customer</p>
                     <div className="space-y-1">
                       {selectedOrder.user?.name && (
@@ -753,7 +743,7 @@ export default function AdminOrders() {
                         <span className="text-xs text-secondary">User ID:</span>
                         <Link
                           to={`/admin/accounts?userId=${selectedOrder.user?.id ?? selectedOrder.user_id}`}
-                          className="text-xs text-blue-600 hover:text-blue-800 hover:underline break-all"
+                          className="link-info break-all text-xs"
                         >
                           {selectedOrder.user?.id ?? selectedOrder.user_id}
                         </Link>
@@ -772,7 +762,7 @@ export default function AdminOrders() {
                     <select
                       value={orderForm.bake_day_id}
                       onChange={(e) => setOrderForm((f) => ({ ...f, bake_day_id: e.target.value }))}
-                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="input-base px-3"
                     >
                       <option value="">Unset</option>
                       {bakeDays.map((bd) => (
@@ -793,7 +783,7 @@ export default function AdminOrders() {
                       <select
                         value={orderForm.status}
                         onChange={(e) => setOrderForm((f) => ({ ...f, status: e.target.value }))}
-                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="input-base px-3"
                       >
                         <option value="">Select status...</option>
                         {statusOptions.map((status) => (
@@ -810,7 +800,7 @@ export default function AdminOrders() {
                         onChange={(e) =>
                           setOrderForm((f) => ({ ...f, stripe_status: e.target.value }))
                         }
-                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="input-base px-3"
                       >
                         <option value="">Select stripe status...</option>
                         {stripeStatusOptions.map((status) => (
@@ -836,7 +826,7 @@ export default function AdminOrders() {
                         onChange={(e) =>
                           setOrderForm((f) => ({ ...f, total_price: e.target.value }))
                         }
-                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="input-base px-3"
                       />
                     </div>
                     <div className="space-y-1">
@@ -848,7 +838,7 @@ export default function AdminOrders() {
                         onChange={(e) =>
                           setOrderForm((f) => ({ ...f, price_with_tax: e.target.value }))
                         }
-                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="input-base px-3"
                       />
                     </div>
                     <div className="space-y-1">
@@ -861,7 +851,7 @@ export default function AdminOrders() {
                             onChange={(e) =>
                               setOrderForm((f) => ({ ...f, stripeUnlocked: e.target.checked }))
                             }
-                            className="w-4 h-4 text-blue-600 border-neutral-300 rounded"
+                            className="input-check"
                           />
                           Unlock edit
                         </label>
@@ -873,7 +863,7 @@ export default function AdminOrders() {
                           setOrderForm((f) => ({ ...f, stripe_session_id: e.target.value }))
                         }
                         disabled={!orderForm.stripeUnlocked}
-                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-muted"
+                        className="input-base input-muted px-3 disabled:cursor-not-allowed disabled:opacity-80"
                       />
                     </div>
                   </div>
@@ -886,7 +876,7 @@ export default function AdminOrders() {
                     value={orderForm.customer_note}
                     onChange={(e) => setOrderForm((f) => ({ ...f, customer_note: e.target.value }))}
                     rows={4}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="input-base"
                   />
                 </section>
 
@@ -896,35 +886,33 @@ export default function AdminOrders() {
                     <h3 className="text-lg font-semibold text">Items</h3>
                     <button
                       onClick={openAddItem}
-                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      className="link-info"
                     >
                       + Add item
                     </button>
                   </div>
 
                   {itemError && (
-                    <div className="bg-red-100 border border-red-400 text-red-800 px-3 py-2 rounded-lg text-sm">
-                      {itemError}
-                    </div>
+                    <div className="banner banner-error text-sm">{itemError}</div>
                   )}
 
-                  <div className="bg-surface border border-neutral-200 rounded-lg overflow-hidden">
+                  <div className="table-shell">
                     <table className="w-full text-sm">
-                      <thead className="bg-muted border-b border-neutral-200">
+                      <thead className="table-head">
                         <tr>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                          <th className="table-head-cell px-3 py-2">
                             Product
                           </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                          <th className="table-head-cell px-3 py-2">
                             Qty
                           </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                          <th className="table-head-cell px-3 py-2">
                             Item price
                           </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
+                          <th className="table-head-cell px-3 py-2">
                             Line total
                           </th>
-                          <th className="px-3 py-2 text-right text-xs font-semibold text-secondary uppercase tracking-wider">
+                          <th className="table-head-cell px-3 py-2 text-right">
                             Actions
                           </th>
                         </tr>
@@ -949,13 +937,13 @@ export default function AdminOrders() {
                               </td>
                               <td className="px-3 py-2 text-right space-x-2">
                                 <button
-                                  className="text-blue-600 hover:text-blue-800 text-sm"
+                                  className="link-info"
                                   onClick={() => openEditItem(item)}
                                 >
                                   Edit
                                 </button>
                                 <button
-                                  className="text-red-600 hover:text-red-800 text-sm"
+                                  className="link-danger"
                                   onClick={() => handleDeleteItem(item)}
                                 >
                                   Delete
@@ -980,7 +968,7 @@ export default function AdminOrders() {
                   <button
                     onClick={handleSaveOrder}
                     disabled={!isOrderDirty || orderSaving}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {orderSaving ? 'Saving...' : 'Save changes'}
                   </button>
@@ -988,23 +976,23 @@ export default function AdminOrders() {
 
                 {/* Danger Zone */}
                 <section className="space-y-3">
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-red-800">Danger Zone</h3>
-                    <p className="text-sm text-red-700 mt-1">
+                  <div className="banner banner-error p-4">
+                    <h3 className="text-lg font-semibold">Danger Zone</h3>
+                    <p className="mt-1 text-sm">
                       Deleting an order removes the order and all its items. This cannot be undone.
                     </p>
                     {requiresFullId && (
-                      <p className="text-xs text-red-700 mt-1">
+                      <p className="mt-1 text-xs">
                         Warning: Stripe indicates this order is paid. Type the full order id to
                         confirm.
                       </p>
                     )}
 
                     <div className="mt-3 space-y-3">
-                      <label className="flex items-center gap-2 text-sm text-red-800">
+                      <label className="flex items-center gap-2 text-sm">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 text-red-600 border-red-300 rounded"
+                          className="input-check"
                           checked={deleteAck}
                           onChange={(e) => setDeleteAck(e.target.checked)}
                         />
@@ -1012,7 +1000,7 @@ export default function AdminOrders() {
                       </label>
 
                       <div className="space-y-1">
-                        <label className="text-sm text-red-800">
+                        <label className="text-sm">
                           Type <span className="">{requiredDeleteToken || 'order id'}</span> to
                           confirm
                         </label>
@@ -1020,7 +1008,7 @@ export default function AdminOrders() {
                           type="text"
                           value={deleteInput}
                           onChange={(e) => setDeleteInput(e.target.value)}
-                          className="w-full px-3 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                          className="input-base px-3"
                         />
                       </div>
 
@@ -1032,7 +1020,7 @@ export default function AdminOrders() {
                           !requiredDeleteToken ||
                           deleteInput.trim() !== requiredDeleteToken
                         }
-                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="btn-danger disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {deleteLoading ? 'Deleting...' : 'Delete Order'}
                       </button>
@@ -1050,19 +1038,19 @@ export default function AdminOrders() {
       {/* Item Modal */}
       {itemModalMode && (
         <div
-          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+          className="modal-backdrop"
           onClick={(e) => {
             if (e.target === e.currentTarget) closeItemModal();
           }}
         >
-          <div className="bg-surface rounded-lg shadow-2xl w-full max-w-lg">
-            <div className="p-4 border-b border-neutral-200 flex items-center justify-between">
+          <div className="modal-panel w-full max-w-lg">
+            <div className="flex items-center justify-between border-b border-neutral-200 p-4">
               <h3 className="text-lg font-semibold text">
                 {itemModalMode === 'add' ? 'Add item' : 'Edit item'}
               </h3>
               <button
                 onClick={closeItemModal}
-                className="text-secondary hover:text-text px-3 py-1 rounded-lg hover:bg-muted"
+                className="btn-secondary px-3 py-1"
               >
                 Close
               </button>
@@ -1073,7 +1061,7 @@ export default function AdminOrders() {
                 <select
                   value={itemForm.product_id}
                   onChange={(e) => setItemForm((f) => ({ ...f, product_id: e.target.value }))}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="input-base px-3"
                 >
                   <option value="">Select product</option>
                   {products.map((p) => (
@@ -1092,7 +1080,7 @@ export default function AdminOrders() {
                     min="1"
                     value={itemForm.quantity}
                     onChange={(e) => setItemForm((f) => ({ ...f, quantity: e.target.value }))}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="input-base px-3"
                   />
                 </div>
                 <div className="space-y-1">
@@ -1102,21 +1090,19 @@ export default function AdminOrders() {
                     step="0.01"
                     value={itemForm.item_price}
                     onChange={(e) => setItemForm((f) => ({ ...f, item_price: e.target.value }))}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="input-base px-3"
                   />
                 </div>
               </div>
 
               {itemError && (
-                <div className="bg-red-100 border border-red-400 text-red-800 px-3 py-2 rounded-lg text-sm">
-                  {itemError}
-                </div>
+                <div className="banner banner-error text-sm">{itemError}</div>
               )}
 
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   onClick={closeItemModal}
-                  className="px-4 py-2 border border-neutral-300 rounded-lg text-secondary hover:bg-muted"
+                  className="btn-secondary"
                   disabled={itemSaving}
                 >
                   Cancel
@@ -1124,7 +1110,7 @@ export default function AdminOrders() {
                 <button
                   onClick={handleSaveItem}
                   disabled={itemSaving}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  className="btn-primary disabled:opacity-50"
                 >
                   {itemSaving ? 'Saving...' : 'Save item'}
                 </button>
@@ -1139,7 +1125,7 @@ export default function AdminOrders() {
 
 function SummaryCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-surface border border-neutral-200 rounded-lg p-4 shadow-sm">
+    <div className="admin-card p-4">
       <p className="text-sm text-secondary">{label}</p>
       <p className="text-2xl font-bold text">{value}</p>
     </div>
@@ -1154,14 +1140,14 @@ function Badge({
   children: ReactNode;
 }) {
   const toneClasses = {
-    green: 'bg-green-100 text-green-800',
-    amber: 'bg-amber-100 text-amber-800',
+    green: 'bg-success-soft text-success',
+    amber: 'bg-warning-soft text-warning',
     gray: 'bg-muted text-text',
-    blue: 'bg-blue-100 text-blue-800',
+    blue: 'bg-info-soft text-info',
   };
 
   return (
-    <span className={`px-2 py-1 text-xs font-semibold rounded ${toneClasses[tone]}`}>
+    <span className={`status-chip ${toneClasses[tone]}`}>
       {children}
     </span>
   );

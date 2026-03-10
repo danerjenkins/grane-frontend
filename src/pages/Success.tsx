@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { CheckCircle2 } from 'lucide-react';
 import { getOrderBySessionId, type Order } from '../api/orders';
 import { useCart } from '../context/CartContext';
 import PickupInfoCard from '../components/PickupInfoCard';
@@ -20,17 +21,16 @@ export default function Success() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const session_id = searchParams.get('session_id');
+  const sessionId = searchParams.get('session_id');
 
   useEffect(() => {
-    if (!session_id) {
+    if (!sessionId) {
       setError('Session ID missing.');
       setLoading(false);
       return;
     }
 
-    // First, confirm payment status with backend
-    fetch(`${import.meta.env.VITE_API_URL}/checkout/confirm/${session_id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/checkout/confirm/${sessionId}`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to confirm payment');
         return res.json();
@@ -44,23 +44,22 @@ export default function Success() {
         setError('Failed to confirm your payment. Please contact support.');
       })
       .finally(() => {
-        // Then fetch order details from Supabase via frontend API
-        getOrderBySessionId(session_id)
+        getOrderBySessionId(sessionId)
           .then((data) => setOrder(data))
           .catch((err) => {
             console.error('Error loading order:', err);
-            if (!error) setError('Failed to load order details.');
+            setError((current) => current ?? 'Failed to load order details.');
           })
           .finally(() => setLoading(false));
       });
-  }, [session_id]);
+  }, [clearCart, sessionId]);
 
-  if (!session_id) {
+  if (!sessionId) {
     return (
       <main className="min-h-screen bg-muted px-6 py-10">
-        <div className="max-w-xl mx-auto text-center">
+        <div className="mx-auto max-w-xl text-center">
           <p className="text-secondary">Session ID missing.</p>
-          <Link to="/" className="mt-4 inline-block text-blue-600 hover:underline">
+          <Link to="/" className="mt-4 inline-block text-info hover:underline">
             Return Home
           </Link>
         </div>
@@ -71,30 +70,26 @@ export default function Success() {
   return (
     <main className="min-h-screen bg-muted px-6 py-10">
       {loading ? (
-        <div className="max-w-xl mx-auto text-center">
+        <div className="mx-auto max-w-xl text-center">
           <p className="text-secondary">Confirming your order...</p>
         </div>
       ) : error ? (
-        <div className="max-w-xl mx-auto bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-2">Something went wrong</h1>
+        <div className="banner banner-error mx-auto max-w-xl p-6 text-center">
+          <h1 className="mb-2 text-2xl font-bold">Something went wrong</h1>
           <p className="text-text">{error}</p>
-          <p className="text-sm text-secondary mt-4">
+          <p className="mt-4 text-sm text-secondary">
             Please contact us at (702) 767-3350 or check your email for more information.
           </p>
-          <Link
-            to="/"
-            className="mt-6 inline-block bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
-          >
+          <Link to="/" className="btn-neutral mt-6 inline-block px-6">
             Return Home
           </Link>
         </div>
       ) : confirmResponse && order ? (
-        <div className="max-w-xl mx-auto">
-          {/* Confirmation Banner */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8 text-center">
-            <div className="text-5xl mb-3">✓</div>
-            <h1 className="text-3xl font-bold text-green-700 mb-2">Order Confirmed!</h1>
-            <p className="text-text mb-3">
+        <div className="mx-auto max-w-xl">
+          <div className="banner banner-success mb-8 p-6 text-center">
+            <CheckCircle2 className="mx-auto mb-3 h-12 w-12" />
+            <h1 className="mb-2 text-3xl font-bold">Order Confirmed!</h1>
+            <p className="mb-3 text-text">
               Your order will be ready for home pickup on your selected bake day.
             </p>
             <p className="text-sm text-secondary">
@@ -106,18 +101,17 @@ export default function Success() {
             <PickupInfoCard bakeDayDate={order.bake_days?.[0]?.date ?? null} variant="success" />
           </div>
 
-          {/* Order Details */}
-          <div className="bg-surface shadow-sm rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+          <div className="admin-card mb-6 p-6">
+            <h2 className="mb-4 text-xl font-semibold">Order Summary</h2>
 
             {order.user?.name && (
-              <p className="text-text mb-3">
+              <p className="mb-3 text-text">
                 <span className="font-semibold">Name:</span> {order.user.name}
               </p>
             )}
 
             {order.bake_days?.[0]?.date && (
-              <p className="text-text mb-3">
+              <p className="mb-3 text-text">
                 <span className="font-semibold">Bake Day:</span>{' '}
                 {new Date(order.bake_days[0].date).toLocaleDateString('en-US', {
                   weekday: 'long',
@@ -130,11 +124,11 @@ export default function Success() {
 
             <hr className="my-4" />
 
-            <h3 className="font-semibold mb-3">Items</h3>
-            <div className="space-y-3 mb-4">
+            <h3 className="mb-3 font-semibold">Items</h3>
+            <div className="mb-4 space-y-3">
               {(order.order_items ?? []).map((item) => (
                 <div key={item.id} className="flex items-center gap-3 text-sm">
-                  <span className="font-medium">{item.quantity}×</span>
+                  <span className="font-medium">{item.quantity}x</span>
                   <span className="flex-1">{item.product?.name}</span>
                   <span className="text-secondary">
                     ${((item.item_price ?? 0) * item.quantity).toFixed(2)}
@@ -150,16 +144,15 @@ export default function Success() {
             </div>
 
             {order.customer_note && (
-              <div className="mt-4 p-3 bg-gray-50 rounded text-sm">
-                <p className="font-semibold text-text mb-1">Order Note:</p>
+              <div className="mt-4 rounded bg-muted p-3 text-sm">
+                <p className="mb-1 font-semibold text-text">Order Note:</p>
                 <p className="text-secondary">{order.customer_note}</p>
               </div>
             )}
           </div>
 
-          {/* Next Steps */}
-          <div className="bg-brand-soft border border-brand-soft rounded-lg p-6 mb-6">
-            <h3 className="font-semibold text-brand-strong mb-3">What's Next?</h3>
+          <div className="mb-6 rounded-lg border border-brand-soft bg-brand-soft p-6">
+            <h3 className="mb-3 font-semibold text-brand-strong">What's Next?</h3>
             <ul className="space-y-2 text-sm text-brand-strong">
               <li className="flex gap-2">
                 <span className="font-bold">1.</span>
@@ -176,26 +169,19 @@ export default function Success() {
             </ul>
           </div>
 
-          {/* CTA */}
           <div className="flex flex-col gap-3">
-            <Link
-              to="/about#faq"
-              className="bg-gray-100 text-text py-3 text-center rounded-lg hover:bg-muted transition font-medium"
-            >
+            <Link to="/about#faq" className="btn-secondary py-3 text-center">
               Questions? Check our FAQ
             </Link>
-            <Link
-              to="/"
-              className="bg-black text-white py-3 text-center rounded-lg hover:bg-gray-800 transition font-medium"
-            >
+            <Link to="/" className="btn-neutral py-3 text-center">
               Return Home
             </Link>
           </div>
         </div>
       ) : (
-        <div className="max-w-xl mx-auto text-center">
+        <div className="mx-auto max-w-xl text-center">
           <p className="text-secondary">Order not found.</p>
-          <Link to="/" className="mt-4 inline-block text-blue-600 hover:underline">
+          <Link to="/" className="mt-4 inline-block text-info hover:underline">
             Return Home
           </Link>
         </div>

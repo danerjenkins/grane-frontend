@@ -55,14 +55,14 @@ export default function AdminRoute({ children }: { children: JSX.Element }) {
   if (state === 'unauthorized') {
     return (
       <main className="min-h-screen bg-muted flex items-center justify-center px-4 py-10">
-        <div className="max-w-md bg-white rounded-lg shadow-sm border p-8 text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-2">Not Authorized</h1>
+        <div className="admin-card max-w-md p-8 text-center">
+          <h1 className="text-2xl font-bold text-danger mb-2">Not Authorized</h1>
           <p className="text-text mb-6">You do not have permission to access this page.</p>
 
           <div className="space-y-3">
             <Link
               to="/"
-              className="block bg-text text-white px-4 py-2 rounded-lg hover:bg-secondary transition"
+              className="btn-neutral block"
             >
               Return Home
             </Link>

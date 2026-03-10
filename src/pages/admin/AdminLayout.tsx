@@ -30,7 +30,7 @@ export default function AdminLayout() {
     <div className="flex h-full min-h-0 bg-muted">
       {/* Sidebar - Hidden on mobile, visible on desktop */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-neutral-200 text transform transition-transform duration-300 lg:relative lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-neutral-200 bg-surface text transition-transform duration-300 lg:relative lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -38,7 +38,7 @@ export default function AdminLayout() {
           {/* Header */}
           <Link
             to="/admin"
-            className="block p-6 border-b border-neutral-200 hover:bg-neutral-50 transition-colors"
+            className="block border-b border-neutral-200 p-6 transition-colors hover:bg-neutral-50"
             onClick={() => setSidebarOpen(false)}
           >
             <h1 className="text-xl font-bold text">Admin Panel</h1>
@@ -54,8 +54,8 @@ export default function AdminLayout() {
                 end={link.path === '/admin'}
                 onClick={() => setSidebarOpen(false)}
                 className={({ isActive }) =>
-                  `block px-4 py-2 rounded-lg transition-colors ${
-                    isActive ? 'bg-neutral-900 text-white' : 'text-neutral-700 hover:bg-neutral-100'
+                  `block rounded-lg px-4 py-2 transition-colors ${
+                    isActive ? 'bg-text text-white' : 'text-secondary hover:bg-muted hover:text-text'
                   }`
                 }
               >
@@ -68,7 +68,7 @@ export default function AdminLayout() {
           <div className="p-4 border-t border-neutral-200">
             <button
               onClick={handleSignOut}
-              className="w-full bg-neutral-900 hover:bg-neutral-800 text-white px-4 py-2 rounded-lg transition-colors"
+              className="btn-neutral w-full"
             >
               Sign Out
             </button>
@@ -79,7 +79,7 @@ export default function AdminLayout() {
       {/* Main Content */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {/* Top Header - Mobile */}
-        <header className="lg:hidden bg-surface border-b border-neutral-200 px-4 py-3 flex items-center justify-between">
+        <header className="flex items-center justify-between border-b border-neutral-200 bg-surface px-4 py-3 lg:hidden">
           <Link
             to="/admin"
             className="hover:opacity-80 transition-opacity"
@@ -90,7 +90,7 @@ export default function AdminLayout() {
           </Link>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+            className="btn-secondary p-2"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import ProductImage from '../components/ProductImage';
 import { getProductById } from '../api/products';
 import { useCart } from '../context/CartContext';
-import ProductImage from '../components/ProductImage';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -34,60 +34,50 @@ export default function ProductDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading)
+  if (loading) {
     return (
       <main className="px-6 py-10 text-center">
         <p className="text-secondary">Loading...</p>
       </main>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <main className="px-6 py-10 text-center">
-        <p className="text-red-500">{error}</p>
+        <p className="banner banner-error inline-block">{error}</p>
       </main>
     );
+  }
 
   return (
     <main className="min-h-screen bg-muted px-4 py-10">
-      <div className="mx-auto max-w-4xl bg-surface rounded-2xl shadow p-6 md:p-10">
-        {/* Back Button */}
+      <div className="surface-card mx-auto max-w-4xl p-6 md:p-10">
         <button
           onClick={() => navigate(-1)}
-          className="text-sm text-secondary hover:text-text mb-6"
+          className="mb-6 text-sm text-secondary transition hover:text-text"
         >
-          ← Back
+          Back
         </button>
 
-        {/* Content Layout */}
-        <div className="grid md:grid-cols-2 gap-10">
-          {/* Product Image */}
+        <div className="grid gap-10 md:grid-cols-2">
           <ProductImage
             imageUrl={product.image_url}
             alt={product.name}
-            className="rounded-xl w-full h-80 object-cover shadow-sm"
+            className="h-80 w-full rounded-xl object-cover shadow-sm"
             placeholderSize="large"
           />
 
-          {/* Product Info */}
           <div>
-            <h1 className="text-3xl font-bold mb-3">{product.name}</h1>
+            <h1 className="mb-3 text-3xl font-bold">{product.name}</h1>
+            <p className="mb-6 leading-relaxed text-secondary">{product.description}</p>
+            <p className="mb-8 text-2xl font-semibold text-text">${product.price.toFixed(2)}</p>
 
-            <p className="text-secondary mb-6 leading-relaxed">{product.description}</p>
-
-            <p className="text-2xl font-semibold text-text mb-8">
-              ${product.price.toFixed(2)}
-            </p>
-
-            {/* CTA */}
-            <a
-              href="/bake-days"
-              className="inline-block bg-black text-white px-6 py-3 rounded-xl text-center font-medium hover:bg-muted transition w-full"
-            >
+            <a href="/bake-days" className="btn-neutral block w-full rounded-xl px-6 py-3 text-center">
               Order on Bake Days Page
             </a>
 
-            <p className="text-xs text-secondary mt-3 text-center">
+            <p className="mt-3 text-center text-xs text-secondary">
               {friendlySelectedBakeDay
                 ? `Your selected bake day: ${friendlySelectedBakeDay}`
                 : 'Choose a bake day to order.'}

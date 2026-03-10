@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Wheat, Sparkles, RefreshCw } from 'lucide-react';
+import { RefreshCw, Sparkles, Wheat } from 'lucide-react';
 
 type ErrorPageProps = {
   title?: string;
@@ -10,19 +10,31 @@ type ErrorPageProps = {
 function getDefaults(statusCode?: number) {
   if (statusCode === 500) {
     return {
-      title: 'We’ll be back with warm bread soon.',
+      title: "We'll be back with warm bread soon.",
       message:
-        'Something went a little off in the kitchen. Give us a moment, and we’ll have things ready again.',
+        "Something went a little off in the kitchen. Give us a moment, and we'll have things ready again.",
       statusCode: 500,
     };
   }
 
   return {
-    title: 'This page didn’t rise.',
+    title: "This page didn't rise.",
     message:
-      'Looks like this page isn’t here. The oven’s warm though — let’s get you back to fresh bread.',
+      "Looks like this page isn't here. The oven is warm though, let's get you back to fresh bread.",
     statusCode: statusCode ?? 404,
   };
+}
+
+function QuickLink({ to, children }: { to: string; children: string }) {
+  return (
+    <Link
+      to={to}
+      className="flex items-center justify-between rounded-xl border border-neutral-200 bg-surface px-4 py-3 text-sm font-semibold text-text transition hover:bg-muted"
+    >
+      {children}
+      <span aria-hidden="true">→</span>
+    </Link>
+  );
 }
 
 export default function ErrorPage({ title, message, statusCode }: ErrorPageProps) {
@@ -51,7 +63,7 @@ export default function ErrorPage({ title, message, statusCode }: ErrorPageProps
 
       <div className="relative mx-auto max-w-3xl">
         <div className="mb-10 flex items-center justify-center">
-          <div className="flex items-center gap-3 rounded-full border border-white/70 bg-white/80 px-4 py-2 shadow-sm">
+          <div className="surface-card flex items-center gap-3 rounded-full bg-surface/80 px-4 py-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-brand-strong">
               <Wheat className="h-5 w-5" aria-hidden="true" />
             </div>
@@ -64,15 +76,13 @@ export default function ErrorPage({ title, message, statusCode }: ErrorPageProps
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/70 bg-white/90 p-8 shadow-xl md:p-12">
+        <div className="surface-card rounded-3xl bg-surface/90 p-8 shadow-xl md:p-12">
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-brand-strong">
               <Sparkles className="h-4 w-4" aria-hidden="true" />
               Error {resolvedCode}
             </span>
-            <span className="text-xs font-semibold text-secondary">
-              We saved your spot in line.
-            </span>
+            <span className="text-xs font-semibold text-secondary">We saved your spot in line.</span>
           </div>
 
           <h1 className="mt-6 text-4xl font-bold tracking-tight md:text-5xl">{resolvedTitle}</h1>
@@ -81,7 +91,7 @@ export default function ErrorPage({ title, message, statusCode }: ErrorPageProps
           </p>
 
           <div className="mt-8 grid gap-6 md:grid-cols-[1.1fr_0.9fr]">
-            <div className="rounded-2xl bg-muted/70 p-6">
+            <div className="surface-card bg-muted/70 p-6">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-secondary">
                 Helpful next steps
               </p>
@@ -95,54 +105,30 @@ export default function ErrorPage({ title, message, statusCode }: ErrorPageProps
               </ul>
             </div>
 
-            <div className="rounded-2xl border border-dashed border-neutral-200 bg-surface p-6">
+            <div className="surface-card rounded-2xl border-dashed p-6">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-secondary">
                 Popular paths
               </p>
               <div className="mt-4 space-y-3">
-                <Link
-                  to="/"
-                  className="flex items-center justify-between rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-text transition hover:bg-muted"
-                >
-                  Back to Home
-                  <span aria-hidden="true">→</span>
-                </Link>
-                <Link
-                  to="/bake-days"
-                  className="flex items-center justify-between rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-text transition hover:bg-muted"
-                >
-                  Browse Bake Days
-                  <span aria-hidden="true">→</span>
-                </Link>
-                <Link
-                  to="/about#contact"
-                  className="flex items-center justify-between rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-text transition hover:bg-muted"
-                >
-                  Contact Grane
-                  <span aria-hidden="true">→</span>
-                </Link>
+                <QuickLink to="/">Back to Home</QuickLink>
+                <QuickLink to="/bake-days">Browse Bake Days</QuickLink>
+                <QuickLink to="/about#contact">Contact Grane</QuickLink>
               </div>
             </div>
           </div>
 
           <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-            <Link
-              to="/"
-              className="inline-flex items-center justify-center rounded-xl bg-text px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-text/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong"
-            >
+            <Link to="/" className="btn-neutral rounded-xl px-6 py-3 text-base">
               Take me home
             </Link>
-            <Link
-              to="/bake-days"
-              className="inline-flex items-center justify-center rounded-xl border border-neutral-200 bg-surface px-6 py-3 text-base font-semibold text-text shadow-sm transition hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong"
-            >
+            <Link to="/bake-days" className="btn-secondary rounded-xl px-6 py-3 text-base">
               Order fresh bread
             </Link>
             {isServerError ? (
               <button
                 type="button"
                 onClick={() => navigate(0)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-5 py-3 text-base font-semibold text-text shadow-sm transition hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong"
+                className="btn-secondary inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-base"
               >
                 <RefreshCw className="h-4 w-4" aria-hidden="true" />
                 Reload

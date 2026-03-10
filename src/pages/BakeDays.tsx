@@ -149,7 +149,7 @@ export default function BakeDaysPage() {
         <div
           className="
           pointer-events-none absolute left-1/2 top-full z-20 w-40 -translate-x-1/2 
-          rounded-md bg-text px-3 py-2 text-xs text-white opacity-0 
+          btn-neutral rounded-md px-3 py-2 text-xs opacity-0 
           shadow-lg transition-opacity duration-200 group-hover:opacity-100 
         "
         >
@@ -179,7 +179,7 @@ export default function BakeDaysPage() {
         <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:justify-center">
           {/* Calendar Card */}
           <section className="w-full max-w-xl">
-            <div className="rounded-3xl border bg-surface p-6 shadow-sm">
+            <div className="surface-card rounded-3xl p-6">
               <div className="mb-6 flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-semibold text-text">Bake Day Calendar</h2>
@@ -236,19 +236,6 @@ export default function BakeDaysPage() {
                 <div className="mt-6 h-2 w-48 overflow-hidden rounded-full bg-muted">
                   <div className="h-full animate-loading-bar bg-brand-strong/40" />
                 </div>
-
-                <style>
-                  {`
-                    @keyframes loadingBar {
-                      0% { transform: translateX(-100%); }
-                      50% { transform: translateX(0%); }
-                      100% { transform: translateX(100%); }
-                    }
-                    .animate-loading-bar {
-                      animation: loadingBar 1.5s infinite;
-                    }
-                  `}
-                </style>
               </div>
             ) : selectedBakeDayRecord ? (
               <div className="space-y-6">
@@ -258,7 +245,7 @@ export default function BakeDaysPage() {
                 </div>
                 {/* Toast */}
                 {addedMessage && (
-                  <div className="mb-6 flex items-center justify-center gap-2 rounded-lg bg-green-100 px-4 py-3 text-center text-sm font-medium text-green-800 shadow-sm">
+                  <div className="banner banner-success mb-6 flex items-center justify-center gap-2 text-center text-sm font-medium shadow-sm">
                     <CheckCircle2 className="h-4 w-4" />
                     {addedMessage}
                   </div>
@@ -378,14 +365,11 @@ export default function BakeDaysPage() {
                               // Create the button element
                               const button = (
                                 <button
-                                  className={`
-          mt-3 w-full rounded-lg px-4 py-3 text-base font-medium transition-colors
-          ${
-            deadlineStatus === 'too-close'
-              ? 'bg-muted text-secondary cursor-not-allowed'
-              : 'bg-text text-white hover:bg-text/90'
-          }
-        `}
+                                  className={`mt-3 w-full rounded-lg px-4 py-3 text-base font-medium transition-colors ${
+                                    deadlineStatus === 'too-close'
+                                      ? 'cursor-not-allowed bg-muted text-secondary'
+                                      : 'btn-neutral'
+                                  }`}
                                   disabled={deadlineStatus === 'too-close'}
                                   onClick={() => {
                                     if (deadlineStatus === 'too-close') return;

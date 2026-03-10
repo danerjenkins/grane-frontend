@@ -24,17 +24,21 @@ const Navbar = () => {
     return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
-  const desktopNavLinkClass = (path: string, isAdminLink = false) =>
+  const desktopNavLinkClass = (isAdminLink = false) =>
     [
-      isAdminLink ? 'text-brand-strong hover:text-brand font-semibold' : 'text-text hover:text-secondary',
+      isAdminLink
+        ? 'text-brand-strong hover:text-brand font-semibold'
+        : 'text-text hover:text-secondary',
       'font-medium text-base tracking-wide transition-colors relative group pb-1',
     ]
       .filter(Boolean)
       .join(' ');
 
-  const mobileNavLinkClass = (path: string, isAdminLink = false) =>
+  const mobileNavLinkClass = (isAdminLink = false) =>
     [
-      isAdminLink ? 'text-brand-strong hover:text-brand font-semibold' : 'text-text hover:text-secondary',
+      isAdminLink
+        ? 'text-brand-strong hover:text-brand font-semibold'
+        : 'text-text hover:text-secondary',
       'text-base transition-colors hover:translate-x-1 transform',
     ]
       .filter(Boolean)
@@ -159,10 +163,7 @@ const Navbar = () => {
 
           {/* DESKTOP MENU + DESKTOP CART */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link
-              to="/"
-              className={desktopNavLinkClass('/')}
-            >
+            <Link to="/" className={desktopNavLinkClass()}>
               Home
               <span
                 className={`absolute bottom-0 left-0 h-0.5 transition-all ${
@@ -170,38 +171,25 @@ const Navbar = () => {
                 }`}
               ></span>
             </Link>
-            <Link
-              to="/about"
-              className={desktopNavLinkClass('/about')}
-            >
+            <Link to="/about" className={desktopNavLinkClass()}>
               About Grane
               <span
                 className={`absolute bottom-0 left-0 h-0.5 transition-all ${
-                  isActiveRoute('/about')
-                    ? 'w-full bg-text'
-                    : 'w-0 bg-text group-hover:w-full'
+                  isActiveRoute('/about') ? 'w-full bg-text' : 'w-0 bg-text group-hover:w-full'
                 }`}
               ></span>
             </Link>
-            <Link
-              to="/bake-days"
-              className={desktopNavLinkClass('/bake-days')}
-            >
+            <Link to="/bake-days" className={desktopNavLinkClass()}>
               Order
               <span
                 className={`absolute bottom-0 left-0 h-0.5 transition-all ${
-                  isActiveRoute('/bake-days')
-                    ? 'w-full bg-text'
-                    : 'w-0 bg-text group-hover:w-full'
+                  isActiveRoute('/bake-days') ? 'w-full bg-text' : 'w-0 bg-text group-hover:w-full'
                 }`}
               ></span>
             </Link>
 
             {isLoggedIn && !sessionLoading && (
-              <Link
-                to="/my-orders"
-                className={desktopNavLinkClass('/my-orders')}
-              >
+              <Link to="/my-orders" className={desktopNavLinkClass()}>
                 My Orders
                 <span
                   className={`absolute bottom-0 left-0 h-0.5 transition-all ${
@@ -215,10 +203,7 @@ const Navbar = () => {
 
             {/* Admin Link */}
             {isUserAdmin && !sessionLoading && (
-              <Link
-                to="/admin"
-                className={desktopNavLinkClass('/admin', true)}
-              >
+              <Link to="/admin" className={desktopNavLinkClass(true)}>
                 Admin
                 <span
                   className={`absolute bottom-0 left-0 h-0.5 transition-all ${
@@ -335,45 +320,25 @@ const Navbar = () => {
       {/* MOBILE MENU ITEMS */}
       {isOpen && (
         <div className="mt-6 flex flex-col space-y-4 md:hidden pb-4 border-t border-neutral-200 pt-4">
-          <Link
-            to="/"
-            className={mobileNavLinkClass('/')}
-            onClick={() => setIsOpen(false)}
-          >
+          <Link to="/" className={mobileNavLinkClass()} onClick={() => setIsOpen(false)}>
             Home
           </Link>
-          <Link
-            to="/about"
-            className={mobileNavLinkClass('/about')}
-            onClick={() => setIsOpen(false)}
-          >
+          <Link to="/about" className={mobileNavLinkClass()} onClick={() => setIsOpen(false)}>
             About Grane
           </Link>
-          <Link
-            to="/bake-days"
-            className={mobileNavLinkClass('/bake-days')}
-            onClick={() => setIsOpen(false)}
-          >
+          <Link to="/bake-days" className={mobileNavLinkClass()} onClick={() => setIsOpen(false)}>
             Order
           </Link>
 
           {isLoggedIn && !sessionLoading && (
-            <Link
-              to="/my-orders"
-              className={mobileNavLinkClass('/my-orders')}
-              onClick={() => setIsOpen(false)}
-            >
+            <Link to="/my-orders" className={mobileNavLinkClass()} onClick={() => setIsOpen(false)}>
               My Orders
             </Link>
           )}
 
           {/* Admin Link */}
           {isUserAdmin && !sessionLoading && (
-            <Link
-              to="/admin"
-              className={mobileNavLinkClass('/admin', true)}
-              onClick={() => setIsOpen(false)}
-            >
+            <Link to="/admin" className={mobileNavLinkClass(true)} onClick={() => setIsOpen(false)}>
               Admin
             </Link>
           )}

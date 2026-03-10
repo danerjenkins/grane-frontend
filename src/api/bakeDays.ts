@@ -19,6 +19,7 @@ export interface BakeDayProduct {
 export interface BakeDay {
   id: string;
   date: string;
+  is_published: boolean;
   bake_day_products: BakeDayProduct[];
 }
 
@@ -29,6 +30,7 @@ export async function getBakeDays(): Promise<BakeDay[]> {
       `
       id,
       date,
+      is_published,
       bake_day_products (
         id,
         quantity_limit,
@@ -44,6 +46,7 @@ export async function getBakeDays(): Promise<BakeDay[]> {
       )
     `
     )
+    .eq('is_published', true)
     .order('date', { ascending: true });
 
   if (error) {

@@ -123,8 +123,7 @@ export default function BakeDayTileCalendar({
           const inMonth = date.getMonth() === currentMonth.getMonth();
           const status = dayStatusByYmd[ymd] ?? 'inactive';
           const selected = sameLocalDay(value, date);
-          const isAvailable = status === 'available';
-          const isClickable = inMonth && isAvailable;
+          const isClickable = inMonth;
 
           const baseClasses =
             'w-full aspect-square rounded-xl border text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:ring-offset-2 focus-visible:ring-offset-surface';

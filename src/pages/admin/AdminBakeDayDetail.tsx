@@ -219,7 +219,7 @@ export default function AdminBakeDayDetail() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-muted px-6 py-10">
+      <main className="bg-muted px-6 py-10">
         <div className="max-w-6xl mx-auto text-secondary">Loading bake day...</div>
       </main>
     );
@@ -227,14 +227,14 @@ export default function AdminBakeDayDetail() {
 
   if (!bakeDayId || !bakeDay) {
     return (
-      <main className="min-h-screen bg-muted px-6 py-10">
+      <main className="bg-muted px-6 py-10">
         <div className="max-w-6xl mx-auto text-red-700">Bake day not found.</div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-muted px-6 py-10">
+    <main className="bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Banners */}
         {error && (

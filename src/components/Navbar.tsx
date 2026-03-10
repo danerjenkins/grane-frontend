@@ -17,6 +17,29 @@ const Navbar = () => {
   const { cartQuantity } = useCart();
   const location = useLocation();
 
+  const isActiveRoute = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+  };
+
+  const desktopNavLinkClass = (path: string, isAdminLink = false) =>
+    [
+      isAdminLink ? 'text-brand-strong hover:text-brand font-semibold' : 'text-text hover:text-secondary',
+      'font-medium text-base tracking-wide transition-colors relative group pb-1',
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+  const mobileNavLinkClass = (path: string, isAdminLink = false) =>
+    [
+      isAdminLink ? 'text-brand-strong hover:text-brand font-semibold' : 'text-text hover:text-secondary',
+      'text-base transition-colors hover:translate-x-1 transform',
+    ]
+      .filter(Boolean)
+      .join(' ');
+
   // Check session on mount and when location changes
   useEffect(() => {
     const checkSession = async () => {
@@ -139,33 +162,55 @@ const Navbar = () => {
             {/* <Link to="/menu" className="nav-link">Menu</Link>*/}
             <Link
               to="/"
-              className="text-text font-medium text-base tracking-wide hover:text-secondary transition-colors relative group"
+              className={desktopNavLinkClass('/')}
             >
               Home
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 transition-all ${
+                  isActiveRoute('/') ? 'w-full bg-text' : 'w-0 bg-text group-hover:w-full'
+                }`}
+              ></span>
             </Link>
             <Link
               to="/about"
-              className="text-text font-medium text-base tracking-wide hover:text-secondary transition-colors relative group"
+              className={desktopNavLinkClass('/about')}
             >
               About Grane
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 transition-all ${
+                  isActiveRoute('/about')
+                    ? 'w-full bg-text'
+                    : 'w-0 bg-text group-hover:w-full'
+                }`}
+              ></span>
             </Link>
             <Link
               to="/bake-days"
-              className="text-text font-semibold text-base tracking-wide hover:text-secondary transition-colors relative group"
+              className={desktopNavLinkClass('/bake-days')}
             >
               Order
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 transition-all ${
+                  isActiveRoute('/bake-days')
+                    ? 'w-full bg-text'
+                    : 'w-0 bg-text group-hover:w-full'
+                }`}
+              ></span>
             </Link>
 
             {isLoggedIn && !sessionLoading && (
               <Link
                 to="/my-orders"
-                className="text-text font-medium text-base tracking-wide hover:text-secondary transition-colors relative group"
+                className={desktopNavLinkClass('/my-orders')}
               >
                 My Orders
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text transition-all group-hover:w-full"></span>
+                <span
+                  className={`absolute bottom-0 left-0 h-0.5 transition-all ${
+                    isActiveRoute('/my-orders')
+                      ? 'w-full bg-text'
+                      : 'w-0 bg-text group-hover:w-full'
+                  }`}
+                ></span>
               </Link>
             )}
 
@@ -173,10 +218,16 @@ const Navbar = () => {
             {isUserAdmin && !sessionLoading && (
               <Link
                 to="/admin"
-                className="text-brand-strong font-semibold text-base tracking-wide hover:text-brand transition-colors relative group"
+                className={desktopNavLinkClass('/admin', true)}
               >
                 Admin
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-strong transition-all group-hover:w-full"></span>
+                <span
+                  className={`absolute bottom-0 left-0 h-0.5 transition-all ${
+                    isActiveRoute('/admin')
+                      ? 'w-full bg-brand-strong'
+                      : 'w-0 bg-brand-strong group-hover:w-full'
+                  }`}
+                ></span>
               </Link>
             )}
 
@@ -287,21 +338,21 @@ const Navbar = () => {
         <div className="mt-6 flex flex-col space-y-4 md:hidden pb-4 border-t border-neutral-200 pt-4">
           <Link
             to="/"
-            className="text-text font-medium text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
+            className={mobileNavLinkClass('/')}
             onClick={() => setIsOpen(false)}
           >
             Home
           </Link>
           <Link
             to="/about"
-            className="text-text font-medium text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
+            className={mobileNavLinkClass('/about')}
             onClick={() => setIsOpen(false)}
           >
             About Grane
           </Link>
           <Link
             to="/bake-days"
-            className="text-text font-semibold text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
+            className={mobileNavLinkClass('/bake-days')}
             onClick={() => setIsOpen(false)}
           >
             Order
@@ -310,7 +361,7 @@ const Navbar = () => {
           {isLoggedIn && !sessionLoading && (
             <Link
               to="/my-orders"
-              className="text-text font-medium text-base hover:text-secondary transition-colors hover:translate-x-1 transform"
+              className={mobileNavLinkClass('/my-orders')}
               onClick={() => setIsOpen(false)}
             >
               My Orders
@@ -321,7 +372,7 @@ const Navbar = () => {
           {isUserAdmin && !sessionLoading && (
             <Link
               to="/admin"
-              className="text-brand-strong font-semibold text-base hover:text-brand transition-colors hover:translate-x-1 transform"
+              className={mobileNavLinkClass('/admin', true)}
               onClick={() => setIsOpen(false)}
             >
               Admin

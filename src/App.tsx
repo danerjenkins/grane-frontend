@@ -48,10 +48,11 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-800">
+    <div className="flex min-h-screen flex-col bg-neutral-50 text-neutral-800">
       <Navbar />
 
-      <Routes>
+      <div className="flex-1 min-h-0">
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/why-bake-days" element={<About />} />
@@ -93,7 +94,8 @@ export default function App() {
         <Route path="/success" element={<Success />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="*" element={<ErrorPage statusCode={404} />} />
-      </Routes>
+        </Routes>
+      </div>
     </div>
   );
 }

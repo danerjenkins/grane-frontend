@@ -245,7 +245,7 @@ export default function AdminBakeDays() {
   };
 
   return (
-    <main className="min-h-screen bg-muted px-6 py-10">
+    <main className="bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto">
         {/* Banners */}
         {error && (

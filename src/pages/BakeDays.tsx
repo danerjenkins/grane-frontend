@@ -67,11 +67,22 @@ export default function BakeDaysPage() {
     return new Date(y, m - 1, d); // <-- Local time, no UTC shift
   }
 
+  const getCalendarDayStatus = (bakeDayStr: string): DayStatus => {
+    const bakeDay = toLocalDateFromYMD(bakeDayStr);
+    const today = new Date();
+
+    bakeDay.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    const diffDays = (bakeDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+
+    return diffDays <= 2 ? 'closed' : 'available';
+  };
+
   const dayStatusByYmd = useMemo<Record<string, DayStatus>>(() => {
     const map: Record<string, DayStatus> = {};
     bakeDays.forEach((b) => {
-      const hasAvailable = b.bake_day_products?.some((p) => p.available) ?? false;
-      map[b.date] = hasAvailable ? 'available' : 'closed';
+      map[b.date] = getCalendarDayStatus(b.date);
     });
     return map;
   }, [bakeDays]);
@@ -114,7 +125,10 @@ export default function BakeDaysPage() {
   const getOrderDeadlineStatus = (bakeDayStr: string | undefined) => {
     if (!bakeDayStr) return null;
 
-    const bakeDay = new Date(bakeDayStr);
+    const status = getCalendarDayStatus(bakeDayStr);
+    if (status === 'closed') return 'too-close';
+
+    const bakeDay = toLocalDateFromYMD(bakeDayStr);
     const today = new Date();
 
     bakeDay.setHours(0, 0, 0, 0);
@@ -122,7 +136,6 @@ export default function BakeDaysPage() {
 
     const diffDays = (bakeDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
 
-    if (diffDays <= 2) return 'too-close'; // too late
     if (diffDays <= 4) return 'soon'; // nearing deadline
 
     return null; // no tooltip
@@ -196,10 +209,10 @@ export default function BakeDaysPage() {
                 }}
               />
 
-              <div className="mt-5 flex items-start gap-2 text-sm text-secondary">
-                <InfoIcon />
-                <p>Golden highlights mean a bake day is open with available products.</p>
-              </div>
+                <div className="mt-5 flex items-start gap-2 text-sm text-secondary">
+                  <InfoIcon />
+                  <p>Golden highlights are published bake days that are still open for ordering.</p>
+                </div>
 
               {/* Selected date badge */}
               {friendlySelectedDate && (

@@ -27,7 +27,7 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="flex h-screen bg-muted">
+    <div className="flex h-full min-h-0 bg-muted">
       {/* Sidebar - Hidden on mobile, visible on desktop */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-neutral-200 text transform transition-transform duration-300 lg:relative lg:translate-x-0 ${
@@ -76,7 +76,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {/* Top Header - Mobile */}
         <header className="lg:hidden bg-surface border-b border-neutral-200 px-4 py-3 flex items-center justify-between">
           <Link

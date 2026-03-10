@@ -475,7 +475,7 @@ export default function AdminOrders() {
   };
 
   return (
-    <main className="min-h-screen bg-muted px-6 py-10">
+    <main className="bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto space-y-6">
         {pageSuccess && (
           <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg">

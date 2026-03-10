@@ -150,7 +150,7 @@ export default function AdminHome() {
   ];
 
   return (
-    <main className="min-h-screen bg-muted px-6 py-10">
+    <main className="bg-muted px-6 py-10">
       <div className="max-w-6xl mx-auto">
         {/* Title */}
         <div className="mb-12">

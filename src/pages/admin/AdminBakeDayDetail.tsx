@@ -10,14 +10,15 @@ import {
 } from '../../api/admin/bakeDayProductsAdmin';
 import { listProducts } from '../../api/admin/productsAdmin';
 import type { BakeDay, BakeDayProductWithProduct, Product } from '../../api/admin/types';
+import { parseAppDate } from '../../utils/dates';
 
 function shortId(id: string) {
   return id.slice(0, 8);
 }
 
 function formatDate(dateString: string) {
-  const parsed = new Date(dateString);
-  if (Number.isNaN(parsed.getTime())) return dateString;
+  const parsed = parseAppDate(dateString);
+  if (!parsed) return dateString;
   return parsed.toLocaleDateString(undefined, {
     weekday: 'short',
     year: 'numeric',
@@ -228,7 +229,9 @@ export default function AdminBakeDayDetail() {
   if (!bakeDayId || !bakeDay) {
     return (
       <main className="bg-muted px-6 py-10">
-        <div className="mx-auto max-w-6xl banner banner-error inline-block">Bake day not found.</div>
+        <div className="mx-auto max-w-6xl banner banner-error inline-block">
+          Bake day not found.
+        </div>
       </main>
     );
   }
@@ -277,18 +280,10 @@ export default function AdminBakeDayDetail() {
                 <table className="w-full">
                   <thead className="table-head">
                     <tr>
-                      <th className="table-head-cell">
-                        Product
-                      </th>
-                      <th className="table-head-cell">
-                        Limit
-                      </th>
-                      <th className="table-head-cell">
-                        Sold
-                      </th>
-                      <th className="table-head-cell text-center">
-                        Actions
-                      </th>
+                      <th className="table-head-cell">Product</th>
+                      <th className="table-head-cell">Limit</th>
+                      <th className="table-head-cell">Sold</th>
+                      <th className="table-head-cell text-center">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-200">
@@ -326,11 +321,11 @@ export default function AdminBakeDayDetail() {
                             <button
                               onClick={() => handleUpdateRow(dp.id)}
                               disabled={updatingId === dp.id}
-                               className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors ${
-                                 updatingId === dp.id
-                                    ? 'bg-brand-soft text-brand cursor-not-allowed'
-                                   : 'btn-primary'
-                               }`}
+                              className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors ${
+                                updatingId === dp.id
+                                  ? 'bg-brand-soft text-brand cursor-not-allowed'
+                                  : 'btn-primary'
+                              }`}
                               title={updatingId === dp.id ? 'Saving...' : 'Save changes'}
                             >
                               <Save size={14} />
@@ -341,11 +336,11 @@ export default function AdminBakeDayDetail() {
                             <button
                               onClick={() => handleDeleteRow(dp.id)}
                               disabled={deletingId === dp.id}
-                               className={`inline-flex items-center justify-center rounded-md px-2.5 py-1.5 transition-colors ${
-                                 deletingId === dp.id
-                                   ? 'cursor-not-allowed bg-danger-soft text-danger/50'
-                                   : 'btn-danger-soft'
-                               }`}
+                              className={`inline-flex items-center justify-center rounded-md px-2.5 py-1.5 transition-colors ${
+                                deletingId === dp.id
+                                  ? 'cursor-not-allowed bg-danger-soft text-danger/50'
+                                  : 'btn-danger-soft'
+                              }`}
                               title={deletingId === dp.id ? 'Removing...' : 'Remove product'}
                             >
                               <Trash2 size={14} />
@@ -407,9 +402,7 @@ export default function AdminBakeDayDetail() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className={`btn-primary w-full ${
-                    saving ? 'cursor-not-allowed opacity-50' : ''
-                  }`}
+                  className={`btn-primary w-full ${saving ? 'cursor-not-allowed opacity-50' : ''}`}
                 >
                   {saving ? 'Adding...' : 'Add to Bake Day'}
                 </button>

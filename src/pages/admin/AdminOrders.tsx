@@ -12,6 +12,7 @@ import {
 import { listBakeDays } from '../../api/admin/bakeDaysAdmin';
 import { listProducts } from '../../api/admin/productsAdmin';
 import type { BakeDay, OrderItem, OrderWithItems, Product } from '../../api/admin/types';
+import { parseAppDate } from '../../utils/dates';
 
 type SortDir = 'asc' | 'desc';
 type DateFilter = '7d' | '30d' | 'all';
@@ -248,8 +249,8 @@ export default function AdminOrders() {
   const shortId = (id: string | null | undefined) => (id ? id.slice(0, 8) : '—');
 
   const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return isNaN(date.getTime()) ? '—' : date.toLocaleDateString();
+    const date = parseAppDate(dateStr);
+    return !date ? '—' : date.toLocaleDateString();
   };
 
   const parseNullableNumber = (value: string) => {
@@ -570,33 +571,16 @@ export default function AdminOrders() {
               <table className="w-full">
                 <thead className="table-head">
                   <tr>
-                    <th
-                      className="table-head-cell cursor-pointer px-4"
-                      onClick={toggleSort}
-                    >
+                    <th className="table-head-cell cursor-pointer px-4" onClick={toggleSort}>
                       Created {sortDir === 'desc' ? '↓' : '↑'}
                     </th>
-                    <th className="table-head-cell px-4">
-                      Order ID
-                    </th>
-                    <th className="table-head-cell px-4">
-                      Bake Day
-                    </th>
-                    <th className="table-head-cell px-4">
-                      User
-                    </th>
-                    <th className="table-head-cell px-4">
-                      Status
-                    </th>
-                    <th className="table-head-cell px-4">
-                      Stripe
-                    </th>
-                    <th className="table-head-cell px-4">
-                      Total
-                    </th>
-                    <th className="table-head-cell px-4 text-center">
-                      Actions
-                    </th>
+                    <th className="table-head-cell px-4">Order ID</th>
+                    <th className="table-head-cell px-4">Bake Day</th>
+                    <th className="table-head-cell px-4">User</th>
+                    <th className="table-head-cell px-4">Status</th>
+                    <th className="table-head-cell px-4">Stripe</th>
+                    <th className="table-head-cell px-4">Total</th>
+                    <th className="table-head-cell px-4 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-200">
@@ -709,10 +693,7 @@ export default function AdminOrders() {
                 <p className="text-sm text-secondary">Order</p>
                 <h2 className="text-2xl font-bold text">{selectedOrderId}</h2>
               </div>
-              <button
-                onClick={closeDetails}
-                className="btn-secondary px-3 py-1"
-              >
+              <button onClick={closeDetails} className="btn-secondary px-3 py-1">
                 Close
               </button>
             </div>
@@ -721,9 +702,7 @@ export default function AdminOrders() {
               <div className="p-6 text-secondary">Loading details...</div>
             ) : selectedOrder ? (
               <div className="p-6 space-y-5">
-                {orderSuccess && (
-                  <div className="banner banner-success">{orderSuccess}</div>
-                )}
+                {orderSuccess && <div className="banner banner-success">{orderSuccess}</div>}
 
                 {/* Summary */}
                 <div className="grid grid-cols-2 gap-3">
@@ -884,37 +863,22 @@ export default function AdminOrders() {
                 <section className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text">Items</h3>
-                    <button
-                      onClick={openAddItem}
-                      className="link-info"
-                    >
+                    <button onClick={openAddItem} className="link-info">
                       + Add item
                     </button>
                   </div>
 
-                  {itemError && (
-                    <div className="banner banner-error text-sm">{itemError}</div>
-                  )}
+                  {itemError && <div className="banner banner-error text-sm">{itemError}</div>}
 
                   <div className="table-shell">
                     <table className="w-full text-sm">
                       <thead className="table-head">
                         <tr>
-                          <th className="table-head-cell px-3 py-2">
-                            Product
-                          </th>
-                          <th className="table-head-cell px-3 py-2">
-                            Qty
-                          </th>
-                          <th className="table-head-cell px-3 py-2">
-                            Item price
-                          </th>
-                          <th className="table-head-cell px-3 py-2">
-                            Line total
-                          </th>
-                          <th className="table-head-cell px-3 py-2 text-right">
-                            Actions
-                          </th>
+                          <th className="table-head-cell px-3 py-2">Product</th>
+                          <th className="table-head-cell px-3 py-2">Qty</th>
+                          <th className="table-head-cell px-3 py-2">Item price</th>
+                          <th className="table-head-cell px-3 py-2">Line total</th>
+                          <th className="table-head-cell px-3 py-2 text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-neutral-200">
@@ -936,10 +900,7 @@ export default function AdminOrders() {
                                 {lineTotal === '—' ? '—' : `$${lineTotal}`}
                               </td>
                               <td className="px-3 py-2 text-right space-x-2">
-                                <button
-                                  className="link-info"
-                                  onClick={() => openEditItem(item)}
-                                >
+                                <button className="link-info" onClick={() => openEditItem(item)}>
                                   Edit
                                 </button>
                                 <button
@@ -1048,10 +1009,7 @@ export default function AdminOrders() {
               <h3 className="text-lg font-semibold text">
                 {itemModalMode === 'add' ? 'Add item' : 'Edit item'}
               </h3>
-              <button
-                onClick={closeItemModal}
-                className="btn-secondary px-3 py-1"
-              >
+              <button onClick={closeItemModal} className="btn-secondary px-3 py-1">
                 Close
               </button>
             </div>
@@ -1095,16 +1053,10 @@ export default function AdminOrders() {
                 </div>
               </div>
 
-              {itemError && (
-                <div className="banner banner-error text-sm">{itemError}</div>
-              )}
+              {itemError && <div className="banner banner-error text-sm">{itemError}</div>}
 
               <div className="flex justify-end gap-3 pt-2">
-                <button
-                  onClick={closeItemModal}
-                  className="btn-secondary"
-                  disabled={itemSaving}
-                >
+                <button onClick={closeItemModal} className="btn-secondary" disabled={itemSaving}>
                   Cancel
                 </button>
                 <button
@@ -1146,9 +1098,5 @@ function Badge({
     blue: 'bg-info-soft text-info',
   };
 
-  return (
-    <span className={`status-chip ${toneClasses[tone]}`}>
-      {children}
-    </span>
-  );
+  return <span className={`status-chip ${toneClasses[tone]}`}>{children}</span>;
 }

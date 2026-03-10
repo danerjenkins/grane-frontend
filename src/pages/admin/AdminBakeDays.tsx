@@ -9,6 +9,7 @@ import {
 } from '../../api/admin/bakeDaysAdmin';
 import { listBakeDayProductsByBakeDayId } from '../../api/admin/bakeDayProductsAdmin';
 import type { BakeDay, BakeDayProductWithProduct } from '../../api/admin/types';
+import { parseAppDate } from '../../utils/dates';
 
 type ModalMode = 'create' | 'edit' | null;
 type BakeDayStatus = 'Draft' | 'Published' | 'Announced';
@@ -18,14 +19,19 @@ function shortId(id: string) {
 }
 
 function formatDate(dateString: string) {
-  const parsed = new Date(dateString);
-  if (Number.isNaN(parsed.getTime())) return dateString;
+  const parsed = parseAppDate(dateString);
+  if (!parsed) return dateString;
   return parsed.toLocaleDateString(undefined, {
     weekday: 'short',
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   });
+}
+
+function getDateTime(dateString: string) {
+  const parsed = parseAppDate(dateString);
+  return parsed ? parsed.getTime() : Number.NEGATIVE_INFINITY;
 }
 
 function getStatus(day: BakeDay): BakeDayStatus {
@@ -73,7 +79,7 @@ export default function AdminBakeDays() {
   }, []);
 
   const sortedBakeDays = useMemo(() => {
-    return [...bakeDays].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return [...bakeDays].sort((a, b) => getDateTime(b.date) - getDateTime(a.date));
   }, [bakeDays]);
 
   const upcomingBakeDay = useMemo(() => {
@@ -81,8 +87,8 @@ export default function AdminBakeDays() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const upcoming = [...bakeDays]
-      .filter((day) => new Date(day.date).getTime() >= today.getTime())
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      .filter((day) => getDateTime(day.date) >= today.getTime())
+      .sort((a, b) => getDateTime(a.date) - getDateTime(b.date));
     return upcoming[0] ?? null;
   }, [bakeDays]);
 
@@ -116,7 +122,7 @@ export default function AdminBakeDays() {
     return () => {
       active = false;
     };
-  }, [upcomingBakeDay?.id]);
+  }, [upcomingBakeDay]);
 
   const loadBakeDays = async () => {
     try {
@@ -248,24 +254,13 @@ export default function AdminBakeDays() {
     <main className="bg-muted px-6 py-10">
       <div className="max-w-7xl mx-auto">
         {/* Banners */}
-        {error && (
-          <div className="banner banner-error mb-4">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="banner banner-success mb-4">
-            {success}
-          </div>
-        )}
+        {error && <div className="banner banner-error mb-4">{error}</div>}
+        {success && <div className="banner banner-success mb-4">{success}</div>}
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <h1 className="text-4xl font-bold text-text">Bake Days</h1>
-          <button
-            onClick={openCreateModal}
-            className="btn-primary-lg"
-          >
+          <button onClick={openCreateModal} className="btn-primary-lg">
             New Bake Day
           </button>
         </div>
@@ -293,11 +288,7 @@ export default function AdminBakeDays() {
           </div>
 
           <div className="p-6">
-            {upcomingError && (
-              <div className="banner banner-error mb-4">
-                {upcomingError}
-              </div>
-            )}
+            {upcomingError && <div className="banner banner-error mb-4">{upcomingError}</div>}
 
             {!upcomingBakeDay ? (
               <div className="text-sm text-secondary">
@@ -356,18 +347,10 @@ export default function AdminBakeDays() {
               <table className="w-full">
                 <thead className="table-head">
                   <tr>
-                     <th className="table-head-cell">
-                      Date
-                    </th>
-                     <th className="table-head-cell">
-                      ID
-                    </th>
-                     <th className="table-head-cell">
-                      Status
-                    </th>
-                     <th className="table-head-cell text-center">
-                      Actions
-                    </th>
+                    <th className="table-head-cell">Date</th>
+                    <th className="table-head-cell">ID</th>
+                    <th className="table-head-cell">Status</th>
+                    <th className="table-head-cell text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-200">
@@ -452,11 +435,7 @@ export default function AdminBakeDays() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {modalError && (
-                <div className="banner banner-error">
-                  {modalError}
-                </div>
-              )}
+              {modalError && <div className="banner banner-error">{modalError}</div>}
 
               <div>
                 <label
@@ -476,19 +455,13 @@ export default function AdminBakeDays() {
               </div>
 
               <div className="flex items-center justify-end space-x-2 pt-2">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="btn-secondary"
-                >
+                <button type="button" onClick={closeModal} className="btn-secondary">
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className={`btn-neutral ${
-                    saving ? 'cursor-not-allowed opacity-50' : ''
-                  }`}
+                  className={`btn-neutral ${saving ? 'cursor-not-allowed opacity-50' : ''}`}
                 >
                   {saving ? 'Saving...' : modalMode === 'create' ? 'Create' : 'Save Changes'}
                 </button>
@@ -515,11 +488,7 @@ export default function AdminBakeDays() {
             </div>
 
             <div className="p-6 space-y-4">
-              {publishError && (
-                <div className="banner banner-error">
-                  {publishError}
-                </div>
-              )}
+              {publishError && <div className="banner banner-error">{publishError}</div>}
 
               <div className="text-sm text-secondary">
                 Date: {formatDate(publishingBakeDay.date)}
@@ -539,11 +508,7 @@ export default function AdminBakeDays() {
             </div>
 
             <div className="flex items-center justify-end gap-2 px-6 pb-6">
-              <button
-                type="button"
-                onClick={closePublishModal}
-                className="btn-secondary"
-              >
+              <button type="button" onClick={closePublishModal} className="btn-secondary">
                 Cancel
               </button>
               <button

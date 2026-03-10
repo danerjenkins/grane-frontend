@@ -16,14 +16,15 @@ import {
 } from '../../api/admin/userRolesAdmin';
 import { getSession } from '../../api/auth';
 import type { UserRow } from '../../api/admin/types';
+import { parseAppDate } from '../../utils/dates';
 
 function shortId(id: string) {
   return id.slice(0, 8);
 }
 
 function formatDate(dateString: string) {
-  const parsed = new Date(dateString);
-  if (Number.isNaN(parsed.getTime())) return dateString;
+  const parsed = parseAppDate(dateString);
+  if (!parsed) return dateString;
   return parsed.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
@@ -329,10 +330,7 @@ export default function AdminAccounts() {
             <h1 className="text-4xl font-bold text">Accounts</h1>
             <p className="text-secondary mt-1">Manage customers and admins</p>
           </div>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="btn-primary"
-          >
+          <button onClick={() => setShowCreateModal(true)} className="btn-primary">
             + Create Account
           </button>
         </div>
@@ -361,24 +359,12 @@ export default function AdminAccounts() {
               <table className="w-full">
                 <thead className="table-head">
                   <tr>
-                    <th className="table-head-cell">
-                      Name
-                    </th>
-                    <th className="table-head-cell">
-                      Email
-                    </th>
-                    <th className="table-head-cell">
-                      Phone
-                    </th>
-                    <th className="table-head-cell">
-                      Roles
-                    </th>
-                    <th className="table-head-cell">
-                      Created
-                    </th>
-                    <th className="table-head-cell text-right">
-                      Actions
-                    </th>
+                    <th className="table-head-cell">Name</th>
+                    <th className="table-head-cell">Email</th>
+                    <th className="table-head-cell">Phone</th>
+                    <th className="table-head-cell">Roles</th>
+                    <th className="table-head-cell">Created</th>
+                    <th className="table-head-cell text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-200">
@@ -401,9 +387,7 @@ export default function AdminAccounts() {
                               <span
                                 key={role}
                                 className={`status-chip ${
-                                  role === 'admin'
-                                    ? 'bg-info-soft text-info'
-                                    : 'bg-muted text-text'
+                                  role === 'admin' ? 'bg-info-soft text-info' : 'bg-muted text-text'
                                 }`}
                               >
                                 {role}
@@ -457,19 +441,14 @@ export default function AdminAccounts() {
                   {selectedUser ? shortId(selectedUser.id) : selectedUserId}
                 </p>
               </div>
-              <button
-                onClick={closeDrawer}
-                className="btn-secondary px-3 py-1"
-              >
+              <button onClick={closeDrawer} className="btn-secondary px-3 py-1">
                 Close
               </button>
             </div>
 
             {/* Drawer Content */}
             <div className="p-6 space-y-6">
-              {drawerError && (
-                <div className="banner banner-error">{drawerError}</div>
-              )}
+              {drawerError && <div className="banner banner-error">{drawerError}</div>}
 
               {drawerLoading ? (
                 <div className="text-secondary">Loading user details...</div>
@@ -487,7 +466,7 @@ export default function AdminAccounts() {
                           type="text"
                           value={editName}
                           onChange={(e) => handleProfileChange('name', e.target.value)}
-                           className="input-base text-sm"
+                          className="input-base text-sm"
                         />
                       </div>
                       <div>
@@ -498,7 +477,7 @@ export default function AdminAccounts() {
                           type="email"
                           value={editEmail}
                           onChange={(e) => handleProfileChange('email', e.target.value)}
-                           className="input-base text-sm"
+                          className="input-base text-sm"
                         />
                       </div>
                       <div>
@@ -519,9 +498,7 @@ export default function AdminAccounts() {
                         onClick={handleSaveProfile}
                         disabled={!profileDirty || profileSaving}
                         className={`btn-primary text-sm ${
-                          !profileDirty || profileSaving
-                            ? 'cursor-not-allowed opacity-50'
-                            : ''
+                          !profileDirty || profileSaving ? 'cursor-not-allowed opacity-50' : ''
                         }`}
                       >
                         {profileSaving ? 'Saving...' : 'Save Changes'}
@@ -570,10 +547,7 @@ export default function AdminAccounts() {
                       {userRoles.length > 0 ? (
                         <div className="flex flex-wrap gap-2">
                           {userRoles.map((role) => (
-                            <span
-                              key={role}
-                               className="status-chip bg-info-soft text-sm text-info"
-                            >
+                            <span key={role} className="status-chip bg-info-soft text-sm text-info">
                               {role}
                             </span>
                           ))}
@@ -650,9 +624,7 @@ export default function AdminAccounts() {
                             onClick={handleDeleteProfileRow}
                             disabled={!canDelete || isDeleting}
                             className={`btn-danger w-full text-sm ${
-                              !canDelete || isDeleting
-                                ? 'cursor-not-allowed opacity-50'
-                                : ''
+                              !canDelete || isDeleting ? 'cursor-not-allowed opacity-50' : ''
                             }`}
                           >
                             {isDeleting ? 'Deleting Profile...' : 'Delete User Profile Row'}
@@ -681,17 +653,12 @@ export default function AdminAccounts() {
           <div className="modal-panel w-full max-w-md">
             <div className="flex items-center justify-between border-b border-neutral-200 p-4">
               <h3 className="text-lg font-semibold text">Create Account</h3>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="btn-secondary px-3 py-1"
-              >
+              <button onClick={() => setShowCreateModal(false)} className="btn-secondary px-3 py-1">
                 Close
               </button>
             </div>
             <div className="p-4 space-y-4">
-              {createError && (
-                <div className="banner banner-error text-sm">{createError}</div>
-              )}
+              {createError && <div className="banner banner-error text-sm">{createError}</div>}
 
               <div>
                 <label className="block text-sm font-semibold text-secondary mb-1">

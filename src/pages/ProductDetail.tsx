@@ -1,25 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProductImage from '../components/ProductImage';
-import { getProductById } from '../api/products';
+import { getProductById, type Product } from '../api/products';
 import { useCart } from '../context/CartContext';
+import { parseAppDate } from '../utils/dates';
 
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { selectedBakeDay } = useCart();
 
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const friendlySelectedBakeDay = selectedBakeDay
-    ? new Date(`${selectedBakeDay.date}T00:00:00`).toLocaleDateString(undefined, {
+    ? (parseAppDate(selectedBakeDay.date)?.toLocaleDateString(undefined, {
         weekday: 'long',
         month: 'long',
         day: 'numeric',
         year: 'numeric',
-      })
+      }) ?? selectedBakeDay.date)
     : null;
 
   useEffect(() => {
@@ -73,7 +74,10 @@ export default function ProductDetail() {
             <p className="mb-6 leading-relaxed text-secondary">{product.description}</p>
             <p className="mb-8 text-2xl font-semibold text-text">${product.price.toFixed(2)}</p>
 
-            <a href="/bake-days" className="btn-neutral block w-full rounded-xl px-6 py-3 text-center">
+            <a
+              href="/bake-days"
+              className="btn-neutral block w-full rounded-xl px-6 py-3 text-center"
+            >
               Order on Bake Days Page
             </a>
 

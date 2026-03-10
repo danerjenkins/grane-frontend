@@ -4,6 +4,7 @@ import { useCart, type CartItem } from '../context/CartContext';
 import { getSession, signOut } from '../api/auth';
 import { getMyProfile } from '../api/profile';
 import PickupInfoCard from '../components/PickupInfoCard';
+import { formatBakeDay } from '../config/pickup';
 import {
   AlertCircle,
   BadgeCheck,
@@ -502,9 +503,7 @@ export default function CheckoutPage() {
                 <CalendarDays className="h-4 w-4" />
                 <span>
                   Bake Day:{' '}
-                  {selectedBakeDay
-                    ? new Date(selectedBakeDay.date).toLocaleDateString()
-                    : 'None selected'}
+                  {selectedBakeDay ? formatBakeDay(selectedBakeDay.date) : 'None selected'}
                 </span>
               </div>
               <div className="text-sm text-text space-y-2">

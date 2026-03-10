@@ -353,73 +353,49 @@ export default function About() {
         <div className="mx-auto max-w-3xl">
           <div className="text-center mb-10">
             <h2 className="text-4xl font-bold mb-3">Contact</h2>
-            <p className="text-lg text-secondary">The best way to reach me is by email.</p>
+            <p className="text-lg text-secondary">
+              The best way to reach me is by email for custom orders, questions, or pickup details.
+            </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
-            <form
-              className="rounded-2xl border border-neutral-200 bg-muted p-6 shadow-sm"
-              action="mailto:support@granebakery.com"
-              method="post"
-              encType="text/plain"
-            >
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-semibold text-text">
-                    Name
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    className="mt-2 w-full rounded-xl border border-neutral-200 bg-surface px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-strong"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-text">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    className="mt-2 w-full rounded-xl border border-neutral-200 bg-surface px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-strong"
-                    placeholder="you@email.com"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-semibold text-text">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={4}
-                    className="mt-2 w-full rounded-xl border border-neutral-200 bg-surface px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-strong"
-                    placeholder="How can I help?"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-text px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-text/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong"
-                >
-                  <Mail className="h-4 w-4" /> Send Email
-                </button>
-              </div>
-            </form>
-
-            <div className="rounded-2xl border border-neutral-200 bg-muted p-6 shadow-sm text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft text-brand-strong">
+            <div className="rounded-2xl border border-neutral-200 bg-muted p-8 shadow-sm">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft text-brand-strong">
                 <Mail className="h-5 w-5" />
               </div>
-              <p className="text-sm text-secondary mb-4">support@granebakery.com</p>
+              <h3 className="text-2xl font-semibold mb-3">Email Grane directly</h3>
+              <p className="text-secondary leading-relaxed mb-5">
+                Email is the fastest and most reliable way to reach me. If you have a custom order
+                idea, a question about bake days, or need help with an order, send me a note and
+                I&apos;ll get back to you there.
+              </p>
+              <div className="rounded-xl border border-neutral-200 bg-surface px-4 py-3 text-sm font-medium text-text mb-5">
+                support@granebakery.com
+              </div>
               <a
                 href="mailto:support@granebakery.com"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-text px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-text/90"
               >
-                <Mail className="h-4 w-4" /> Email Me
+                <Mail className="h-4 w-4" /> Open Email
               </a>
+            </div>
+
+            <div className="rounded-2xl border border-neutral-200 bg-muted p-6 shadow-sm">
+              <h3 className="text-lg font-semibold mb-4">Helpful things to include</h3>
+              <div className="space-y-4 text-sm text-secondary leading-relaxed">
+                <div className="rounded-xl bg-surface p-4">
+                  <p className="font-semibold text-text mb-1">Custom orders</p>
+                  <p>Tell me what you want, how many you need, and when you need it.</p>
+                </div>
+                <div className="rounded-xl bg-surface p-4">
+                  <p className="font-semibold text-text mb-1">Bake day questions</p>
+                  <p>Include the bake day and product names you&apos;re asking about.</p>
+                </div>
+                <div className="rounded-xl bg-surface p-4">
+                  <p className="font-semibold text-text mb-1">Order help</p>
+                  <p>Send the name and email used for the order so I can track it down quickly.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

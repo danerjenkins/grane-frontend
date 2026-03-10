@@ -209,10 +209,10 @@ export default function BakeDaysPage() {
                 }}
               />
 
-                <div className="mt-5 flex items-start gap-2 text-sm text-secondary">
-                  <InfoIcon />
-                  <p>Golden highlights are published bake days that are still open for ordering.</p>
-                </div>
+              <div className="mt-5 flex items-start gap-2 text-sm text-secondary">
+                <InfoIcon />
+                <p>Golden highlights are published bake days that are still open for ordering.</p>
+              </div>
 
               {/* Selected date badge */}
               {friendlySelectedDate && (

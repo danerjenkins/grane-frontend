@@ -11,6 +11,15 @@ export interface Product {
   image_url: string | null;
   description: string | null;
   available: boolean;
+  product_images?: ProductImage[];
+}
+
+export interface ProductImage {
+  id: string;
+  product_id?: string;
+  image_url: string;
+  alt_text: string | null;
+  sort_order: number;
 }
 
 export interface Order {

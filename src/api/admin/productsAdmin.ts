@@ -1,6 +1,19 @@
 import { supabase } from '../supabaseClient';
 import type { Product } from './types';
 
+type ProductRow = Omit<Product, 'product_images'> & {
+  product_images?: Product['product_images'] | null;
+};
+
+function normalizeProduct(product: ProductRow): Product {
+  return {
+    ...product,
+    product_images: Array.isArray(product.product_images)
+      ? [...product.product_images].sort((a, b) => a.sort_order - b.sort_order)
+      : [],
+  };
+}
+
 /**
  * Products CRUD operations
  */
@@ -8,18 +21,44 @@ import type { Product } from './types';
 export async function listProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
-    .select('*')
+    .select(
+      `
+        *,
+        product_images (
+          id,
+          product_id,
+          image_url,
+          alt_text,
+          sort_order
+        )
+      `
+    )
     .order('name', { ascending: true });
 
   if (error) {
     throw new Error(`Failed to list products: ${error.message}`);
   }
 
-  return data || [];
+  return (data || []).map(normalizeProduct);
 }
 
 export async function getProductById(id: string): Promise<Product> {
-  const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
+  const { data, error } = await supabase
+    .from('products')
+    .select(
+      `
+        *,
+        product_images (
+          id,
+          product_id,
+          image_url,
+          alt_text,
+          sort_order
+        )
+      `
+    )
+    .eq('id', id)
+    .single();
 
   if (error) {
     throw new Error(`Failed to get product: ${error.message}`);
@@ -29,7 +68,7 @@ export async function getProductById(id: string): Promise<Product> {
     throw new Error('Product not found');
   }
 
-  return data;
+  return normalizeProduct(data);
 }
 
 export async function createProduct(payload: Omit<Product, 'id' | 'created_at'>): Promise<Product> {

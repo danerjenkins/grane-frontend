@@ -137,7 +137,11 @@ export default function BakeDayTileCalendar({
             ? 'transform-gpu transition hover:-translate-y-0.5 hover:shadow-sm'
             : 'cursor-not-allowed';
           const selectedClasses = selected
-            ? 'ring-2 ring-brand-strong ring-offset-2 ring-offset-surface font-semibold'
+            ? status === 'available'
+              ? 'border-brand-strong bg-brand-strong text-white ring-2 ring-brand-strong ring-offset-2 ring-offset-surface shadow-md font-semibold'
+              : status === 'closed'
+                ? 'border-danger bg-danger-soft text-danger ring-2 ring-danger/30 ring-offset-2 ring-offset-surface shadow-sm font-semibold'
+                : 'border-brand-strong bg-surface text-text ring-2 ring-brand-strong ring-offset-2 ring-offset-surface shadow-sm font-semibold'
             : '';
           const outOfMonthClasses = inMonth ? '' : 'opacity-40';
 
@@ -164,7 +168,9 @@ export default function BakeDayTileCalendar({
               <div className="flex h-full w-full flex-col justify-between p-2">
                 <span className="text-sm sm:text-base">{date.getDate()}</span>
                 {status === 'closed' && (
-                  <span className="text-[10px] uppercase tracking-wide text-secondary">CLOSED</span>
+                  <span className="text-[10px] uppercase tracking-wide text-current/80">
+                    Closed
+                  </span>
                 )}
               </div>
             </button>

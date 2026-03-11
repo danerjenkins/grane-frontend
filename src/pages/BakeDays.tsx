@@ -204,6 +204,8 @@ export default function BakeDaysPage() {
                   setProductNotice('');
                   if (record) {
                     setSelectedBakeDay({ id: record.id, date: record.date });
+                  } else if (selectedBakeDay) {
+                    setSelectedBakeDay(null);
                   }
                   setSelectedDate(date);
                 }}
@@ -221,7 +223,7 @@ export default function BakeDaysPage() {
               {friendlySelectedDate && (
                 <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-brand-soft px-3 py-1 text-sm font-medium text-brand-strong">
                   <CalendarDays className="h-4 w-4" />
-                  Bake Day: {friendlySelectedDate}
+                  Selected Bake Day: {friendlySelectedDate}
                 </div>
               )}
             </div>

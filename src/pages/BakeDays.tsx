@@ -21,6 +21,8 @@ export default function BakeDaysPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
+  const [calendarNotice, setCalendarNotice] = useState('');
+  const [productNotice, setProductNotice] = useState('');
 
   const {
     cart,
@@ -59,6 +61,12 @@ export default function BakeDaysPage() {
       setSelectedDate(selected);
     }
   }, [selectedBakeDay, selectedDate]);
+
+  useEffect(() => {
+    if (cart.length === 0 && calendarNotice) {
+      setCalendarNotice('');
+    }
+  }, [calendarNotice, cart.length]);
 
   // Convert Date → YYYY-MM-DD in local time (NO UTC shift)
   const toLocalYMD = (date: Date) => {
@@ -149,24 +157,6 @@ export default function BakeDaysPage() {
     return null; // no tooltip
   };
 
-  // Simple reusable tooltip
-  function Tooltip({ message, children }: { message: string; children: React.ReactNode }) {
-    return (
-      <div className="relative group inline-block">
-        {children}
-        <div
-          className="
-          pointer-events-none absolute left-1/2 top-full z-20 w-40 -translate-x-1/2 
-          btn-neutral rounded-md px-3 py-2 text-xs opacity-0 
-          shadow-lg transition-opacity duration-200 group-hover:opacity-100 
-        "
-        >
-          {message}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <main className="min-h-screen bg-muted px-4 py-10">
       <div className="mx-auto max-w-5xl">
@@ -205,11 +195,13 @@ export default function BakeDaysPage() {
                   const dateStr = toLocalYMD(date);
                   const record = bakeDays.find((b) => b.date === dateStr);
                   if (cart.length > 0 && selectedBakeDay && dateStr !== selectedBakeDay.date) {
-                    alert(
-                      'You already have items in your cart. To change bake days, empty your cart first.'
+                    setCalendarNotice(
+                      'You already have items in your cart. Empty your cart before switching bake days.'
                     );
                     return;
                   }
+                  setCalendarNotice('');
+                  setProductNotice('');
                   if (record) {
                     setSelectedBakeDay({ id: record.id, date: record.date });
                   }
@@ -221,6 +213,9 @@ export default function BakeDaysPage() {
                 <InfoIcon />
                 <p>Golden highlights are published bake days that are still open for ordering.</p>
               </div>
+              {calendarNotice && (
+                <div className="banner banner-warning mt-5 text-sm">{calendarNotice}</div>
+              )}
 
               {/* Selected date badge */}
               {friendlySelectedDate && (
@@ -268,6 +263,9 @@ export default function BakeDaysPage() {
                     {addedMessage}
                   </div>
                 )}
+                {productNotice && (
+                  <div className="banner banner-warning mb-6 text-sm">{productNotice}</div>
+                )}
 
                 {availableProductsForSelectedDay?.length ? (
                   availableProductsForSelectedDay.map(
@@ -280,7 +278,7 @@ export default function BakeDaysPage() {
                       return (
                         <article
                           key={id}
-                          className="group relative overflow-visible rounded-2xl border bg-surface shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md"
+                          className="group relative overflow-hidden rounded-2xl border bg-surface shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md"
                         >
                           <div className="relative h-52 w-full overflow-hidden">
                             <Link to={`/product/${product.id}`}>
@@ -372,10 +370,10 @@ export default function BakeDaysPage() {
                               (() => {
                                 // Determine deadline status
                                 const deadlineStatus = getOrderDeadlineStatus(
-                                  selectedBakeDay?.date
+                                  selectedBakeDayRecord?.date
                                 );
 
-                                const tooltipMessage =
+                                const helperMessage =
                                   deadlineStatus === 'too-close'
                                     ? 'Orders must be placed at least 3 days before the bake day. Please choose a later date.'
                                     : deadlineStatus === 'soon'
@@ -394,11 +392,24 @@ export default function BakeDaysPage() {
                                     onClick={() => {
                                       if (deadlineStatus === 'too-close') return;
 
-                                      if (!selectedBakeDay) {
-                                        alert('Please select a bake day first.');
+                                      if (!selectedBakeDayRecord) {
+                                        setProductNotice(
+                                          'Please select a bake day before adding items to your order.'
+                                        );
                                         return;
                                       }
 
+                                      if (
+                                        !selectedBakeDay ||
+                                        selectedBakeDay.date !== selectedBakeDayRecord.date
+                                      ) {
+                                        setSelectedBakeDay({
+                                          id: selectedBakeDayRecord.id,
+                                          date: selectedBakeDayRecord.date,
+                                        });
+                                      }
+
+                                      setProductNotice('');
                                       addToCart({
                                         product_id: product.id,
                                         name: product.name,
@@ -424,11 +435,21 @@ export default function BakeDaysPage() {
                                   </button>
                                 );
 
-                                // Wrap in tooltip only if needed
-                                return tooltipMessage ? (
-                                  <Tooltip message={tooltipMessage}>{button}</Tooltip>
-                                ) : (
-                                  button
+                                return (
+                                  <div className="mt-3">
+                                    {button}
+                                    {helperMessage && (
+                                      <p
+                                        className={`mt-2 text-xs ${
+                                          deadlineStatus === 'too-close'
+                                            ? 'text-danger'
+                                            : 'text-secondary'
+                                        }`}
+                                      >
+                                        {helperMessage}
+                                      </p>
+                                    )}
+                                  </div>
                                 );
                               })()
                             )}

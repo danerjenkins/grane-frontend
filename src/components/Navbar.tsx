@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingCart, User } from 'lucide-react';
 import { useCart, type CartItem } from '../context/CartContext';
@@ -12,10 +12,13 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [sessionLoading, setSessionLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
   const { cart, removeFromCart } = useCart();
   const { clearCart } = useCart();
   const { cartQuantity } = useCart();
   const location = useLocation();
+  const lastScrollY = useRef(0);
+  const previousCartQuantity = useRef(cartQuantity);
 
   const isActiveRoute = (path: string) => {
     if (path === '/') {
@@ -107,8 +110,50 @@ const Navbar = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollDelta = currentScrollY - lastScrollY.current;
+
+      if (Math.abs(scrollDelta) < 8) {
+        return;
+      }
+
+      if (currentScrollY <= 16) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(scrollDelta < 0);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    lastScrollY.current = window.scrollY;
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen || cartOpen) {
+      setIsVisible(true);
+    }
+  }, [cartOpen, isOpen]);
+
+  useEffect(() => {
+    if (previousCartQuantity.current === 0 && cartQuantity > 0) {
+      setIsVisible(true);
+    }
+
+    previousCartQuantity.current = cartQuantity;
+  }, [cartQuantity]);
+
   return (
-    <nav className="relative border-b border-neutral-200 bg-surface px-3 py-4 md:px-8">
+    <nav
+      className={`sticky top-0 z-40 border-b border-neutral-200 bg-surface px-3 py-4 transition-transform duration-300 ease-out md:px-8 ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      }`}
+    >
       <div className="w-full">
         <div className="flex justify-between items-center">
           {/* Logo */}

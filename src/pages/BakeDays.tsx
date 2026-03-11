@@ -1,20 +1,44 @@
-import { useEffect, useMemo, useState } from 'react';
-import { getBakeDays, type BakeDay } from '../api/bakeDays';
-import { useCart } from '../context/CartContext';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ProductImage from '../components/ProductImage';
-import BakeDayTileCalendar, { type DayStatus } from '../components/BakeDayTileCalendar';
 import {
-  CalendarDays,
-  Sparkles,
-  ArrowRight,
-  ShoppingBag,
-  Plus,
-  Minus,
-  CheckCircle2,
   AlertTriangle,
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
   Loader2,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Sparkles,
 } from 'lucide-react';
+import { getBakeDays, type BakeDay } from '../api/bakeDays';
+import BakeDayTileCalendar, { type DayStatus } from '../components/BakeDayTileCalendar';
+import ProductImage from '../components/ProductImage';
+import { useCart } from '../context/CartContext';
+
+const toLocalYMD = (date: Date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
+function toLocalDateFromYMD(ymd: string) {
+  const [y, m, d] = ymd.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+const getCalendarDayStatus = (bakeDayStr: string): DayStatus => {
+  const bakeDay = toLocalDateFromYMD(bakeDayStr);
+  const today = new Date();
+
+  bakeDay.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  const diffDays = (bakeDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+
+  return diffDays <= 2 ? 'closed' : 'available';
+};
 
 export default function BakeDaysPage() {
   const [bakeDays, setBakeDays] = useState<BakeDay[]>([]);
@@ -23,6 +47,7 @@ export default function BakeDaysPage() {
   const [loadError, setLoadError] = useState('');
   const [calendarNotice, setCalendarNotice] = useState('');
   const [productNotice, setProductNotice] = useState('');
+  const [addedMessage, setAddedMessage] = useState('');
 
   const {
     cart,
@@ -34,16 +59,13 @@ export default function BakeDaysPage() {
     validateBakeDay,
     removeUnavailableProducts,
   } = useCart();
-  const [addedMessage, setAddedMessage] = useState('');
 
-  // Load bake days
   useEffect(() => {
     setIsLoading(true);
     setLoadError('');
     getBakeDays()
       .then((days) => {
         setBakeDays(days);
-        // Validate selected bake day is still available
         validateBakeDay(days.map((d) => ({ id: d.id, date: d.date })));
       })
       .catch((error) => {
@@ -53,7 +75,6 @@ export default function BakeDaysPage() {
       .finally(() => setIsLoading(false));
   }, [validateBakeDay]);
 
-  // Auto-select bake day based on current cart selection
   useEffect(() => {
     if (!selectedBakeDay?.date) return;
     const selected = toLocalDateFromYMD(selectedBakeDay.date);
@@ -68,47 +89,19 @@ export default function BakeDaysPage() {
     }
   }, [calendarNotice, cart.length]);
 
-  // Convert Date → YYYY-MM-DD in local time (NO UTC shift)
-  const toLocalYMD = (date: Date) => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
-  };
-  function toLocalDateFromYMD(ymd: string) {
-    const [y, m, d] = ymd.split('-').map(Number);
-    return new Date(y, m - 1, d); // <-- Local time, no UTC shift
-  }
+  const dayStatusByYmd: Record<string, DayStatus> = {};
+  bakeDays.forEach((b) => {
+    dayStatusByYmd[b.date] = getCalendarDayStatus(b.date);
+  });
 
-  const getCalendarDayStatus = (bakeDayStr: string): DayStatus => {
-    const bakeDay = toLocalDateFromYMD(bakeDayStr);
-    const today = new Date();
-
-    bakeDay.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-
-    const diffDays = (bakeDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
-
-    return diffDays <= 2 ? 'closed' : 'available';
-  };
-
-  const dayStatusByYmd = useMemo<Record<string, DayStatus>>(() => {
-    const map: Record<string, DayStatus> = {};
-    bakeDays.forEach((b) => {
-      map[b.date] = getCalendarDayStatus(b.date);
-    });
-    return map;
-  }, [bakeDays]);
-
-  // Find selected bake day record
   const selectedBakeDayRecord = bakeDays.find(
     (b) => selectedDate && b.date === toLocalYMD(selectedDate)
   );
+
   const availableProductsForSelectedDay = selectedBakeDayRecord?.bake_day_products.filter(
     (p) => p.available
   );
 
-  // Validate products when a bake day is selected
   useEffect(() => {
     if (!selectedBakeDayRecord?.bake_day_products) return;
 
@@ -137,7 +130,6 @@ export default function BakeDaysPage() {
           })
         : null;
 
-  // Returns "too-close", "soon", or null based on days remaining
   const getOrderDeadlineStatus = (bakeDayStr: string | undefined) => {
     if (!bakeDayStr) return null;
 
@@ -152,15 +144,14 @@ export default function BakeDaysPage() {
 
     const diffDays = (bakeDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
 
-    if (diffDays <= 4) return 'soon'; // nearing deadline
+    if (diffDays <= 4) return 'soon';
 
-    return null; // no tooltip
+    return null;
   };
 
   return (
     <main className="min-h-screen bg-muted px-4 py-10">
       <div className="mx-auto max-w-5xl">
-        {/* Header */}
         <header className="mb-10 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-soft text-brand-strong">
             <CalendarDays className="h-7 w-7" />
@@ -175,7 +166,6 @@ export default function BakeDaysPage() {
         </header>
 
         <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:justify-center">
-          {/* Calendar Card */}
           <section className="w-full max-w-xl">
             <div className="surface-card rounded-3xl p-6">
               <div className="mb-6 flex items-center justify-between">
@@ -188,25 +178,30 @@ export default function BakeDaysPage() {
                   Fresh drops
                 </div>
               </div>
+
               <BakeDayTileCalendar
                 value={selectedDate}
                 dayStatusByYmd={dayStatusByYmd}
                 onChange={(date) => {
                   const dateStr = toLocalYMD(date);
                   const record = bakeDays.find((b) => b.date === dateStr);
+
                   if (cart.length > 0 && selectedBakeDay && dateStr !== selectedBakeDay.date) {
                     setCalendarNotice(
                       'You already have items in your cart. Empty your cart before switching bake days.'
                     );
                     return;
                   }
+
                   setCalendarNotice('');
                   setProductNotice('');
+
                   if (record) {
                     setSelectedBakeDay({ id: record.id, date: record.date });
                   } else if (selectedBakeDay) {
                     setSelectedBakeDay(null);
                   }
+
                   setSelectedDate(date);
                 }}
               />
@@ -215,11 +210,11 @@ export default function BakeDaysPage() {
                 <InfoIcon />
                 <p>Golden highlights are published bake days that are still open for ordering.</p>
               </div>
+
               {calendarNotice && (
                 <div className="banner banner-warning mt-5 text-sm">{calendarNotice}</div>
               )}
 
-              {/* Selected date badge */}
               {friendlySelectedDate && (
                 <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-brand-soft px-3 py-1 text-sm font-medium text-brand-strong">
                   <CalendarDays className="h-4 w-4" />
@@ -228,16 +223,14 @@ export default function BakeDaysPage() {
               )}
             </div>
           </section>
-          {/* Product Listing */}
+
           <section className="w-full max-w-xl">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-brand-strong">
                   <Loader2 className="h-7 w-7 animate-spin" />
                 </div>
-
                 <p className="text-lg font-medium text-secondary">Good things are baking...</p>
-
                 <div className="mt-6 h-2 w-48 overflow-hidden rounded-full bg-muted">
                   <div className="h-full animate-loading-bar bg-brand-strong/40" />
                 </div>
@@ -258,13 +251,14 @@ export default function BakeDaysPage() {
                   <ShoppingBag className="h-6 w-6 text-brand-strong" />
                   Products for {friendlySelectedDate}
                 </div>
-                {/* Toast */}
+
                 {addedMessage && (
                   <div className="banner banner-success mb-6 flex items-center justify-center gap-2 text-center text-sm font-medium shadow-sm">
                     <CheckCircle2 className="h-4 w-4" />
                     {addedMessage}
                   </div>
                 )}
+
                 {productNotice && (
                   <div className="banner banner-warning mb-6 text-sm">{productNotice}</div>
                 )}
@@ -320,7 +314,6 @@ export default function BakeDaysPage() {
                               </div>
                             </div>
 
-                            {/* Controls */}
                             {soldOut && !cartItem ? (
                               <button
                                 className="sold-out-button mt-2 w-full cursor-not-allowed rounded-lg bg-muted py-2 text-sm font-medium text-secondary"
@@ -330,7 +323,6 @@ export default function BakeDaysPage() {
                               </button>
                             ) : cartItem ? (
                               <div className="mt-3 flex items-center justify-between">
-                                {/* Quantity stepper */}
                                 <div className="flex w-32 items-center justify-between rounded-full border px-2 py-1 text-sm">
                                   <button
                                     className="px-2 text-secondary hover:text-text"
@@ -370,7 +362,6 @@ export default function BakeDaysPage() {
                               </div>
                             ) : (
                               (() => {
-                                // Determine deadline status
                                 const deadlineStatus = getOrderDeadlineStatus(
                                   selectedBakeDayRecord?.date
                                 );
@@ -382,64 +373,60 @@ export default function BakeDaysPage() {
                                       ? 'Place your order soon!'
                                       : null;
 
-                                // Create the button element
-                                const button = (
-                                  <button
-                                    className={`mt-3 w-full rounded-lg px-4 py-3 text-base font-medium transition-colors ${
-                                      deadlineStatus === 'too-close'
-                                        ? 'cursor-not-allowed bg-muted text-secondary'
-                                        : 'btn-neutral'
-                                    }`}
-                                    disabled={deadlineStatus === 'too-close'}
-                                    onClick={() => {
-                                      if (deadlineStatus === 'too-close') return;
-
-                                      if (!selectedBakeDayRecord) {
-                                        setProductNotice(
-                                          'Please select a bake day before adding items to your order.'
-                                        );
-                                        return;
-                                      }
-
-                                      if (
-                                        !selectedBakeDay ||
-                                        selectedBakeDay.date !== selectedBakeDayRecord.date
-                                      ) {
-                                        setSelectedBakeDay({
-                                          id: selectedBakeDayRecord.id,
-                                          date: selectedBakeDayRecord.date,
-                                        });
-                                      }
-
-                                      setProductNotice('');
-                                      addToCart({
-                                        product_id: product.id,
-                                        name: product.name,
-                                        price: product.price,
-                                        quantity: 1,
-                                      });
-
-                                      setAddedMessage(`${product.name} added to cart!`);
-                                      setTimeout(() => setAddedMessage(''), 2000);
-                                    }}
-                                  >
-                                    <span className="inline-flex items-center justify-center gap-2">
-                                      {deadlineStatus === 'too-close' ? (
-                                        <>
-                                          <AlertTriangle className="h-4 w-4" /> Too Late to Order
-                                        </>
-                                      ) : (
-                                        <>
-                                          <Plus className="h-4 w-4" /> Add to Order
-                                        </>
-                                      )}
-                                    </span>
-                                  </button>
-                                );
-
                                 return (
                                   <div className="mt-3">
-                                    {button}
+                                    <button
+                                      className={`w-full rounded-lg px-4 py-3 text-base font-medium transition-colors ${
+                                        deadlineStatus === 'too-close'
+                                          ? 'cursor-not-allowed bg-muted text-secondary'
+                                          : 'btn-neutral'
+                                      }`}
+                                      disabled={deadlineStatus === 'too-close'}
+                                      onClick={() => {
+                                        if (deadlineStatus === 'too-close') return;
+
+                                        if (!selectedBakeDayRecord) {
+                                          setProductNotice(
+                                            'Please select a bake day before adding items to your order.'
+                                          );
+                                          return;
+                                        }
+
+                                        if (
+                                          !selectedBakeDay ||
+                                          selectedBakeDay.date !== selectedBakeDayRecord.date
+                                        ) {
+                                          setSelectedBakeDay({
+                                            id: selectedBakeDayRecord.id,
+                                            date: selectedBakeDayRecord.date,
+                                          });
+                                        }
+
+                                        setProductNotice('');
+                                        addToCart({
+                                          product_id: product.id,
+                                          name: product.name,
+                                          price: product.price,
+                                          quantity: 1,
+                                        });
+
+                                        setAddedMessage(`${product.name} added to cart!`);
+                                        setTimeout(() => setAddedMessage(''), 2000);
+                                      }}
+                                    >
+                                      <span className="inline-flex items-center justify-center gap-2">
+                                        {deadlineStatus === 'too-close' ? (
+                                          <>
+                                            <AlertTriangle className="h-4 w-4" /> Too Late to Order
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Plus className="h-4 w-4" /> Add to Order
+                                          </>
+                                        )}
+                                      </span>
+                                    </button>
+
                                     {helperMessage && (
                                       <p
                                         className={`mt-2 text-xs ${
@@ -487,12 +474,11 @@ export default function BakeDaysPage() {
         </div>
       </div>
 
-      {/* FAQ Link */}
       <div className="mt-12 text-center">
         <p className="text-secondary">
           <Link
             to="/about#faq"
-            className="inline-flex items-center gap-2 font-semibold text-text underline hover:text-secondary transition"
+            className="inline-flex items-center gap-2 font-semibold text-text underline transition hover:text-secondary"
           >
             Have questions? Check our FAQ <ArrowRight className="h-4 w-4" />
           </Link>

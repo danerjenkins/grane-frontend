@@ -84,7 +84,7 @@ export default function BakeDayTileCalendar({
   };
 
   return (
-    <div className={cx('rounded-2xl border border-border bg-surface shadow-sm p-4', className)}>
+    <div className={cx('rounded-2xl border border-border bg-surface p-4 shadow-sm', className)}>
       <div className="flex items-center justify-between">
         <button
           type="button"
@@ -94,7 +94,7 @@ export default function BakeDayTileCalendar({
           }
           aria-label="Previous month"
         >
-          ‹
+          {'<'}
         </button>
         <div className="text-sm font-semibold text-text">{formatMonthLabel(currentMonth)}</div>
         <button
@@ -105,11 +105,11 @@ export default function BakeDayTileCalendar({
           }
           aria-label="Next month"
         >
-          ›
+          {'>'}
         </button>
       </div>
 
-      <div className="mt-4 grid grid-cols-7 gap-2 sm:gap-3 text-xs font-medium text-secondary">
+      <div className="mt-4 grid grid-cols-7 gap-2 text-xs font-medium text-secondary sm:gap-3">
         {WEEKDAYS.map((day) => (
           <div key={day} className="text-center">
             {day}
@@ -126,15 +126,15 @@ export default function BakeDayTileCalendar({
           const isClickable = inMonth;
 
           const baseClasses =
-            'w-full aspect-square rounded-xl border text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:ring-offset-2 focus-visible:ring-offset-surface';
+            'aspect-square w-full rounded-xl border text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:ring-offset-2 focus-visible:ring-offset-surface';
           const stateClasses =
             status === 'inactive'
-              ? 'border-dashed border-border text-secondary/50 bg-transparent'
+              ? 'border-dashed border-border bg-transparent text-secondary/50'
               : status === 'closed'
                 ? 'border-border bg-muted text-text'
                 : 'border-transparent bg-brand-soft text-brand-strong';
           const interactiveClasses = isClickable
-            ? 'transition transform-gpu hover:shadow-sm hover:-translate-y-0.5'
+            ? 'transform-gpu transition hover:-translate-y-0.5 hover:shadow-sm'
             : 'cursor-not-allowed';
           const selectedClasses = selected
             ? 'ring-2 ring-brand-strong ring-offset-2 ring-offset-surface font-semibold'

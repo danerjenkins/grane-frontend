@@ -44,20 +44,20 @@ This repo is where most of the product thinking is visible. The code shows how t
 
 ## This Repository's Role
 
-This repository is the React 19 + TypeScript + Vite application in which customers and admins spend most of their time. Routing in [`src/App.tsx`](C:/repos/grane/grane-frontend/src/App.tsx) makes the application structure explicit:
+This repository is the React 19 + TypeScript + Vite application in which customers and admins spend most of their time. Routing in [`src/App.tsx`](./src/App.tsx) makes the application structure explicit:
 
 - public storefront pages for discovery and ordering
 - authenticated account pages for customer profile and order history
 - protected admin routes for operations management
 - a payment success page that reads Stripe session status back from the backend
 
-The frontend talks directly to Supabase for most data and auth concerns through [`src/api/supabaseClient.ts`](C:/repos/grane/grane-frontend/src/api/supabaseClient.ts), while payment-sensitive operations go through the separate backend repository.
+The frontend talks directly to Supabase for most data and auth concerns through [`src/api/supabaseClient.ts`](./src/api/supabaseClient.ts), while payment-sensitive operations go through the separate backend repository.
 
 ## Full-System Architecture
 
 ### Frontend
 
-The customer and admin experiences live here in [`grane-frontend`](C:/repos/grane/grane-frontend). This repo owns:
+The customer and admin experiences live here in [`grane-frontend`](./). This repo owns:
 
 - routing and page composition
 - cart state and persistence
@@ -85,15 +85,15 @@ Supabase acts as more than "just a database." In this project it is effectively 
 - row-level security and an `is_admin()` RPC back the admin authorization model
 - the frontend uses Supabase directly for most CRUD workflows, which reduces custom backend surface area
 
-The code in [`src/api/auth.ts`](C:/repos/grane/grane-frontend/src/api/auth.ts) shows a thoughtful identity model: authenticated users are synchronized into `public.users`, while guest buyers can still exist in the business domain without having full auth accounts.
+The code in [`src/api/auth.ts`](./src/api/auth.ts) shows a thoughtful identity model: authenticated users are synchronized into `public.users`, while guest buyers can still exist in the business domain without having full auth accounts.
 
 ### Edge Functions for Operations
 
 Operational messaging is split into Supabase Edge Functions:
 
-- [`supabase/functions/order-confirmation-email/index.ts`](C:/repos/grane/grane-frontend/supabase/functions/order-confirmation-email/index.ts)
-- [`supabase/functions/announce-bake-day/index.ts`](C:/repos/grane/grane-frontend/supabase/functions/announce-bake-day/index.ts)
-- [`supabase/functions/send-pickup-reminders/index.ts`](C:/repos/grane/grane-frontend/supabase/functions/send-pickup-reminders/index.ts)
+- [`supabase/functions/order-confirmation-email/index.ts`](./supabase/functions/order-confirmation-email/index.ts)
+- [`supabase/functions/announce-bake-day/index.ts`](./supabase/functions/announce-bake-day/index.ts)
+- [`supabase/functions/send-pickup-reminders/index.ts`](./supabase/functions/send-pickup-reminders/index.ts)
 
 That separation is a strong design choice. Checkout remains focused on payment and inventory, while email workflows can be triggered independently and use service-role access where appropriate.
 
@@ -101,11 +101,11 @@ That separation is a strong design choice. Checkout remains focused on payment a
 
 ### 1. Landing and Discovery
 
-[`src/pages/Home.tsx`](C:/repos/grane/grane-frontend/src/pages/Home.tsx) is not a generic ecommerce homepage. It immediately frames the business as a small-batch preorder bakery with local pickup. That is a product decision as much as a UI decision: it sets expectations before the customer reaches checkout.
+[`src/pages/Home.tsx`](./src/pages/Home.tsx) is not a generic ecommerce homepage. It immediately frames the business as a small-batch preorder bakery with local pickup. That is a product decision as much as a UI decision: it sets expectations before the customer reaches checkout.
 
 ### 2. Bake-Day-First Ordering
 
-[`src/pages/BakeDays.tsx`](C:/repos/grane/grane-frontend/src/pages/BakeDays.tsx) is the core of the domain model. Customers choose a date before assembling an order. The page:
+[`src/pages/BakeDays.tsx`](./src/pages/BakeDays.tsx) is the core of the domain model. Customers choose a date before assembling an order. The page:
 
 - fetches only published bake days
 - shows availability by date through a custom calendar
@@ -117,7 +117,7 @@ This is a strong product-specific adaptation of ecommerce. Instead of bending th
 
 ### 3. Cart Persistence Without Fake Reservations
 
-[`src/context/CartContext.tsx`](C:/repos/grane/grane-frontend/src/context/CartContext.tsx) is one of the most interesting files in the repo because it reveals deliberate trade-offs:
+[`src/context/CartContext.tsx`](./src/context/CartContext.tsx) is one of the most interesting files in the repo because it reveals deliberate trade-offs:
 
 - cart state persists to `localStorage`
 - persisted state is versioned and expires after seven days
@@ -129,7 +129,7 @@ The key design choice is that cart persistence improves continuity but does not 
 
 ### 4. Checkout With Auth-Optional Ordering
 
-[`src/pages/CheckoutPage.tsx`](C:/repos/grane/grane-frontend/src/pages/CheckoutPage.tsx) supports both guest checkout and logged-in checkout. That reduces friction for first-time customers while still allowing repeat customers to benefit from stored profile data and order history.
+[`src/pages/CheckoutPage.tsx`](./src/pages/CheckoutPage.tsx) supports both guest checkout and logged-in checkout. That reduces friction for first-time customers while still allowing repeat customers to benefit from stored profile data and order history.
 
 The page also includes pragmatic resilience:
 
@@ -140,7 +140,7 @@ The page also includes pragmatic resilience:
 
 ### 5. Payment Confirmation
 
-[`src/pages/Success.tsx`](C:/repos/grane/grane-frontend/src/pages/Success.tsx) does not assume redirect success equals payment success. It asks the backend to confirm the Stripe session and then clears the cart only after confirmation data is received. That is a subtle but important trust boundary.
+[`src/pages/Success.tsx`](./src/pages/Success.tsx) does not assume redirect success equals payment success. It asks the backend to confirm the Stripe session and then clears the cart only after confirmation data is received. That is a subtle but important trust boundary.
 
 ## Admin and Operations Design
 
@@ -148,7 +148,7 @@ The admin area is not decorative. It encodes the day-to-day workflow the bakery 
 
 ### Authorization Model
 
-Admin access is enforced in [`src/routes/AdminRoute.tsx`](C:/repos/grane/grane-frontend/src/routes/AdminRoute.tsx) via the `is_admin()` RPC exposed through [`src/api/admin.ts`](C:/repos/grane/grane-frontend/src/api/admin.ts). The code comments are explicit that admin status comes from the `user_roles` table, not from client-side assumptions or metadata flags.
+Admin access is enforced in [`src/routes/AdminRoute.tsx`](./src/routes/AdminRoute.tsx) via the `is_admin()` RPC exposed through [`src/api/admin.ts`](./src/api/admin.ts). The code comments are explicit that admin status comes from the `user_roles` table, not from client-side assumptions or metadata flags.
 
 That is the right source of truth. It keeps authorization in the data layer instead of sprinkling role logic through UI state.
 
@@ -156,14 +156,14 @@ That is the right source of truth. It keeps authorization in the data layer inst
 
 The admin workflow is centered around bake days:
 
-- [`src/pages/admin/AdminBakeDays.tsx`](C:/repos/grane/grane-frontend/src/pages/admin/AdminBakeDays.tsx) creates, edits, publishes, and deletes bake days
-- [`src/pages/admin/AdminBakeDayDetail.tsx`](C:/repos/grane/grane-frontend/src/pages/admin/AdminBakeDayDetail.tsx) assigns products to a bake day and sets `quantity_limit`, `quantity_sold`, and availability
+- [`src/pages/admin/AdminBakeDays.tsx`](./src/pages/admin/AdminBakeDays.tsx) creates, edits, publishes, and deletes bake days
+- [`src/pages/admin/AdminBakeDayDetail.tsx`](./src/pages/admin/AdminBakeDayDetail.tsx) assigns products to a bake day and sets `quantity_limit`, `quantity_sold`, and availability
 
 This is a sensible operations model for a microbakery. Inventory is managed at the product/date intersection, which mirrors how production is actually planned.
 
 ### Safe Stripe Environment Switching
 
-[`src/pages/admin/AdminHome.tsx`](C:/repos/grane/grane-frontend/src/pages/admin/AdminHome.tsx) includes a Stripe mode toggle driven by app settings. That is a notable operational feature because it lets the owner switch new checkout sessions between sandbox and live mode without code changes or redeploys.
+[`src/pages/admin/AdminHome.tsx`](./src/pages/admin/AdminHome.tsx) includes a Stripe mode toggle driven by app settings. That is a notable operational feature because it lets the owner switch new checkout sessions between sandbox and live mode without code changes or redeploys.
 
 This is a strong example of reducing operational risk through productized configuration instead of relying on tribal knowledge.
 
@@ -182,7 +182,7 @@ That architecture matters because the frontend is designed around those guarante
 
 ### Trade-Off 1: Best-Effort Inventory Instead of Hard Reservation
 
-The most important architectural trade-off is documented in [`OVERSELL_IMPLEMENTATION.md`](C:/repos/grane/OVERSELL_IMPLEMENTATION.md) and reflected in both [`src/context/CartContext.tsx`](C:/repos/grane/grane-frontend/src/context/CartContext.tsx) and the backend webhook logic.
+The most important architectural trade-off is documented in `OVERSELL_IMPLEMENTATION.md` from the broader project notes and reflected in both [`src/context/CartContext.tsx`](./src/context/CartContext.tsx) and the backend webhook logic.
 
 Decision:
 - do not reserve inventory when a customer adds items to cart

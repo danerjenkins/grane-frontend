@@ -178,10 +178,7 @@ export default function Account() {
           <Link to="/" className="text-sm text-secondary hover:text-text">
             ← Back to Home
           </Link>
-          <button
-            onClick={handleSignOut}
-            className="btn-danger text-sm"
-          >
+          <button onClick={handleSignOut} className="btn-danger text-sm">
             Sign Out
           </button>
         </div>
@@ -195,12 +192,20 @@ export default function Account() {
         {/* Quick Links */}
         <div className="admin-card p-6 mb-6">
           <h2 className="text-xl font-bold text-text mb-3">Quick Links</h2>
-          <Link
-            to="/my-orders"
-            className="btn-neutral inline-flex items-center justify-center px-5 py-2.5 text-sm"
-          >
-            View My Orders
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              to="/my-orders"
+              className="btn-neutral inline-flex items-center justify-center px-5 py-2.5 text-sm"
+            >
+              View My Orders
+            </Link>
+            <Link
+              to="/feedback"
+              className="btn-secondary inline-flex items-center justify-center px-5 py-2.5 text-sm"
+            >
+              Your Feedback
+            </Link>
+          </div>
         </div>
 
         {/* Error Banner */}

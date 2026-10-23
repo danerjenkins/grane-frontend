@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 .env
 supabase/.temp/
+
+# Feedback loop: local bug bundles (may contain customer screenshots)
+.bugs/
+.env.local

@@ -24,6 +24,7 @@ export default function AdminLayout() {
     { name: 'Orders', path: '/admin/orders' },
     { name: 'Accounts', path: '/admin/accounts' },
     { name: 'Bake Days', path: '/admin/bake-days' },
+    { name: 'Feedback', path: '/admin/feedback' },
   ];
 
   return (
@@ -55,7 +56,9 @@ export default function AdminLayout() {
                 onClick={() => setSidebarOpen(false)}
                 className={({ isActive }) =>
                   `block rounded-lg px-4 py-2 transition-colors ${
-                    isActive ? 'bg-text text-white' : 'text-secondary hover:bg-muted hover:text-text'
+                    isActive
+                      ? 'bg-text text-white'
+                      : 'text-secondary hover:bg-muted hover:text-text'
                   }`
                 }
               >
@@ -66,10 +69,7 @@ export default function AdminLayout() {
 
           {/* Sign Out Button */}
           <div className="p-4 border-t border-neutral-200">
-            <button
-              onClick={handleSignOut}
-              className="btn-neutral w-full"
-            >
+            <button onClick={handleSignOut} className="btn-neutral w-full">
               Sign Out
             </button>
           </div>
@@ -88,10 +88,7 @@ export default function AdminLayout() {
             <h1 className="text-lg font-semibold text">Admin</h1>
             <p className="text-xs text-secondary">Grane Bakery</p>
           </Link>
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="btn-secondary p-2"
-          >
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="btn-secondary p-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"

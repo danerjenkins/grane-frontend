@@ -31,3 +31,17 @@ entrypoint = "./functions/announce-bake-day/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/announce-bake-day/*.html" ]
+
+[functions.feedback-report]
+enabled = true
+# Guests can send feedback; the function identifies signed-in callers itself.
+verify_jwt = false
+import_map = "./functions/feedback-report/deno.json"
+entrypoint = "./functions/feedback-report/index.ts"
+
+[functions.feedback-resolve]
+enabled = true
+# Accepts admin/user JWTs or the service-role key (CLI + post-commit hook); auth is checked in the function.
+verify_jwt = false
+import_map = "./functions/feedback-resolve/deno.json"
+entrypoint = "./functions/feedback-resolve/index.ts"

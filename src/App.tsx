@@ -21,6 +21,10 @@ import AdminProducts from './pages/admin/AdminProducts';
 import AdminAccounts from './pages/admin/AdminAccounts';
 import AdminBakeDays from './pages/admin/AdminBakeDays';
 import AdminBakeDayDetail from './pages/admin/AdminBakeDayDetail.tsx';
+import AdminFeedback from './pages/admin/AdminFeedback';
+import AdminFeedbackDetail from './pages/admin/AdminFeedbackDetail';
+import Feedback from './pages/Feedback';
+import FeedbackWidget from './components/feedback/FeedbackWidget';
 import { getSession, ensureUserProfile } from './api/auth';
 
 export default function App() {
@@ -47,49 +51,61 @@ export default function App() {
 
       <div className="flex-1 min-h-0">
         <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/why-bake-days" element={<About />} />
-        <Route path="/bake-days" element={<BakeDaysPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/account"
-          element={
-            <ProtectedRoute>
-              <Account />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/my-orders"
-          element={
-            <ProtectedRoute redirectMessage="Please log in to view your orders.">
-              <MyOrders />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminLayout />
-            </AdminRoute>
-          }
-        >
-          <Route index element={<AdminHome />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="accounts" element={<AdminAccounts />} />
-          <Route path="bake-days" element={<AdminBakeDays />} />
-          <Route path="bake-days/:bakeDayId" element={<AdminBakeDayDetail />} />
-        </Route>
-        <Route path="/success" element={<Success />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="*" element={<ErrorPage statusCode={404} />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/why-bake-days" element={<About />} />
+          <Route path="/bake-days" element={<BakeDaysPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <Account />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-orders"
+            element={
+              <ProtectedRoute redirectMessage="Please log in to view your orders.">
+                <MyOrders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/feedback"
+            element={
+              <ProtectedRoute redirectMessage="Please log in to see your feedback.">
+                <Feedback />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminLayout />
+              </AdminRoute>
+            }
+          >
+            <Route index element={<AdminHome />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="accounts" element={<AdminAccounts />} />
+            <Route path="bake-days" element={<AdminBakeDays />} />
+            <Route path="bake-days/:bakeDayId" element={<AdminBakeDayDetail />} />
+            <Route path="feedback" element={<AdminFeedback />} />
+            <Route path="feedback/:feedbackId" element={<AdminFeedbackDetail />} />
+          </Route>
+          <Route path="/success" element={<Success />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="*" element={<ErrorPage statusCode={404} />} />
         </Routes>
       </div>
+
+      <FeedbackWidget />
     </div>
   );
 }

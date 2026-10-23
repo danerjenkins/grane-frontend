@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+# post-commit: if this commit fixes a reported bug, close it and notify the reporter.
+# Convention:  fix(scope): summary (bug 43f4d0f6)
+#              Bug-Note: one warm sentence for the reporter
+#              Bug-Resolution: fixed | noise | duplicate | wontfix | by_design   (optional)
+msg=$(git log -1 --pretty=%B)
+id=$(printf '%s' "$msg" | sed -n 's/.*(bug \([0-9a-f][0-9a-f-]\{5,\}\)).*/\1/p' | head -1)
+[ -z "$id" ] && exit 0                                  # not a bug-fixing commit -> no-op
+
+note=$(printf '%s' "$msg"       | sed -n 's/^Bug-Note:[[:space:]]*//p'       | head -1)
+resolution=$(printf '%s' "$msg" | sed -n 's/^Bug-Resolution:[[:space:]]*//p' | head -1)
+
+if [ -n "$resolution" ] && [ "$resolution" != "fixed" ]; then
+  if [ -n "$note" ]; then
+    npm run --silent bug:resolve -- "$id" --via commit --resolution "$resolution" --note "$note"
+  else
+    npm run --silent bug:resolve -- "$id" --via commit --resolution "$resolution"
+  fi
+elif [ -n "$note" ]; then
+  npm run --silent bug:resolve -- "$id" --via commit --note "$note"
+else
+  echo "WARNING: commit landed but bug $id was NOT closed, a 'fixed' close needs a 'Bug-Note:' trailer."
+  echo "         amend it (git commit --amend) or run: npm run bug:resolve -- $id --note \"...\""
+fi
+exit 0   # never fail the commit; it already landed

@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Bug, CheckCircle2, HelpCircle, Lightbulb, MessageSquare, X } from 'lucide-react';
+import { Bug, CheckCircle2, HelpCircle, Lightbulb, MessageSquare, Pencil, X } from 'lucide-react';
 import { getSession } from '../../api/auth';
 import { buildContext, getSessionId } from '../../feedback/context';
 import { recordNav } from '../../feedback/rings';
 import { prime, takeScreenshot } from '../../feedback/screenshot';
 import { submitReport } from '../../feedback/submit';
 import type { FeedbackKind } from '../../feedback/types';
+import { renderMarkup, type Stroke } from '../../feedback/markup';
+import ScreenshotMarkup from './ScreenshotMarkup';
 
 const MAX_CHARS = 2000;
 const SENT_DISMISS_MS = 4000;
@@ -25,10 +27,13 @@ const KINDS: { value: FeedbackKind; label: string; icon: typeof Bug }[] = [
 export default function FeedbackWidget() {
   const location = useLocation();
   const [state, setState] = useState<WidgetState>('launcher');
+  // baseShot is the raw capture; screenshot is what gets sent (baseShot plus any markup).
+  const [baseShot, setBaseShot] = useState<string | null>(null);
   const [screenshot, setScreenshot] = useState<string | null>(null);
+  const [strokes, setStrokes] = useState<Stroke[]>([]);
   const [capturing, setCapturing] = useState(false);
   const [includeScreenshot, setIncludeScreenshot] = useState(true);
-  const [zoomed, setZoomed] = useState(false);
+  const [marking, setMarking] = useState(false);
   const [description, setDescription] = useState('');
   const [kind, setKind] = useState<FeedbackKind | null>(null);
   const [email, setEmail] = useState('');
@@ -46,13 +51,15 @@ export default function FeedbackWidget() {
     // Capture before the panel paints over the page (the panel is excluded anyway).
     prime();
     const [shot, session] = await Promise.all([takeScreenshot(), getSession().catch(() => null)]);
+    setBaseShot(shot);
     setScreenshot(shot);
+    setStrokes([]);
     setSignedIn(Boolean(session));
     setCapturing(false);
   }, [state]);
 
   const collapse = useCallback(() => {
-    setZoomed(false);
+    setMarking(false);
     setState('launcher');
   }, []);
 
@@ -63,7 +70,7 @@ export default function FeedbackWidget() {
         event.preventDefault();
         void open();
       } else if (event.key === 'Escape' && state === 'panel') {
-        if (zoomed) setZoomed(false);
+        if (marking) setMarking(false);
         else collapse();
       }
     };
@@ -74,7 +81,7 @@ export default function FeedbackWidget() {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener(OPEN_FEEDBACK_EVENT, onOpen);
     };
-  }, [open, collapse, state, zoomed]);
+  }, [open, collapse, state, marking]);
 
   useEffect(() => {
     if (state === 'panel' && !capturing) textareaRef.current?.focus();
@@ -85,6 +92,16 @@ export default function FeedbackWidget() {
     const timer = window.setTimeout(() => setState('launcher'), SENT_DISMISS_MS);
     return () => window.clearTimeout(timer);
   }, [state]);
+
+  const cancelMarkup = useCallback(() => setMarking(false), []);
+
+  const finishMarkup = async (next: Stroke[]) => {
+    setMarking(false);
+    if (!baseShot) return;
+    setStrokes(next);
+    setScreenshot(await renderMarkup(baseShot, next).catch(() => baseShot));
+    setIncludeScreenshot(true);
+  };
 
   const canSend =
     !capturing && (description.trim().length > 0 || (includeScreenshot && screenshot));
@@ -111,9 +128,11 @@ export default function FeedbackWidget() {
     setDescription('');
     setKind(null);
     setEmail('');
+    setBaseShot(null);
     setScreenshot(null);
+    setStrokes([]);
     setIncludeScreenshot(true);
-    setZoomed(false);
+    setMarking(false);
     setState('sent');
   };
 
@@ -166,10 +185,10 @@ export default function FeedbackWidget() {
           <div>
             <button
               type="button"
-              onClick={() => screenshot && setZoomed(true)}
-              disabled={!screenshot}
-              className="flex h-32 w-full items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-muted"
-              aria-label="Zoom screenshot"
+              onClick={() => baseShot && setMarking(true)}
+              disabled={!baseShot}
+              className="group relative flex h-32 w-full items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-muted"
+              aria-label="Draw on screenshot"
             >
               {capturing ? (
                 <span className="text-sm text-secondary">Capturing screen…</span>
@@ -181,6 +200,12 @@ export default function FeedbackWidget() {
                 />
               ) : (
                 <span className="text-sm text-secondary">No screenshot available</span>
+              )}
+              {screenshot && !capturing && (
+                <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-surface/90 px-2.5 py-1 text-xs font-medium text-text shadow group-hover:bg-surface">
+                  <Pencil className="h-3 w-3" />
+                  {strokes.length ? 'Edit drawing' : 'Draw on it'}
+                </span>
               )}
             </button>
             {screenshot && (
@@ -265,14 +290,13 @@ export default function FeedbackWidget() {
         </form>
       )}
 
-      {zoomed && screenshot && (
-        <div className="modal-backdrop" onClick={() => setZoomed(false)}>
-          <img
-            src={screenshot}
-            alt="Screenshot of this page, enlarged"
-            className="max-h-full max-w-full rounded-lg shadow-xl"
-          />
-        </div>
+      {marking && baseShot && (
+        <ScreenshotMarkup
+          base={baseShot}
+          initialStrokes={strokes}
+          onDone={(next) => void finishMarkup(next)}
+          onCancel={cancelMarkup}
+        />
       )}
     </div>
   );
